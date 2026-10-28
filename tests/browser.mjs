@@ -1730,7 +1730,7 @@ try {
   assert.equal(katexCdnRequests.length,0,'KaTeX must not request the old CDN');
   assert.ok(katexFontResponses.length>0,'KaTeX fonts must be fetched');
   for(const response of katexFontResponses) {
-    assert.ok(response.url().startsWith(base+'/upstream/transformer-explainer/build/'),'KaTeX fonts must be served locally under the build path');
+    assert.ok(response.url().startsWith(base+'/upstream/transformer-explainer/build/')||response.url().startsWith(base+'/vendor/katex/fonts/'),'KaTeX fonts must come from the local Transformer build or shared formula renderer');
     assert.equal(response.status(),200,'local KaTeX font must load successfully');
   }
   console.log('PASS: Korean and English KaTeX formulas load local CSS and fonts with the old CDN blocked');

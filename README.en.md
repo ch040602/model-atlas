@@ -1,5 +1,9 @@
 # Model Atlas
 
+Each of the 82 formula operations now explains its current numerical result, offers a controlled prediction with a reason to reveal, and links to the operations that actually consume it. Nineteen shared formula topics separate the core idea, three derivation steps, a worked example and applicability conditions. Diffusion and GAN exercises also explain the current values and why controlled changes affect the result.
+
+The four original labs include cursor-position explanations. Inspect CNN map coordinates for channel contributions, bias and output, or Transformer matrix cells for actual query/key scores and attention weights. Diffusion explains its displayed step, seed, guidance and saved results; GAN follows the selected loss and the timing of displayed values. Schematic vector stripes are identified as illustrations. Hover or focus a region with Tab; pin the card or press F2 to read it, and Escape to close. Touch a component on touch screens. “Read current values” refreshes the snapshot after animation or training, and the bottom-right toggle disables help. This works in embedded and separate-window originals.
+
 The learning site includes [credits and license summaries](credits.html) in Korean and English. The [detailed record](LICENSES.md) covers the separate review of models, images and other assets.
 
 The ROC and threshold concept follows six synthetic scores through predictions, confusion counts, recall, false positive rate, the ROC curve and AUC. It includes tied scores and the case with no positive predictions. This fixed example does not evaluate a trained classifier.

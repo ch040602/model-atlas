@@ -1,5 +1,5 @@
 diff --git a/index.html b/index.html
-index 30436714..fb06fe2b 100644
+index 30436714..8cf778ad 100644
 --- a/index.html
 +++ b/index.html
 @@ -1,25 +1,107 @@
@@ -121,7 +121,7 @@ index 30436714..fb06fe2b 100644
      <div id="header"></div>
      <div id="main">
          <div id="architecture-wrapper">
-@@ -31,6 +113,13 @@
+@@ -31,7 +113,15 @@
              </div>
          </div>
      </div>
@@ -133,8 +133,10 @@ index 30436714..fb06fe2b 100644
 +    </section>
 +    <section id="model-atlas-trajectory-guide" hidden aria-labelledby="model-atlas-trajectory-title"></section>
      <div id="description"></div>
++    <script type="module" src="../../original-cursor-help.js"></script>
      <script type="module" src="./js/prompts.js"></script>
      <script type="module" src="./js/header.js"></script>
+     <script type="module" src="./js/architecture.js"></script>
 diff --git a/js/architecture.js b/js/architecture.js
 index b26649b7..38e7f584 100644
 --- a/js/architecture.js

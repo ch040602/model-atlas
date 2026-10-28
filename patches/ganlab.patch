@@ -1616,7 +1616,7 @@ index f1d916f..3056717 100644
    initializeModelVariables() {
      if (this.dVariables) {
 diff --git a/demo/index.html b/demo/index.html
-index 6e0720a..b0023ea 100644
+index 6e0720a..0ba5950 100644
 --- a/demo/index.html
 +++ b/demo/index.html
 @@ -1,13 +1,25 @@
@@ -2024,7 +2024,7 @@ index 6e0720a..b0023ea 100644
    <script type="text/javascript">
      const tag = document.createElement('script');
      tag.id = 'iframe-demo';
-@@ -466,23 +582,30 @@
+@@ -466,26 +582,34 @@
      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
    
      let player;
@@ -2064,3 +2064,7 @@ index 6e0720a..b0023ea 100644
        });
      });
    </script>
++  <script type="module" src="../../../original-cursor-help.js"></script>
+ </body>
+ 
+ </html>

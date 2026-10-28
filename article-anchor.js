@@ -23,5 +23,6 @@
  }
  window.addEventListener('hashchange',follow);
  follow();
+ import('./original-cursor-help.js');
  if(new URLSearchParams(location.search).has('atlas-model'))import('./article-formula-reference.js');
 })();
