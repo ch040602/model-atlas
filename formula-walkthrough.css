@@ -13,6 +13,15 @@
 .formula-explanation h4{margin:0 0 24px;font-size:24px;font-weight:500;line-height:1.5;letter-spacing:-.025em;scroll-margin-top:96px}
 .formula-explanation h5,.formula-active h5{margin:24px 0 10px;font-size:13px;font-weight:600;color:#465563}
 .formula-explanation .formula-role{font-size:15px;color:#1c1e21;line-height:1.85;margin:0}
+.formula-explanation .step-reasoning p{font-size:15px;line-height:1.9;color:#253746;word-break:keep-all;overflow-wrap:break-word;margin:10px 0 18px}
+.step-reasoning{margin:22px 0;padding-top:2px;border-top:1px solid #ced8e0}
+.step-prediction,.step-answer{padding:12px 0;border-top:1px solid #d5dee5}
+.step-answer{margin-top:14px;padding-left:12px;border-left:2px solid #0064e0}
+.step-prediction>summary,.step-answer>summary{min-height:28px;font-size:14px;line-height:1.7;color:#174b74}
+.step-prediction:focus-within{scroll-margin-top:24px}
+.step-connection ul{padding-left:18px;line-height:1.8}
+.step-connection button{border:0;background:none;padding:5px 0;color:#0064e0;font:inherit;font-size:14px;text-align:left;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.step-reasoning summary:focus-visible,.step-connection button:focus-visible{outline:2px solid #0064e0;outline-offset:4px}
 .formula-scope{padding-top:20px;margin-top:24px;border-top:1px solid #dee3e9}
 .formula-journey summary{cursor:pointer;font-size:13px;font-weight:500;color:#1c1e21;line-height:1.6}
 .formula-scope p{font-size:12px}
