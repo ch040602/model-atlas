@@ -4,6 +4,10 @@ import {formulaDefaults,formulaWalkthrough,num} from '../formula-model.js';
 import {formulaExplanationContent} from '../formula-walkthrough.js';
 import {convolutionClassification} from '../convolution-lab.js';
 import {sequenceExperiment} from '../sequence-lab.js';
+import {diffusionExperiment,diffusionOutput,diffusionSecondStep} from '../diffusion-lab.js';
+import {ganTrainingExperiment,ganTrainingOutput} from '../gan-training-lab.js';
+import {formulaDerivations} from '../formula-derivations.js';
+import {mathMarkup} from '../math-render.js';
 
 const near=(a,b)=>assert.ok(Math.abs(a-b)<1e-9,`${a} ≠ ${b}`);
 const variants={
@@ -56,4 +60,19 @@ for(const weight of [-0.8,0.4,1.1]){
 const live=stepReasoning('cnn',{center:0.6,strength:1.2,bias:0.3},'weighted-sum').meaning[0];
 assert.ok(live.includes(num(1.2*(2-0.6))));
 assert.ok(stepReasoning('transformer',{x1:2,x2:0},'ln1-standardize').meaning[0].includes(num(Math.sqrt(1.01))));
+for(const d of Object.values(formulaDerivations))for(const step of d.steps)assert.doesNotMatch(mathMarkup(step.tex),/katex-error/);
+for(const noise of [-1,0,0.7]){
+ const clean=0.4,r=diffusionExperiment(clean,noise,noise,0,1),wrong=diffusionExperiment(clean,noise,noise+0.1,0,1);
+ near(r.estimatedClean,clean);near(wrong.estimatedClean-clean,-Math.sqrt(3)*0.1);
+ const a=diffusionSecondStep(r.previous,-0.2),b=diffusionSecondStep(r.previous,0.8);
+ assert.notEqual(a.next,b.next);
+}
+for(const lang of ['ko','en']){
+ const diff=diffusionOutput({clean:0.4,noise:-1,prediction:0.2,unconditional:-0.2,guidance:2,nextPrediction:0.5},lang,7);
+ const gan=ganTrainingOutput({real:1,generator:0.2,weight:-0.5,bias:0.1},lang,5);
+ assert.equal((diff.match(/class="practice-reasoning"/g)||[]).length,7);
+ assert.equal((gan.match(/class="practice-reasoning"/g)||[]).length,5);
+ assert.doesNotMatch(diff+gan,/undefined|NaN|katex-error/);
+}
+const balanced=ganTrainingExperiment(0.4,0.4,0,0);near(balanced.dReal,0.5);near(balanced.dFake,0.5);near(balanced.dWeightGradient,0);near(balanced.dBiasGradient,0);
 console.log(`PASS: ${count} bilingual live explanations; actual dependency links; zero filters, bias, average sensitivity, blocked ReLU, memory removal and independently calculated live values`);

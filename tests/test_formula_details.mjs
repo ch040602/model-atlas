@@ -9,6 +9,7 @@ import {gradientDirection,gradientPresets,gradientLabOutput} from '../gradient-d
 import {formulaDetails,formulaDetailMarkup,detailsForStep} from '../formula-details.js';
 import {formulaDefaults,formulaWalkthrough} from '../formula-model.js';
 import {formulaExplanationContent} from '../formula-walkthrough.js';
+import {formulaDerivations} from '../formula-derivations.js';
 
 const near=(a,b,tol=1e-8)=>assert.ok(Math.abs(a-b)<=tol*Math.max(1,Math.abs(a),Math.abs(b)),`${a} != ${b}`);
 let cases=0;
@@ -24,6 +25,7 @@ for(let iw=-30;iw<=30;iw+=2)for(let iy=-20;iy<=20;iy+=2)for(let ir=0;ir<=30;ir++
  cases++;
 }
 for(const lang of ['ko','en']){
+ assert.deepEqual(Object.keys(formulaDetails),Object.keys(formulaDerivations));
  for(const key of Object.keys(formulaDetails))assert.doesNotMatch(formulaDetailMarkup([key],lang,true),/katex-error|>undefined<|\bNaN\b/);
  for(const [kind,v] of Object.entries(formulaDefaults))for(const [index,step] of formulaWalkthrough(kind,v,lang).steps.entries()){
   assert.ok(detailsForStep(kind,step.id).every(id=>formulaDetails[id]));
@@ -47,10 +49,10 @@ try{
   const page=await browser.newPage({viewport:{width,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());
   await page.goto(`${base}${prefix}/index.html?lang=${lang}&section=gradient-direction-title#foundation`);
-  await page.locator('#gradient-direction-output li').waitFor();
-  assert.equal(await page.locator('#gradient-direction-output li').count(),1);
+  await page.locator('#gradient-direction-output > ol > li').waitFor();
+  assert.equal(await page.locator('#gradient-direction-output > ol > li').count(),1);
   for(let i=0;i<4;i++)await page.locator('[data-gradient-stage=next]').click();
-  assert.equal(await page.locator('#gradient-direction-output li').count(),5);
+  assert.equal(await page.locator('#gradient-direction-output > ol > li').count(),5);
   assert.equal(await page.locator('[data-gradient-stage=next]').isDisabled(),true);
   for(const [preset,v] of Object.entries(gradientPresets)){
    await page.locator(`[data-gradient-preset=${preset}]`).click();
@@ -65,7 +67,7 @@ try{
   await page.keyboard.press('ArrowRight');assert.equal(await page.locator('#gradient-rate').inputValue(),'0.05');
   // Language rerender keeps values and revealed stage; navigation returns to this experiment.
   await page.locator('#language').click();assert.equal(await page.locator('#gradient-rate').inputValue(),'0.05');
-  assert.equal(await page.locator('#gradient-direction-output li').count(),5);
+  assert.equal(await page.locator('#gradient-direction-output > ol > li').count(),5);
   await page.locator('#language').click();
   assert.equal(await page.locator('.katex-error').count(),0);
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
@@ -81,7 +83,9 @@ try{
   }
   for(const [kind,key] of [['diffusion','denoise'],['gan','adversarial']]){
    await page.goto(`${base}${prefix}/index.html?lang=${lang}#${kind}`);
-   const details=page.locator(`[data-math-detail=${key}]`);await details.locator('summary').click();
+   const details=page.locator(`[data-math-detail=${key}]`);await details.locator(':scope > summary').click();
+   const derivation=details.locator('.derivation-steps');await derivation.locator(':scope > summary').click();
+   assert.equal(await derivation.locator('li').count(),3);
    assert.equal(await details.getAttribute('open'),'');assert.ok(await details.locator('.katex').count()>0);
    assert.equal(await page.locator('.katex-error').count(),0);
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));

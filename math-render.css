@@ -20,3 +20,22 @@
 .formula-detail>summary:focus-visible{outline:2px solid #2563eb;outline-offset:4px}
 .formula-detail>div{min-width:0;padding-top:4px}.formula-detail p{margin:12px 0;overflow-wrap:anywhere}
 .formula-detail .math-block{font-size:12px;max-width:100%}.formula-detail a{font-size:12px;color:#174e3a;text-underline-offset:3px}
+.formula-detail{font-size:15px;line-height:1.9;padding:18px 0}
+.formula-detail p,.formula-journey .formula-detail p{font-size:15px;line-height:1.9;color:#253746;word-break:keep-all;overflow-wrap:break-word}
+.formula-detail .math-block{font-size:14px;padding-block:14px}
+.formula-detail summary{font-size:14px;min-height:28px}
+.formula-detail h6{font:600 15px/1.65 var(--sans,system-ui);margin:8px 0;color:#142e3e}
+.derivation-idea{margin-bottom:18px!important}
+.derivation-steps,.derivation-reference{margin:14px 0;padding:12px 0;border-top:1px solid #d5dee5}
+.derivation-steps ol{padding-left:24px;margin:18px 0;list-style:decimal}
+.derivation-steps li{padding-left:6px;margin-bottom:26px;min-width:0}
+.derivation-steps li::marker{color:#0064e0;font-weight:700}
+.derivation-example{padding:14px 0;border-top:1px solid #d5dee5}
+.derivation-example b{font-size:13px;color:#465563}
+.formula-detail details>summary:focus-visible{outline:2px solid #0064e0;outline-offset:4px}
+.practice-reasoning{margin-top:20px;padding:16px 0 2px;border-top:1px solid #d5dee5;max-width:72ch}
+.practice-reasoning h4{font:600 15px/1.6 system-ui,sans-serif;margin:0 0 10px;color:#183647}
+.practice-reasoning p{font-size:15px!important;line-height:1.9!important;word-break:keep-all;overflow-wrap:break-word}
+.practice-reasoning details{margin:14px 0;padding-left:12px;border-left:2px solid #c7dcfa}
+.practice-reasoning summary{cursor:pointer;font-size:14px;line-height:1.8;color:#174b74}
+.practice-reasoning summary:focus-visible{outline:2px solid #0064e0;outline-offset:3px}

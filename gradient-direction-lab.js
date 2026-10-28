@@ -26,11 +26,11 @@ function plot(v,r,t){
 export function gradientLabOutput(v,lang,stage){
  const t=copy[lang],r=gradientDirection(v),m=math;
  const steps=[
-  `${m(String.raw`L(w)=(w-y)^2=(${n(v.w)}-${signed(v.y)})^2=${n(r.loss)}`)}`,
-  `${m(String.raw`g=\frac{\mathrm dL}{\mathrm dw}=2(w-y)=2(${n(v.w)}-${signed(v.y)})=${n(r.g)}`)}<p>${r.g>0?t.positive:r.g<0?t.negative:t.zero}</p>`,
+  `<p>${lang==='ko'?'먼저 예측 w와 정답 y 사이의 부호 있는 오차를 구합니다. 제곱은 두 방향의 오차를 모두 양의 벌점으로 만들고, 멀수록 더 큰 벌점을 줍니다.':'First compute the signed prediction error w−y. Squaring penalizes either direction and gives a larger penalty farther from the target.'}</p>${m(String.raw`L(w)=(w-y)^2=(${n(v.w)}-${signed(v.y)})^2=${n(r.loss)}`)}`,
+  `<p>${lang==='ko'?'기울기는 손실 그 자체가 아니라, 가중치를 조금 바꿀 때 손실이 얼마나 반응하는지입니다. 작은 이동 h를 넣어 제곱을 전개하고 h로 나누면 2(w−y)+h가 남습니다. h가 0에 가까워질 때 마지막 h가 사라져 아래 미분이 됩니다.':'The gradient is sensitivity, not the loss itself. Expand the square after a small displacement h and divide the loss change by h. The result is 2(w−y)+h; letting h approach zero gives the derivative below.'}</p>${m(String.raw`\frac{L(w+h)-L(w)}h=2(w-y)+h`)}${m(String.raw`g=\frac{\mathrm dL}{\mathrm dw}=2(w-y)=2(${n(v.w)}-${signed(v.y)})=${n(r.g)}`)}<p>${r.g>0?t.positive:r.g<0?t.negative:t.zero}</p>`,
   `<p>${t.same}</p>${m(String.raw`\Delta w=-\eta g=-${n(v.rate)}\cdot${signed(r.g)}=${n(r.delta)}`)}${m(String.raw`w_{-}=w-\eta g=${n(v.w)}-${n(v.rate)}\cdot${signed(r.g)}=${n(r.down)}`)}${m(String.raw`w_{+}=w+\eta g=${n(v.w)}+${n(v.rate)}\cdot${signed(r.g)}=${n(r.up)}`)}`,
   `<div class="gradient-comparison">${[[t.loss,'original',v.w,r.loss],[t.down,'subtract',r.down,r.downLoss],[t.up,'add',r.up,r.upLoss]].map(([label,key,w,loss])=>`<div data-gradient-result="${key}" data-weight="${w}" data-loss="${loss}"><b>${label}</b>${m(String.raw`L(${n(w)})=(${n(w)}-${signed(v.y)})^2=${n(loss)}`)}</div>`).join('')}</div><p class="gradient-verdict">${r.downLoss<r.loss-1e-10?t.decreased:r.downLoss>r.loss+1e-10?t.increased:t.unchanged}</p>${plot(v,r,t)}`,
-  `${m(String.raw`w_{-}-y=(1-2\eta)(w-y)\quad\Longrightarrow\quad L(w_{-})=(1-2\eta)^2L(w)=${n(r.ratio)}\cdot${n(r.loss)}=${n(r.downLoss)}`)}<p>${t.bound}</p>${formulaDetailMarkup(['descent'],lang,true)}`
+  `<p>${lang==='ko'?'갱신 뒤 오차는 (w−y)에서 2η(w−y)를 뺀 값입니다. 공통인 (w−y)를 묶으면 1−2η가 남습니다. 손실은 오차의 제곱이므로 감소 비율도 이 계수의 제곱입니다.':'The new error subtracts 2η(w−y) from (w−y). Factoring out the old error leaves 1−2η. Since loss squares the error, its ratio is the square of that factor.'}</p>${m(String.raw`w_{-}-y=(w-y)-2\eta(w-y)=(1-2\eta)(w-y)`)}${m(String.raw`L(w_{-})=(1-2\eta)^2L(w)`)}${m(String.raw`${n(r.ratio)}\cdot${n(r.loss)}=${n(r.downLoss)}`)}<p>${t.bound}</p>${formulaDetailMarkup(['descent'],lang,true)}`
  ];
  return `<ol class="sequence-steps">${steps.slice(0,stage).map((html,i)=>`<li><b>${i+1}. ${t.stages[i]}</b>${html}</li>`).join('')}</ol>`;
 }
