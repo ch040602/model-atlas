@@ -1,3 +1,4 @@
+import {mathHelpMarkup,topicMath} from './math-help.js';
 import {mathMarkup,escapeMathHTML as esc} from './math-render.js';
 import {formulaDerivations} from './formula-derivations.js';
 
@@ -98,7 +99,7 @@ export function formulaDetailMarkup(keys,lang,open=false){
   const c=formulaDetails[key],d=formulaDerivations[key];
   const derivation=`<p class="derivation-idea">${esc(d.idea[i])}</p><details class="derivation-steps"><summary>${i===0?'식이 만들어지는 과정 · 세 단계로 읽기':'Read the derivation in three steps'}</summary><ol>${d.steps.map(s=>`<li><h6>${esc(s.title[i])}</h6><p>${esc(s.text[i])}</p>${mathMarkup(s.tex)}</li>`).join('')}</ol><div class="derivation-example"><b>${i===0?'별도의 고정 예제로 확인':'Check with a separate fixed example'}</b><p>${esc(d.example[i])}</p></div></details>`;
   const reference=`<details class="derivation-reference"><summary>${i===0?'일반식과 적용 조건 더 읽기':'Read the general formula and assumptions'}</summary>${c.rows.map(r=>`<p>${esc(r[lang])}</p>${r.tex?mathMarkup(r.tex):''}`).join('')}</details>`;
-  return `<details class="formula-detail" data-math-detail="${key}" ${open?'open':''}><summary>${esc(c.title[i])}</summary><div>${derivation}${reference}${c.source?`<a href="${c.source}" target="_blank" rel="noopener noreferrer">${i===0?'근거와 유도 읽기':'Read the derivation'} ↗</a>`:''}${key==='descent'?`<p><a href="index.html?section=gradient-direction-title#foundation" target="_blank" rel="noopener noreferrer">${i===0?'기울기를 빼고 더하는 실습':'Try subtracting and adding gradients'} ↗</a></p>`:''}</div></details>`;
+  return `<details class="formula-detail" data-math-detail="${key}" ${open?'open':''}><summary>${esc(c.title[i])}</summary><div>${mathHelpMarkup(topicMath[key]||[],lang)}${derivation}${reference}${c.source?`<a href="${c.source}" target="_blank" rel="noopener noreferrer">${i===0?'근거와 유도 읽기':'Read the derivation'} ↗</a>`:''}${key==='descent'?`<p><a href="${esc(new URL(`index.html?lang=${lang}&section=gradient-direction-title#foundation`,import.meta.url).href)}" target="_blank" rel="noopener noreferrer">${i===0?'기울기를 빼고 더하는 실습':'Try subtracting and adding gradients'} ↗</a></p>`:''}</div></details>`;
  }).join('');
 }
 export function detailsForStep(kind,id){

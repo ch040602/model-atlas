@@ -1,3 +1,4 @@
+import {formulaMathHelp} from './math-help.js';
 import {cursorMatch,cursorContext,keyboardRegions} from './original-cursor-context.js';
 import {mathMarkup,escapeMathHTML as esc} from './math-render.js';
 import {formulaDetailMarkup} from './formula-details.js';
@@ -56,7 +57,7 @@ export function installOriginalCursorHelp(doc=document){
   const ids=new Set((match.element.getAttribute('aria-describedby')||'').split(/\s+/).filter(Boolean));ids.add('atlas-cursor-description');match.element.setAttribute('aria-describedby',[...ids].join(' '));
   const chapter=kind==='gan'?'gan':kind;
   const destination=new URL(`index.html?lang=${lang}#${chapter}`,import.meta.url).href;
-  content.innerHTML=`<h3 id="atlas-cursor-title">${esc(data.title)}</h3><p id="atlas-cursor-description">${esc(data.why)}</p>${data.tex?mathMarkup(data.tex):''}${data.live?`<section class="atlas-cursor-live"><h4>${t('가리킨 위치 · 읽은 시점의 값','At this location · values when read')}</h4><p>${esc(data.live)}</p>${data.calculation?mathMarkup(data.calculation):''}</section>`:''}${data.details.length?`<details data-cursor-derivation><summary>${t('왜 이 식인가 · 원리와 별도 수치 예제','Why this equation · principles and separate examples')}</summary><div></div></details>`:''}<a href="${esc(destination)}" target="_blank" rel="noopener noreferrer">${t('이 모델의 단계별 계산에서 이어 보기 ↗','Continue with this model’s worked calculations ↗')}</a><p class="atlas-cursor-hint">${t('커서를 잠시 멈추면 설명합니다. 고정하면 펼쳐 읽을 수 있습니다. 애니메이션·학습 중 바뀐 값은 새로 읽으세요. Tab/터치 지원 · F2: 설명으로 · Esc: 닫기.','Pause over a component to inspect it. Pin to read further. Read again for values changed by animation or training. Tab/touch supported · F2: focus explanation · Esc: close.')}</p>`;
+  content.innerHTML=`<h3 id="atlas-cursor-title">${esc(data.title)}</h3><p id="atlas-cursor-description">${esc(data.why)}</p>${data.tex?mathMarkup(data.tex):''}${data.live?`<section class="atlas-cursor-live"><h4>${t('가리킨 위치 · 읽은 시점의 값','At this location · values when read')}</h4><p>${esc(data.live)}</p>${data.calculation?mathMarkup(data.calculation):''}</section>`:''}${data.details.length?formulaMathHelp(data.details,lang):''}${data.details.length?`<details data-cursor-derivation><summary>${t('왜 이 식인가 · 원리와 별도 수치 예제','Why this equation · principles and separate examples')}</summary><div></div></details>`:''}<a href="${esc(destination)}" target="_blank" rel="noopener noreferrer">${t('이 모델의 단계별 계산에서 이어 보기 ↗','Continue with this model’s worked calculations ↗')}</a><p class="atlas-cursor-hint">${t('커서를 잠시 멈추면 설명합니다. 고정하면 펼쳐 읽을 수 있습니다. 애니메이션·학습 중 바뀐 값은 새로 읽으세요. Tab/터치 지원 · F2: 설명으로 · Esc: 닫기.','Pause over a component to inspect it. Pin to read further. Read again for values changed by animation or training. Tab/touch supported · F2: focus explanation · Esc: close.')}</p>`;
   const derivation=content.querySelector('[data-cursor-derivation]');
   derivation?.addEventListener('toggle',()=>{
    if(derivation.open&&!derivation.querySelector('.formula-detail')){
@@ -104,6 +105,8 @@ export function installOriginalCursorHelp(doc=document){
  panel.addEventListener('pointerenter',()=>{clearTimeout(hideTimer);clearTimeout(showTimer);});
  panel.addEventListener('pointerleave',scheduleClose);
  panel.addEventListener('focusin',()=>clearTimeout(hideTimer));
+ // Expanded vocabulary can change height just as the derivation does.
+ panel.addEventListener('toggle',()=>{if(visible())place();},true);
  pin.addEventListener('click',()=>{pinned=!pinned;pin.setAttribute('aria-pressed',String(pinned));pin.textContent=pinned?t('고정 해제','Unpin'):t('설명 고정','Pin explanation');});
  panel.querySelector('[data-cursor-refresh]').addEventListener('click',()=>{if(active)render(active,true);});
  function dismiss(){const target=active?.element;if(panel.contains(doc.activeElement)&&target?.isConnected)target.focus({preventScroll:true});hide();suppressed=target;}

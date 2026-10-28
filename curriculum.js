@@ -1,7 +1,7 @@
 // Text and examples are original. Equations use small scalars to expose each operation.
 export const chapters = [
   {
-    id:'foundation', icon:'◌', ko:{name:'학습의 기초', kicker:'시작하기 전에', summary:'모델은 입력을 예측으로 바꾸고, 오차를 이용해 내부 숫자를 조금씩 고칩니다.', goal:'순전파, 손실, 역전파와 업데이트가 어떻게 연결되는지 이해합니다.', steps:[
+    id:'foundation', icon:'◌', ko:{name:'학습의 기초', kicker:'시작하기 전에', summary:'모델은 입력을 예측으로 바꾸고, 오차를 이용해 내부 숫자를 조금씩 고칩니다.', goal:'입력으로 예상값을 만들고, 틀린 정도를 계산해 모델 안의 숫자를 고치는 이유를 이해합니다.', steps:[
       ['1. 예측 만들기','순전파와 파라미터','모델은 입력 x에 학습 가능한 가중치 w와 편향 b를 적용해 예측 ŷ를 만듭니다. 이 계산을 순전파라고 합니다.','ŷ = wx + b','입력층과 출력층 사이에서 적용합니다.','w는 입력의 영향력, b는 기준점을 조절합니다.','ŷ는 예측값으로, 정답과 비교할 대상입니다.'],
       ['2. 틀린 정도 재기','손실 함수','정답 y와 예측 ŷ 사이의 차이를 제곱하면 예측이 정답에서 멀수록 손실이 커집니다.','L = (ŷ − y)²','예측을 만든 다음 정답과 비교할 때 적용합니다.','제곱은 오차의 부호를 없애고 큰 오차를 더 크게 벌합니다.','L이 작을수록 이 예제의 예측이 정답에 가깝습니다.'],
       ['3. 조금씩 고치기','역전파와 경사하강법','기울기는 각 파라미터를 조금 바꿀 때 손실이 얼마나 변하는지 나타냅니다. 역전파는 연쇄법칙으로 이 기울기를 출력에서 입력 쪽으로 전달합니다.','w_new = w − η · ∂L/∂w','손실을 계산한 뒤 학습 단계에서 적용합니다.','η는 학습률이며, 기울기의 반대 방향으로 w를 이동합니다.','업데이트된 w로 다음 순전파를 계산합니다. 학습률이 너무 크면 손실이 증가할 수도 있습니다.']
@@ -23,11 +23,11 @@ export const chapters = [
     ]}
   },
   {
-    id:'rnn', icon:'↻', ko:{name:'RNN',kicker:'02 / 순서 기억하기',summary:'이전 상태를 현재 입력과 함께 사용해 순서가 있는 데이터를 처리합니다.',goal:'은닉 상태가 시간에 따라 전달되는 계산을 직접 따라갑니다.',steps:[
+    id:'rnn', icon:'↻', ko:{name:'RNN',kicker:'02 / 순서 기억하기',summary:'이전 상태를 현재 입력과 함께 사용해 순서가 있는 데이터를 처리합니다.',goal:'앞의 입력을 숫자 메모에 남기고, 다음 입력과 함께 쓰는 계산을 따라갑니다.',steps:[
       ['1. 순서가 있는 입력','단어와 시점','RNN은 문장이나 시계열을 한 번에 한 항목씩 처리합니다. t는 현재 시점, xₜ는 현재 입력입니다.','x₁ → x₂ → x₃ → …','단어, 센서값 같은 순차 데이터를 처리할 때 적용합니다.','순서가 바뀌면 모델이 받는 맥락도 바뀝니다.','각 시점마다 새로운 은닉 상태를 만듭니다.'],
       ['2. 이전 상태 갱신','현재 입력과 기억 결합','현재 입력과 이전 은닉 상태를 각각 가중합하고 비선형 함수 tanh를 적용합니다. h₀는 보통 0으로 시작할 수 있습니다.','hₜ = tanh(Wₓxₜ + Wₕhₜ₋₁ + b)','각 시점의 RNN 셀 안에서 적용합니다.','Wₓ는 현재 입력, Wₕ는 이전 상태의 영향을 조절합니다. tanh는 결과를 −1과 1 사이로 제한합니다.','hₜ는 현재까지의 정보를 요약해 다음 시점에 전달합니다.'],
       ['3. 출력과 시간 역전파','순차 학습','각 상태에서 출력을 만들고 손실을 계산합니다. 시간 역전파는 펼쳐진 여러 시점의 계산에 연쇄법칙을 적용합니다.','oₜ = Wᵧhₜ + bᵧ;  L = Σₜ Lₜ','출력층과 순차 데이터 학습에서 적용합니다.','여러 시점에서 공유하는 가중치에 대한 기울기를 합칩니다.','장기 의존성에서는 기울기 소실·폭주가 생길 수 있어 LSTM이나 GRU가 대안이 됩니다.']
-    ]}, en:{name:'RNN',kicker:'02 / REMEMBERING ORDER',summary:'A recurrent model combines the current input with its previous state to process a sequence.',goal:'Follow the calculation that carries hidden state across time.',steps:[
+    ]}, en:{name:'RNN',kicker:'02 / REMEMBERING ORDER',summary:'A recurrent model combines the current input with its previous state to process a sequence.',goal:'Follow how a numerical note carries earlier inputs into the next calculation.',steps:[
       ['1. Ordered input','Tokens and time steps','An RNN processes a sentence or time series one item at a time. t is the current step and xₜ is its input.','x₁ → x₂ → x₃ → …','When processing a sequence such as words or sensor readings.','Changing order changes the context the model receives.','A new hidden state is made at every step.'],
       ['2. Update the state','Combine input and memory','Combine weighted current input and previous state, then apply tanh. The initial state h₀ may be zero.','hₜ = tanh(Wₓxₜ + Wₕhₜ₋₁ + b)','Inside the RNN cell at every time step.','Wₓ controls input influence, Wₕ the previous state; tanh bounds the result between −1 and 1.','hₜ summarizes information so far and is passed to the next step.'],
       ['3. Output and backpropagation through time','Learning sequences','Produce outputs from states and compute loss. Backpropagation through time applies the chain rule across the unrolled steps.','oₜ = Wᵧhₜ + bᵧ;  L = Σₜ Lₜ','At the output and during sequence training.','Gradients for weights shared across time are accumulated.','Long dependencies can cause vanishing or exploding gradients; LSTMs and GRUs are alternatives.']
@@ -45,11 +45,11 @@ export const chapters = [
     ]}
   },
   {
-    id:'transformer', icon:'✺', resource:'./upstream/transformer-explainer/build/', ko:{name:'Transformer',kicker:'04 / 맥락 연결하기',summary:'어텐션으로 각 토큰이 다른 토큰의 정보를 얼마나 참고할지 정합니다.',goal:'점수, softmax 가중치, 값의 가중합이 다음 표현을 만드는 과정을 이해합니다.',steps:[
+    id:'transformer', icon:'✺', resource:'./upstream/transformer-explainer/build/', ko:{name:'Transformer',kicker:'04 / 맥락 연결하기',summary:'문장의 단어 조각들을 숫자로 바꾸고, 서로의 정보를 얼마씩 가져올지 계산합니다.',goal:'비교 점수에서 섞을 비율을 정하고, 그 비율로 다른 위치의 숫자를 가져오는 과정을 이해합니다.',steps:[
       ['1. 토큰을 벡터로','입력 준비','문장을 토큰으로 나누고 각 토큰을 임베딩 벡터로 표현합니다. 위치 정보도 더해 토큰의 순서를 알려줍니다.','입력 토큰 → 임베딩 + 위치 정보','Transformer 블록에 들어가기 전에 적용합니다.','벡터는 학습 가능한 표현이고 위치 정보는 순서를 제공합니다.','각 위치의 표현이 Q, K, V를 만드는 입력이 됩니다.'],
       ['2. 관련도 계산','Query와 Key','각 토큰의 표현을 변환해 질의 Q, 키 K, 값 V를 만듭니다. 질의와 키의 내적은 관련도 점수입니다.','scoreᵢⱼ = (qᵢ · kⱼ) / √dₖ','각 어텐션 헤드에서 토큰 i가 토큰 j를 볼 때 적용합니다.','√dₖ로 나누어 차원이 커질 때 점수의 크기를 조절합니다.','점수는 아직 확률이 아니며 softmax의 입력입니다.'],
       ['3. 정보를 섞기','Softmax와 가중합','토큰 i의 점수들을 함께 softmax로 정규화하고 각 값 V에 가중치를 곱해 더합니다. GPT처럼 다음 토큰을 예측하는 모델은 미래 위치의 점수를 −∞로 가려 그 가중치를 0으로 만듭니다.','aᵢⱼ = exp(scoreᵢⱼ) / Σₖ exp(scoreᵢₖ);  oᵢ = Σⱼ aᵢⱼvⱼ','어텐션 블록 안에서 한 질의 i에 대해 허용된 키 위치들을 비교할 때 적용합니다.','분모는 같은 질의 i에 대한 모든 키 위치 k의 지수 점수를 더합니다. 가려진 위치는 exp(−∞)=0으로 계산합니다. 이 식은 선택적 학습용 드롭아웃을 적용하기 전입니다.','aᵢⱼ는 위치 j의 값을 섞는 비율이고, oᵢ는 그 값들을 가중합한 문맥 표현입니다. a는 다음 토큰의 출력 확률이 아닙니다.']
-    ]}, en:{name:'Transformer',kicker:'04 / CONNECTING CONTEXT',summary:'Attention determines how much information a token draws from other tokens.',goal:'Follow scores, softmax weights and the weighted sum of values into a new representation.',steps:[
+    ]}, en:{name:'Transformer',kicker:'04 / CONNECTING CONTEXT',summary:'Represent pieces of text as numbers and calculate how much information to gather from each other.',goal:'Follow comparison scores into mixing proportions, then use those proportions to combine values.',steps:[
       ['1. Turn tokens into vectors','Prepare the input','Split text into tokens and represent each as an embedding vector. Add positional information to convey order.','tokens → embeddings + position information','Before entering a Transformer block.','Embeddings are learned representations; position information supplies order.','Each position produces inputs from which Q, K and V are derived.'],
       ['2. Compute relevance','Query and key','Transform token representations into queries Q, keys K and values V. A query–key dot product gives a relevance score.','scoreᵢⱼ = (qᵢ · kⱼ) / √dₖ','In each attention head when token i considers token j.','Dividing by √dₖ controls score scale as dimensions grow.','Scores are not yet probabilities; they go into softmax.'],
       ['3. Mix information','Softmax and weighted sum','Normalize the scores for token i together with softmax, multiply each value V by its weight and sum. Autoregressive models such as GPT mask future scores with −∞, giving them zero weight.','aᵢⱼ = exp(scoreᵢⱼ) / Σₖ exp(scoreᵢₖ);  oᵢ = Σⱼ aᵢⱼvⱼ','Inside an attention block, when comparing the allowed key positions for query i.','The denominator sums exponentiated scores over key positions k for the same query i. A masked position contributes exp(−∞)=0. This formula is before optional training-time dropout.','aᵢⱼ determines how much of position j’s value is mixed into oᵢ. The result oᵢ is a context representation; a is not the next-token output probability.']

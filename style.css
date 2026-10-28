@@ -84,3 +84,12 @@ html[lang=ko] .sequence-lab{word-break:keep-all;overflow-wrap:break-word}
 .gradient-comparison [data-gradient-result=subtract]{border-top:3px solid #16634d}.gradient-comparison [data-gradient-result=add]{border-top:3px solid #a64d12}
 .gradient-plot{max-width:620px;margin:20px 0}.gradient-plot svg{display:block;width:100%;height:auto}.gradient-plot text{font-size:11px;fill:#45514b}
 .gradient-plot figcaption{font-size:12px;line-height:1.6;color:#526960}.gradient-verdict{font-weight:700}
+.first-steps{margin:28px 0;padding:24px;border:1px solid #c8d7cb;border-radius:12px;background:#f8faf6;min-width:0}
+.first-steps h2{margin:0 0 16px;font-size:24px}.first-steps h3{font-size:18px;line-height:1.6}.first-steps p{font-size:16px;line-height:1.9;max-width:72ch;word-break:keep-all;overflow-wrap:anywhere}
+.first-steps .first-steps-note{font-size:14px;color:#526357}.first-step{border-top:1px solid #d6dfd4;padding:16px 0}
+.first-step>summary{cursor:pointer;font-size:17px;font-weight:650;line-height:1.65}.first-step[open]>summary{color:#18543a}
+.first-experiment{border-top:2px solid #c6d5c8;margin-top:10px;padding-top:8px}.first-experiment label{display:block;line-height:1.6}.first-experiment output{margin-left:12px;font-weight:700}.first-experiment input{width:100%;margin:18px 0;accent-color:#245b40}
+.first-check{border-left:3px solid #6f906c;padding:2px 0 8px 18px;margin:24px 0}.first-check summary{cursor:pointer;font-weight:650;line-height:1.7}
+.first-next{padding:10px 14px;border:1px solid #b7c9b9;border-radius:6px;background:white;color:#234e37;text-align:left;line-height:1.6}
+.first-steps :is(summary,button,input):focus-visible{outline:3px solid #27846b;outline-offset:4px}#first-steps-title{scroll-margin-top:24px}
+@media(max-width:600px){.first-steps{padding:18px 14px}.first-steps h2{font-size:21px}.first-steps p{font-size:15px}}

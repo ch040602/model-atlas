@@ -4,6 +4,8 @@
 
 입력에서 예측과 손실, 기울기와 가중치 갱신까지 직접 따라갑니다. CNN·RNN·Transformer는 이전 계산 결과를 다음 식에 넣으며 전체 식을 확장하고, Diffusion·GAN은 모델별 실습으로 생성과 학습 과정을 확인합니다.
 
+배경 지식이 없다면 각 단원의 **숫자로 먼저 이해하기**에서 시작하세요. 상자 무게 예측부터 CNN의 밝기 차이, RNN의 순서, Diffusion의 잡음 복원, Transformer의 정보 혼합, GAN의 평가 방향까지 24단계로 설명합니다. 작은 실험 6개는 숫자 하나만 바꾸며 무엇을 고정했는지, 왜 결과가 그만큼 바뀌었는지를 보여 줍니다. 제곱근·벡터·지수·로그·분산·미분 등의 수학 도움말은 단원과 수식 유도, 원본 커서 설명에서 펼쳐 볼 수 있습니다. 이 입문 예제의 값은 원본 모델의 실제 값과 구분합니다.
+
 [English](README.en.md) · [상세 학습·개발 가이드](DEVELOPMENT_GUIDE.ko.md) · [교육과정 대조표](CURRICULUM_AUDIT.md) · [출처와 라이선스](LICENSES.md)
 
 ## 빠른 시작
@@ -135,6 +137,7 @@ node tests/test_formula_typesetting.mjs
 node tests/test_formula_browser.mjs
 node tests/test_calculation_rail.mjs
 node tests/test_original_cursor.mjs
+node tests/test_first_steps.mjs
 python tests/test_patches.py
 ```
 

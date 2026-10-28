@@ -39,3 +39,9 @@
 .practice-reasoning details{margin:14px 0;padding-left:12px;border-left:2px solid #c7dcfa}
 .practice-reasoning summary{cursor:pointer;font-size:14px;line-height:1.8;color:#174b74}
 .practice-reasoning summary:focus-visible{outline:2px solid #0064e0;outline-offset:3px}
+.math-help{margin:18px 0;padding:12px 14px;border:1px solid #cbd6cd;border-radius:7px;background:#f9fbf8;color:#23372d;min-width:0}
+.math-help>summary{font-weight:650;cursor:pointer;line-height:1.7;font-size:15px}
+.math-help>details{padding:13px 0;border-top:1px solid #dce4db;margin-top:10px}
+.math-help>details>summary{font-size:15px;cursor:pointer;line-height:1.7;font-weight:600}
+.math-help p{font-size:15px;line-height:1.9;overflow-wrap:anywhere;word-break:keep-all}
+.math-help summary:focus-visible{outline:3px solid #27846b;outline-offset:4px}

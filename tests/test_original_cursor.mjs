@@ -51,6 +51,15 @@ try{
   assert.equal(await panel.locator('[data-cursor-pin]').getAttribute('aria-pressed'),'true');
   // A pinned card stays readable while the pointer crosses unrelated space.
   await page.mouse.move(5,5);assert.ok(await panel.isVisible());
+  const mathHelp=panel.locator('.atlas-cursor-content > .math-help');
+  await mathHelp.locator(':scope > summary').click();
+  const definition=mathHelp.locator(':scope > details').first();
+  await definition.locator(':scope > summary').click();
+  assert.ok((await definition.locator('p').innerText()).length>80);
+  assert.ok(await definition.locator('.katex').count()>0);
+  const helpBounds=await panel.boundingBox();
+  assert.ok(helpBounds.y>=0 && helpBounds.y+helpBounds.height<=1001,'expanded vocabulary remains in the viewport');
+  await mathHelp.locator(':scope > summary').click();
   if(kind==='cnn'){
    await panel.locator('[data-cursor-derivation] > summary').click();
    await panel.locator('.formula-detail').first().waitFor();
