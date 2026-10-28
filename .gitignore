@@ -1,0 +1,8 @@
+# Upstream checkouts are restored at pinned revisions by scripts/bootstrap.py.
+/upstream/
+/transformer-build.log
+/node_modules/
+__pycache__/
+/bootstrap-build.log
+/cnn-build.log
+/test-results/

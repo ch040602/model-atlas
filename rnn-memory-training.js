@@ -1,0 +1,50 @@
+// A scalar RNN trained by full-batch gradient descent on four fixed sequences.
+export const memoryInitial = () => ({wx:0.6,wh:0.7,b:0,v:0.6,c:0});
+export function memoryEvaluate(p, scale=1) {
+ const samples=[];
+ const gradient={wx:0,wh:0,b:0,v:0,c:0};
+ for(const first of [-scale,scale]) for(const last of [-scale,scale]) {
+  const x=[first,0,last],h=[0];
+  for(const value of x)h.push(Math.tanh(p.wx*value+p.wh*h.at(-1)+p.b));
+  const prediction=p.v*h[3]+p.c, error=prediction-first, loss=error*error;
+  const d=2*error;
+  gradient.v+=d*h[3]/4;gradient.c+=d/4;
+  const delta=Array(3);delta[2]=d*p.v*(1-h[3]*h[3]);
+  for(let i=1;i>=0;i--)delta[i]=delta[i+1]*p.wh*(1-h[i+1]*h[i+1]);
+  for(let i=0;i<3;i++){
+   gradient.wx+=delta[i]*x[i]/4;gradient.wh+=delta[i]*h[i]/4;gradient.b+=delta[i]/4;
+  }
+  samples.push({x,target:first,h,prediction,loss,delta});
+ }
+ return {samples,gradient,loss:samples.reduce((sum,s)=>sum+s.loss,0)/samples.length};
+}
+// Clip the combined L2 norm, preserving direction; null disables clipping.
+export function memoryClip(gradient,maxNorm=null){
+ if(maxNorm!==null && (!Number.isFinite(maxNorm) || maxNorm<0))throw new RangeError('Invalid clipping threshold');
+ const norm=Math.hypot(...Object.values(gradient));
+ const factor=maxNorm===null || norm===0 ? 1 : Math.min(1,maxNorm/norm);
+ const applied=Object.fromEntries(Object.entries(gradient).map(([key,value])=>[key,value*factor]));
+ return {norm,factor,applied};
+}
+export function memoryUpdate(parameters,rate,maxNorm=null){
+ const before=memoryEvaluate(parameters),clip=memoryClip(before.gradient,maxNorm);
+ const next=Object.fromEntries(Object.keys(parameters).map(key=>[key,parameters[key]-rate*clip.applied[key]]));
+ return {before,clip,maxNorm,next,after:memoryEvaluate(next)};
+}
+const f=x=>(Math.abs(x)<0.00005?0:x).toFixed(4);
+const copy={
+ ko:{title:'여러 순서를 반복 학습하기', intro:'첫 번째 입력을 기억해 마지막에 예측하는 작은 회귀 과제입니다. 마지막 입력은 정답과 관계없는 방해 신호입니다. 학습을 반복하고 두 손실이 어떻게 달라지는지 비교하세요.', fixed:'훈련: 첫 입력과 마지막 입력이 각각 −1 또는 1인 네 순서 [첫 입력, 0, 마지막 입력]. 정답은 첫 입력입니다. 평가: 크기가 0.5인 네 순서로, 가중치 갱신에 사용하지 않습니다. 이 고정된 장난감 평가는 일반화 성능을 입증하지 않습니다.', rate:'학습률 η', clip:'전체 기울기 노름 제한 τ', clipOff:'사용 안 함', clipHeading:'기울기 클리핑', clipText:'시간 역전파와 배치 평균 후 다섯 파라미터의 기울기를 하나의 벡터 g로 묶어 크기 ‖g‖₂를 구합니다. 크기가 τ보다 크면 같은 비율로 축소하고, 작거나 같으면 그대로 둡니다. 방향은 유지되며 0 벡터는 그대로입니다. 아래 비율식은 제한을 켜고 노름이 0보다 클 때 적용합니다. 클리핑을 끄면 g′=g입니다. 클리핑은 큰 갱신을 제한하지만 기울기 소실을 복구하거나 손실 감소를 보장하지 않습니다.', clipCurrent:'다음 갱신에 사용할 현재 기울기', clipRaw:'평균 기울기', clipNorm:'원래 노름', clipFactor:'축소 비율', clipApplied:'적용할 기울기', clipLast:'마지막 갱신의 노름 제한', clipNone:'제한 없음', clipReference:'기울기 클리핑 연구 ↗', one:'1회 학습', ten:'최대 10회 학습', reset:'가중치 초기화', epoch:'전체 배치 갱신 횟수', setup:'같은 스칼라 셀과 출력층', setupText:'각 시점에서 동일한 Wₓ, Wₕ, b를 사용합니다. 마지막 상태를 V와 c로 숫자로 변환합니다. 출력은 확률이 아닙니다.', equation:'h₀ = 0; hₜ = tanh(Wₓxₜ + Wₕhₜ₋₁ + b); ŷ = Vh₃ + c', loss:'평균 손실과 갱신', lossText:'네 훈련 예제의 제곱 오차를 평균합니다. 시간 역전파로 각 가중치의 기울기를 구해 평균한 뒤 기존 값에서 모두 동시에 갱신합니다.', train:'훈련 평균 손실', test:'별도 평가 평균 손실', initial:'초기', current:'현재', params:'현재 가중치', last:'마지막 갱신', before:'갱신 전 훈련 손실', after:'갱신 후 훈련 손실', gradient:'갱신 전 평균 기울기', noUpdate:'아직 갱신하지 않았습니다.', predictions:'현재 예측 비교', table:'훈련과 평가 예측', group:'구분', input:'입력 순서', target:'정답', output:'예측', trainLabel:'훈련', testLabel:'평가', note:'계산은 반올림 전 숫자를 사용합니다. 각 버튼은 훈련 네 예제를 한 배치로 사용하며, 평가 데이터는 갱신에 쓰지 않습니다. 최대 200회까지 실행할 수 있습니다. 학습률이나 제한을 바꾸어도 기존 가중치는 유지됩니다. 평가 손실이 항상 줄어드는 것은 아닙니다.'},
+ en:{title:'Train repeatedly on sequences',intro:'A small regression task predicts the first input after reading the sequence. The last input is a distractor unrelated to the target. Train repeatedly and compare the two losses.',fixed:'Training: four sequences [first, 0, last], with first and last independently −1 or 1. The target is the first input. Evaluation: four sequences of magnitude 0.5, never used for updates. This fixed toy evaluation does not establish generalization.',rate:'Learning rate η',clip:'Global gradient norm limit τ',clipOff:'Off',clipHeading:'Gradient clipping',clipText:'After backpropagation through time and batch averaging, combine all five parameter gradients into a vector g and calculate its L2 norm ‖g‖₂. If it exceeds τ, scale every component by the same factor; otherwise leave it unchanged. This preserves direction and leaves a zero vector unchanged. The ratio formula below applies when clipping is on and the norm is nonzero. When clipping is off, g′=g. Clipping limits large updates; it does not restore vanished gradients or guarantee a loss decrease.',clipCurrent:'Current gradient for the next update',clipRaw:'Mean gradient',clipNorm:'Original norm',clipFactor:'Scale factor',clipApplied:'Gradient to apply',clipLast:'Norm limit for last update',clipNone:'No limit',clipReference:'Gradient clipping research ↗',one:'Train 1 step',ten:'Train up to 10 steps',reset:'Reset weights',epoch:'Full-batch updates',setup:'One shared scalar cell and output head',setupText:'Every time step uses the same Wₓ, Wₕ and b. V and c turn the final state into a number, not a probability.',equation:'h₀ = 0; hₜ = tanh(Wₓxₜ + Wₕhₜ₋₁ + b); ŷ = Vh₃ + c',loss:'Mean loss and update',lossText:'Average the squared errors over the four training examples. Backpropagate through time, average each parameter gradient, and update all parameters simultaneously from the old values.',train:'Training mean loss',test:'Held-out evaluation mean loss',initial:'Initial',current:'Current',params:'Current weights',last:'Last update',before:'Training loss before',after:'Training loss after',gradient:'Mean gradient before update',noUpdate:'No updates yet.',predictions:'Compare current predictions',table:'Training and evaluation predictions',group:'Set',input:'Input sequence',target:'Target',output:'Prediction',trainLabel:'Train',testLabel:'Evaluation',note:'Calculations use unrounded values. Each button uses all four training sequences as one batch; evaluation data never updates weights. Up to 200 updates are available. Changing the learning rate or limit preserves the current weights. Evaluation loss does not always decrease.'}
+};
+const names=[['wx','Wₓ'],['wh','Wₕ'],['b','b'],['v','V'],['c','c']];
+export function memoryMarkup(state,lang){
+ const t=copy[lang];
+ return `<section class="sequence-lab memory-lab" aria-labelledby="memory-title"><div class="eyebrow">RNN / TRAINING ON SEQUENCES</div><h2 id="memory-title">${t.title}</h2><p>${t.intro}</p><p class="sequence-fixed">${t.fixed}</p><label class="memory-rate" for="memory-rate">${t.rate} <select id="memory-rate" data-memory-rate>${[0,0.01,0.1,0.2].map(n=>`<option value="${n}" ${state.rate===n?'selected':''}>${n}</option>`).join('')}</select></label> <label class="memory-rate" for="memory-clip">${t.clip} <select id="memory-clip" data-memory-clip><option value="off" ${state.maxNorm===null?'selected':''}>${t.clipOff}</option>${[0.05,0.2,1].map(n=>`<option value="${n}" ${state.maxNorm===n?'selected':''}>${n}</option>`).join('')}</select></label><div class="sequence-actions"><button type="button" data-memory-action="one">${t.one}</button><button type="button" data-memory-action="ten">${t.ten}</button><button type="button" data-memory-action="reset">${t.reset}</button></div><div id="memory-output" aria-live="polite"></div><p class="sequence-rounding">${t.note}</p></section>`;
+}
+export function memoryOutput(state,lang){
+ const t=copy[lang],train=memoryEvaluate(state.parameters),test=memoryEvaluate(state.parameters,0.5),initialTrain=memoryEvaluate(memoryInitial()),initialTest=memoryEvaluate(memoryInitial(),0.5);
+ const clip=memoryClip(train.gradient,state.maxNorm);
+ const table=(r,label)=>r.samples.map(s=>`<tr><td>${label}</td><td>[${s.x.join(', ')}]</td><td>${f(s.target)}</td><td>${f(s.prediction)}</td></tr>`).join('');
+ const last=state.last?`<p>${t.before}: ${f(state.last.before.loss)} → ${t.after}: ${f(state.last.after.loss)}<br>${t.gradient}: ${names.map(([key,label])=>`${label}=${f(state.last.before.gradient[key])}`).join(', ')}<br>${t.clipLast}: ${state.last.maxNorm===null?t.clipNone:f(state.last.maxNorm)}; ${t.clipNorm}: ${f(state.last.clip.norm)}; ${t.clipFactor}: ${f(state.last.clip.factor)}<br>${t.clipApplied}: ${names.map(([key,label])=>`${label}=${f(state.last.clip.applied[key])}`).join(', ')}<br>${lang==='ko'?'이 갱신에 사용한 학습률':'Learning rate used for this update'}: ${f(state.last.rate)}</p>`:`<p>${t.noUpdate}</p>`;
+ return `<div class="conv-calc"><b>${t.setup}</b><p>${t.setupText}</p><code>${t.equation}</code><p><strong>${t.params}:</strong> ${names.map(([key,label])=>`${label}=${f(state.parameters[key])}`).join(', ')}</p><p><strong>${t.epoch}: <span data-memory-count>${state.count}</span> / 200</strong></p></div><div class="conv-calc"><b>${t.loss}</b><p>${t.lossText}</p><code>L = (1/4) Σᵢ (ŷᵢ − yᵢ)²; g = ∂L/∂θ; θ_new = θ − ηg′</code><p>${t.train}: ${t.initial} ${f(initialTrain.loss)} → ${t.current} <strong data-memory-loss="train">${f(train.loss)}</strong><br>${t.test}: ${t.initial} ${f(initialTest.loss)} → ${t.current} <strong data-memory-loss="test">${f(test.loss)}</strong></p><b>${t.clipHeading}</b><p>${t.clipText}</p><code>‖g‖₂ = √(Σⱼ gⱼ²); s = min(1, τ / ‖g‖₂); g′ = s g; θ_new = θ − ηg′</code><p>${t.clipCurrent}<br>${t.clipRaw}: ${names.map(([key,label])=>`${label}=${f(train.gradient[key])}`).join(', ')}<br>${t.clipNorm}: <span data-memory-norm>${f(clip.norm)}</span>; ${t.clipFactor}: <span data-memory-factor>${f(clip.factor)}</span><br>${t.clipApplied}: ${names.map(([key,label])=>`${label}=${f(clip.applied[key])}`).join(', ')}</p><p><a href="https://proceedings.mlr.press/v28/pascanu13.html" target="_blank" rel="noopener noreferrer">${t.clipReference}</a></p><b>${t.last}</b>${last}</div><div class="training-history" role="region" tabindex="0" aria-label="${t.table}"><b>${t.predictions}</b><table><thead><tr><th scope="col">${t.group}</th><th scope="col">${t.input}</th><th scope="col">${t.target}</th><th scope="col">${t.output}</th></tr></thead><tbody>${table(train,t.trainLabel)}${table(test,t.testLabel)}</tbody></table></div>`;
+}

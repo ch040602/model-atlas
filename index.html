@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="An interactive bilingual guide to neural networks.">
+  <title>Model Atlas — Learn how models work</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="math-render.css">
+  <link rel="stylesheet" href="architecture-map.css">
+  <link rel="stylesheet" href="formula-walkthrough.css">
+  <link rel="stylesheet" href="meta-theme.css"><link rel="stylesheet" href="calculation-rail.css">
+</head>
+<body>
+  <a class="skip" id="skip-to-content" href="#main">본문으로 건너뛰기</a>
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="brand" href="#foundation"><span>MODEL <b>ATLAS</b><small>LEARN BY LOOKING CLOSER</small></span></a>
+      <div class="sidebar-tools"><span id="progress-label" class="progress-label"></span><button id="language" class="language" type="button" aria-label="영어로 전환">EN</button></div>
+      <div class="eyebrow" id="path-label"></div>
+      <nav id="navigation" aria-label="단원 탐색"></nav>
+      <div id="formula-navigation"></div>
+      <a id="concept-library-link" class="concept-library-link" href="concepts.html">개념 찾아보기 →</a>
+      <a id="extended-path-link" class="concept-library-link" href="concepts.html#big-data-context">데이터·언어·영상 확장 경로 →</a>
+      <div class="side-footer"><span class="dot"></span><span id="side-note"></span></div>
+    </aside>
+    <main id="main" tabindex="-1">
+      <section class="startup-notice">
+        <h1>학습 화면을 불러오는 중입니다</h1>
+        <p>이 안내가 계속 보이면 HTML 파일을 직접 열었거나 스크립트를 불러오지 못한 것입니다. Windows에서는 프로젝트 폴더의 <strong>START_MODEL_ATLAS.bat</strong>을 두 번 클릭하세요. 열리는 명령 창은 학습 중에 닫지 마세요.</p>
+        <p>다른 운영체제에서는 프로젝트 폴더에서 <code>python3 scripts/serve.py</code>를 실행하고, 표시되는 주소를 브라우저에서 여세요.</p>
+        <div lang="en">
+          <h2>Loading Model Atlas</h2>
+          <p>If this message remains, the HTML file may have been opened directly or the scripts could not load. On Windows, double-click <strong>START_MODEL_ATLAS.bat</strong> in the project folder and keep its command window open.</p>
+          <p>On other systems, run <code>python3 scripts/serve.py</code> from the project folder and open the displayed address.</p>
+        </div>
+      </section>
+    </main>
+    <aside id="calculation-rail" class="calculation-rail" hidden></aside>
+  </div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

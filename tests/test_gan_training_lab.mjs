@@ -1,0 +1,30 @@
+import assert from 'node:assert/strict';
+import {ganTrainingExperiment,ganTrainingOutput} from '../gan-training-lab.js';
+const sig=x=>1/(1+Math.exp(-x));
+const dLoss=(x,g,w,b)=>-Math.log(sig(w*x+b))-Math.log(1-sig(w*g+b));
+const gLoss=(g,w,b)=>-Math.log(sig(w*g+b));
+const squareLoss=(g,w,b)=>(sig(w*g+b)-1)**2;
+const diff=(fn,x)=>(fn(x+1e-6)-fn(x-1e-6))/(2e-6);
+for(const [x,g,w,b] of [[1,0,1,0],[-1,1,-2,0.5],[2,-2,2,-2],[0,0,0,0]]) {
+  const r=ganTrainingExperiment(x,g,w,b);
+  assert.ok(Math.abs(r.dWeightGradient-diff(v=>dLoss(x,g,v,b),w))<1e-8);
+  assert.ok(Math.abs(r.dBiasGradient-diff(v=>dLoss(x,g,w,v),b))<1e-8);
+  assert.ok(Math.abs(r.gGradient-diff(v=>gLoss(v,r.nextWeight,r.nextBias),g))<1e-8);
+  assert.ok(Math.abs(r.squareGradient-diff(v=>squareLoss(v,r.nextWeight,r.nextBias),g))<1e-8);
+  assert.ok(Math.abs(r.squareLoss-squareLoss(g,r.nextWeight,r.nextBias))<1e-12);
+  assert.ok(Math.abs(r.squareGenerator-(g-0.2*r.squareGradient))<1e-12);
+  assert.ok(Math.abs(r.nextSquareLoss-squareLoss(r.squareGenerator,r.nextWeight,r.nextBias))<1e-12);
+  assert.ok(Math.abs(r.nextWeight-(w-0.2*r.dWeightGradient))<1e-12);
+  assert.ok(Math.abs(r.nextBias-(b-0.2*r.dBiasGradient))<1e-12);
+  assert.ok(Math.abs(r.nextGenerator-(g-0.2*r.gGradient))<1e-12);
+  assert.ok(Math.abs(r.nextGLoss-gLoss(r.nextGenerator,r.nextWeight,r.nextBias))<1e-12);
+}
+const values={real:1,generator:0,weight:1,bias:0};
+assert.doesNotMatch(ganTrainingOutput(values,'ko',1),/판별자 손실/);
+assert.match(ganTrainingOutput(values,'ko',5),/w와 b는 바꾸지 않고 g만 갱신/);
+assert.match(ganTrainingOutput(values,'en',5),/w and b stay fixed while g changes/);
+assert.doesNotMatch(ganTrainingOutput(values,'ko',3),/같은 시작점에서 제곱 손실과 비교/);
+assert.match(ganTrainingOutput(values,'ko',4),/시그모이드의 D\(1 − D\)/);
+assert.match(ganTrainingOutput(values,'en',5),/not applied sequentially/);
+assert.match(ganTrainingOutput(values,'en',5),/L_G,sq,new/);
+console.log('PASS: GAN loss gradients, alternating updates and bilingual explanations');

@@ -1,0 +1,2661 @@
+diff --git a/index.html b/index.html
+index 30436714..fb06fe2b 100644
+--- a/index.html
++++ b/index.html
+@@ -1,25 +1,107 @@
+ <!DOCTYPE html>
+ <html lang="en" style="min-width: 1200px;">
+ <head>
+-    <!-- Google tag (gtag.js) -->
+-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V5ZFD2995C"></script>
+-    <script>
+-        window.dataLayer = window.dataLayer || [];
+-        function gtag(){dataLayer.push(arguments);}
+-        gtag('js', new Date());
+-        
+-        gtag('config', 'G-V5ZFD2995C');
+-    </script>
+     <meta charset="UTF-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="stylesheet" href="style.css">
+-	<script src="https://kit.fontawesome.com/e57175cfbc.js" crossorigin="anonymous"></script>
+     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@100;200;300;400;500;600;700;900&display=swap" rel="stylesheet">
+     <title>Diffusion Explainer: Stable Diffusion Explained with Visualization</title>
+-    <script src="https://d3js.org/d3.v7.min.js"></script>
++    <script src="../../vendor/d3-7.9.0.min.js"></script>
+ </head>
+ <body>
++    <!-- Model Atlas localization: preserve original English when lang=en. -->
++    <script>
++      (() => {
++        const translations = {
++        "Select another prompt": "다른 프롬프트 선택",
++        "Click to see how modifying this phrase changes generated image": "이 문구를 바꿨을 때 이미지가 어떻게 달라지는지 확인하기",
++        "Text Representation Generator": "텍스트 표현 생성기",
++        "Guidance scale": "가이던스 스케일",
++        "A higher value strengthens": "값이 클수록",
++        "image's": "생성 이미지가",
++        "adherence to": "더 잘 따릅니다:",
++        "text prompt": "텍스트 프롬프트",
++        "but may cause exaggeration": "다만 지나치게 강하면 과장될 수 있습니다",
++        "Image Representation Refiner": "이미지 표현 정제기",
++        "Refined": "정제된",
++        "Representation": "표현",
++        "Upscale": "확대 복원",
++        "Random noise": "무작위 노이즈",
++        "at timestep 0": "0번째 단계에서",
++        "Seed": "시드",
++        "Go back to Overview to expand": "전체 화면으로 돌아가 펼치기",
++        "Same random noise": "같은 무작위 노이즈",
++        "Evolution Trajectory": "변화 궤적",
++        "Image representations projected onto 2D space": "이미지 표현을 2차원 공간에 투영",
++        "Timestep": "시간 단계",
++        "predicts noise to remove": "제거할 노이즈를 예측합니다",
++        "Guide image generation": "이미지 생성 방향을 안내합니다",
++        "controls": "조절합니다",
++        "how well the image representation adheres to text prompt.": "이미지 표현이 텍스트를 따르는 정도를.",
++        "Higher means stronger adherence.": "값이 클수록 더 강하게 따릅니다.",
++        "Higher gives stronger adherence but can exaggerate.": "값이 클수록 더 잘 따르지만 과장될 수 있습니다.",
++        "How?": "어떻게?",
++        "Noise": "노이즈",
++        "weaken": "줄이기",
++        "Multiply by a small number decided by scheduler to gradually denoise over multiple timesteps": "스케줄러가 정한 작은 값을 곱해 여러 단계에 걸쳐 노이즈를 조금씩 제거합니다",
++        "Multiply by a small number to gradually denoise over multiple timesteps": "작은 값을 곱해 여러 단계에 걸쳐 노이즈를 조금씩 제거합니다",
++        "Timestep is also input to UNet.": "시간 단계도 UNet에 입력합니다.",
++        "UNet predicts two noises:": "UNet은 두 가지 노이즈를 예측합니다:",
++        "(1) generic noise conditioned on an empty prompt": "(1) 빈 프롬프트를 조건으로 한 일반 노이즈",
++        "(2) noise conditioned on your text prompt.": "(2) 입력한 텍스트를 조건으로 한 노이즈.",
++        "Learn how Stable Diffusion transforms": "Stable Diffusion이",
++        "your text prompt": "입력한 텍스트를",
++        "into": "어떻게 바꾸는지 알아보세요:",
++        "image": "이미지",
++        "Code": "코드",
++        "Paper": "논문",
++        "Video": "동영상",
++        "Blog": "블로그",
++        "Tokenizer": "토크나이저",
++        "77 tokens": "토큰 77개",
++        "Truncate if prompt consists of more than 77 tokens (words) Pad with <end> if less than 77 tokens": "77개보다 많으면 자르고, 적으면 <end> 토큰으로 채웁니다",
++        "Text Encoder": "텍스트 인코더",
++        "vector for each token": "각 토큰에 대한 벡터",
++        "Image Encoder": "이미지 인코더",
++        "Hybrid Text-Image Space": "텍스트·이미지 결합 공간",
++        "What is Stable Diffusion?": "Stable Diffusion이란?",
++        "How does Stable Diffusion work?": "Stable Diffusion은 어떻게 작동할까요?",
++        "Now, let's look closer into each process.": "이제 각 과정을 자세히 살펴보겠습니다.",
++        "Text Representation Generation": "텍스트 표현 생성",
++        "Text representation generation consists of tokenizing and text encoding.": "텍스트 표현 생성은 토큰화와 텍스트 인코딩으로 구성됩니다.",
++        "Image Representation Refining": "이미지 표현 정제",
++        "generic noise": "일반 노이즈",
++        "guidance scale": "가이던스 스케일",
++        "impact of prompt": "프롬프트의 영향",
++        "Image Upscaling": "이미지 확대 복원",
++        "How do prompt keywords affect image generation?": "프롬프트의 단어는 이미지 생성에 어떤 영향을 줄까요?",
++        "What can we change?": "무엇을 바꿀 수 있을까요?",
++        "You have control over text prompt and hyperparameters in our Diffusion Explainer to change the generated images:": "Diffusion Explainer에서는 텍스트 프롬프트와 하이퍼파라미터를 바꿔 생성된 이미지를 비교할 수 있습니다:",
++        "How is Diffusion Explainer implemented?": "Diffusion Explainer는 어떻게 구현되었나요?",
++        "We implement the interactive visualizations for Diffusion Explainer using Javascript and D3.js.": "인터랙티브 시각화는 JavaScript와 D3.js로 구현했습니다.",
++        "Who developed the Diffusion Explainer?": "Diffusion Explainer는 누가 개발했나요?"
++};
++        Object.assign(translations, {
++        "top": "맨 위로",
++        "into the tokens ": "다음과 같이 나누어 그립니다: ",
++        ", and ": ", 그리고 ",
++        ". Also, to mark the beginning and end of the prompt, Stable Diffusion adds ": " 또한 프롬프트의 시작과 끝을 표시하기 위해 ",
++        " and ": " 및 ",
++        " tokens at the beginning and the end of the tokens. An illustrative sequence for the above example is ": " 토큰을 추가합니다. 이 예제의 개념적 순서는 다음과 같습니다: ",
++        "After all denoising steps have been completed, Stable Diffusion uses a neural network called Decoder to upscale the image representation into a high-resolution image. The refined image representation fully denoised with the guidance of the text representations would result in a high-resolution image strongly adhering to the text prompt.": "모든 노이즈 제거 단계가 끝나면 디코더라는 신경망이 정제된 이미지 표현을 고해상도 이미지로 복원합니다. 텍스트 표현의 안내를 받아 정제된 표현이 프롬프트를 반영한 이미지로 바뀝니다.",
++        "Additionally, there are other hyperparameters that are not included in the Diffusion Explainer, such as the total number of timesteps, image size, and the type of scheduler.": "이 실습에서 제공하지 않는 하이퍼파라미터로는 전체 시간 단계 수, 이미지 크기, 스케줄러 종류 등이 있습니다."
++});
++        let language = new URLSearchParams(window.location.search).get('lang');
++        if (language !== 'ko' && language !== 'en') {
++          try { language = localStorage.getItem('model-atlas-language'); } catch (_) { language = null; }
++        }
++        const korean = language === 'ko';
++        document.documentElement.lang = korean ? 'ko' : 'en';
++        window.modelAtlasText = text => korean ? (translations[text] || text) : text;
++        window.modelAtlasHtml = (english, koreanText) => korean ? koreanText : english;
++      })();
++    </script>
+     <div id="header"></div>
+     <div id="main">
+         <div id="architecture-wrapper">
+@@ -31,6 +113,13 @@
+             </div>
+         </div>
+     </div>
++    <section id="model-atlas-prompt-translation" hidden aria-label="프롬프트 한국어 설명">
++        <strong>예시 프롬프트의 뜻</strong>
++        <p>선택한 문장: <span id="model-atlas-prompt-selected"></span></p>
++        <p>비교할 문장: <span id="model-atlas-prompt-comparison"></span></p>
++        <p>원래 영어 문장으로 만든 사전 계산 결과를 보여 줍니다. 한국어 문장은 뜻을 설명하며 모델의 입력이 아닙니다.</p>
++    </section>
++    <section id="model-atlas-trajectory-guide" hidden aria-labelledby="model-atlas-trajectory-title"></section>
+     <div id="description"></div>
+     <script type="module" src="./js/prompts.js"></script>
+     <script type="module" src="./js/header.js"></script>
+diff --git a/js/architecture.js b/js/architecture.js
+index b26649b7..38e7f584 100644
+--- a/js/architecture.js
++++ b/js/architecture.js
+@@ -1,4 +1,4 @@
+-import {promptChanged, gsChanged, seedChanged, expandTextVectorGeneratorL2, expandLatentDenoiserL2, compareButtonClicked, drawUmap} from "./function.js"
++import {promptChanged, gsChanged, seedChanged, expandTextVectorGeneratorL2, expandLatentDenoiserL2, compareButtonClicked, drawUmap, syncPreviousLatent} from "./function.js"
+ 
+ document.addEventListener("mouseup", (e) => {
+     if (window.promptDropdownExpanded) {
+@@ -207,7 +207,7 @@ d3.select("#dropdown-button-container")
+ d3.select("#dropdown-button-container")
+     .append("div")
+         .attr("id", "dropdown-button-text")
+-        .text("Select another prompt")
++        .text(window.modelAtlasText("Select another prompt"))
+         
+ let h = +getComputedStyle(document.getElementById("prompt-selector-dropdown-container")).height.slice(0,-2)
+ d3.select("#your-text-prompt").style("top", `${38.5-h/2}px`)
+@@ -230,16 +230,23 @@ d3.select("#prompt-selector-dropdown-container")
+             .attr("class", "prompt-selector-dropdown-options")
+             .attr("id", (d,i) => `prompt-selector-dropdown-option-${i}`)
+             .html((d,i) => window.promptsHtmlCode[i][0])
++            .each(function (d, i) {
++                if (window.modelAtlasHtml(false, true)) {
++                    d3.select(this).append("span").attr("class", "model-atlas-prompt-option-ko")
++                        .text(window.modelAtlasPromptKo[i][0]);
++                }
++            })
+             .on("mouseover", function () {
+                 window.promptHovered = true;
+                 let groupIdx = +(this.id.split("-")[4])
+-                let p = d3.select(`#${this.id}`).text()
++                let p = window.prompts[groupIdx][0]
+                 let p2 = window.prompts[groupIdx][1]
+                 let pCode1 = window.promptsHtmlCode[groupIdx][0]
+                 let pCode2 = window.promptsHtmlCode[groupIdx][1]
+                 window.hoveredPrompt = p
+                 window.hoveredPrompt2 = p2
+                 d3.select("#improved-latent-img").attr("src", `./assets/latent_viz/${p}/${window.seed}_${window.gs}_${window.timestep}.jpg`)
++                syncPreviousLatent();
+                 d3.select("#generated-image").attr("src", `./assets/img/${p}/${window.seed}_${window.gs}_${window.timestep}.jpg`)
+                 d3.select("#improved-latent-img-2").attr("src", `./assets/latent_viz/${p2}/${window.seed}_${window.gs}_${window.timestep}.jpg`)
+                 d3.select("#generated-image-2").attr("src", `./assets/img/${p2}/${window.seed}_${window.gs}_${window.timestep}.jpg`)
+@@ -249,6 +256,7 @@ d3.select("#prompt-selector-dropdown-container")
+                 window.promptHovered = false;
+                 window.hoveredPrompt = "";
+                 d3.select("#improved-latent-img").attr("src", `./assets/latent_viz/${window.selectedPrompt}/${window.seed}_${window.gs}_${window.timestep}.jpg`)
++                syncPreviousLatent();
+                 d3.select("#generated-image").attr("src", `./assets/img/${window.selectedPrompt}/${window.seed}_${window.gs}_${window.timestep}.jpg`)
+                 d3.select("#improved-latent-img-2").attr("src", `./assets/latent_viz/${window.selectedPrompt2}/${window.seed}_${window.gs}_${window.timestep}.jpg`)
+                 d3.select("#generated-image-2").attr("src", `./assets/img/${window.selectedPrompt2}/${window.seed}_${window.gs}_${window.timestep}.jpg`)
+@@ -260,7 +268,7 @@ d3.select(`#prompt-selector-dropdown-option-${selectedPromptGroupIdx}`).style("d
+ d3.select("#your-text-prompt")
+     .append("div")
+     .attr("id", "prompt-keyword-popup-container")
+-    .text("Click to see how modifying this phrase changes generated image")
++    .text(window.modelAtlasText("Click to see how modifying this phrase changes generated image"))
+ d3.selectAll("#prompt-selector-dropdown-box-container .prompt-keyword")
+     .style("cursor", window.compare?"":"pointer")
+     .style("font-weight", window.compare?"700":"700")
+@@ -283,6 +291,16 @@ d3.selectAll("#prompt-selector-dropdown-box-container .prompt-keyword")
+         d3.select("#prompt-keyword-popup-container").style("display", "none")
+         compareButtonClicked();
+     })
++window.modelAtlasSyncCompareControls();
++// The keyword elements are replaced when a prompt changes, so listen on their stable parent.
++document.querySelector('#prompt-selector-dropdown-box-container').addEventListener('keydown', event => {
++    const keyword = event.target.closest('.prompt-keyword');
++    if (!keyword || window.compare || (event.key !== 'Enter' && event.key !== ' ')) return;
++    event.preventDefault();
++    event.stopPropagation();
++    keyword.click();
++    if (window.compare) document.getElementById('exit-button-container').focus();
++});
+ 
+ d3.select("#architecture-container")
+     .append("div")
+@@ -304,7 +322,18 @@ d3.select("#architecture-container")
+     .append("div")
+         .attr("id", "text-vector-generator-container")
+         .attr("class", "architecture-rectangle architecture-component-container denoise-latent-expand-move-to-left")
+-        .text("Text Representation Generator")
++        .attr("role", "button")
++        .attr("tabindex", "0")
++        .attr("aria-expanded", "false")
++        .attr("aria-controls", "text-vector-generator-l2-expl-container")
++        .attr("aria-label", window.modelAtlasHtml("Open text representation details", "텍스트 표현 상세 설명 열기"))
++        .text(window.modelAtlasText("Text Representation Generator"))
++        .on("keydown", function (e) {
++            if (window.compare || (e.key !== "Enter" && e.key !== " ")) return;
++            e.preventDefault();
++            this.click();
++            if (window.textVectorGeneratorL2Expanded) document.getElementById("text-vector-generator-l2-text-encoder-container").focus();
++        })
+         .on("mouseover", (e) => {
+             if (!window.compare && !window.textVectorGeneratorL2Expanded) d3.select("#text-vector-generator-container").style("background-color", "var(--text0)")
+             else if (window.compare) {
+@@ -345,7 +374,7 @@ d3.select("#text-vector-generator-latent-denoiser-text")
+         .attr("id", "text-vector-generator-latent-denoiser-text-1")
+         .append("div")
+             .attr("id", "text-vector-generator-latent-denoiser-text-1-text")
+-            .text("Guidance scale")
++            .text(window.modelAtlasText("Guidance scale"))
+ d3.select("#text-vector-generator-latent-denoiser-text-1")
+     .append("div")
+         .attr("id", "gs-dropdown-container")
+@@ -407,26 +436,26 @@ d3.select("#gs-dropdown-container")
+ d3.select("#gs-dropdown-desc")
+     .append("div")
+         .attr("id", "gs-dropdown-desc-1")
+-        .text("A higher value strengthens")
++        .text(window.modelAtlasText("A higher value strengthens"))
+ d3.select("#gs-dropdown-desc")
+     .append("div")
+         .attr("id", "gs-dropdown-desc-2")
+ d3.select("#gs-dropdown-desc-2")
+     .append("div")
+         .attr("id", "gs-dropdown-desc-2-1")
+-        .text("image's")
++        .text(window.modelAtlasText("image's"))
+ d3.select("#gs-dropdown-desc-2")
+     .append("div")
+         .attr("id", "gs-dropdown-desc-2-2")
+-        .text("adherence to")
++        .text(window.modelAtlasText("adherence to"))
+ d3.select("#gs-dropdown-desc-2")
+     .append("div")
+         .attr("id", "gs-dropdown-desc-2-3")
+-        .text("text prompt")
++        .text(window.modelAtlasText("text prompt"))
+ d3.select("#gs-dropdown-desc")
+     .append("div")
+         .attr("id", "gs-dropdown-desc-3")
+-        .text("but may cause exaggeration")
++        .text(window.modelAtlasText("but may cause exaggeration"))
+         
+ d3.select("#gs-dropdown-options-container")
+         .selectAll("p")
+@@ -440,6 +469,7 @@ d3.select("#gs-dropdown-options-container")
+                 window.gsHovered = true;
+                 window.hoveredGs = d3.select(`#${this.id}`).text() + ".0"
+                 d3.select("#improved-latent-img").attr("src", `./assets/latent_viz/${window.selectedPrompt}/${window.seed}_${window.hoveredGs}_${window.timestep}.jpg`)
++                syncPreviousLatent();
+                 d3.select("#generated-image").attr("src", `./assets/img/${window.selectedPrompt}/${window.seed}_${window.hoveredGs}_${window.timestep}.jpg`)
+                 d3.select("#improved-latent-img-2").attr("src", `./assets/latent_viz/${window.selectedPrompt2}/${window.seed}_${window.hoveredGs}_${window.timestep}.jpg`)
+                 d3.select("#generated-image-2").attr("src", `./assets/img/${window.selectedPrompt2}/${window.seed}_${window.hoveredGs}_${window.timestep}.jpg`)
+@@ -449,6 +479,7 @@ d3.select("#gs-dropdown-options-container")
+                 window.gsHovered = false;
+                 window.hoveredGs = -1;
+                 d3.select("#improved-latent-img").attr("src", `./assets/latent_viz/${window.selectedPrompt}/${window.seed}_${window.gs}_${window.timestep}.jpg`)
++                syncPreviousLatent();
+                 d3.select("#generated-image").attr("src", `./assets/img/${window.selectedPrompt}/${window.seed}_${window.gs}_${window.timestep}.jpg`)
+                 d3.select("#improved-latent-img-2").attr("src", `./assets/latent_viz/${window.selectedPrompt2}/${window.seed}_${window.gs}_${window.timestep}.jpg`)
+                 d3.select("#generated-image-2").attr("src", `./assets/img/${window.selectedPrompt2}/${window.seed}_${window.gs}_${window.timestep}.jpg`)
+@@ -465,8 +496,20 @@ d3.select("#text-vector-generator-latent-denoiser-text")
+ d3.select("#architecture-container")
+     .append("div")
+         .attr("id", "latent-denoiser-container")
++        .attr("aria-disabled", String(!!window.compare))
+         .attr("class", "architecture-rectangle architecture-component-container denoise-latent-expand-move-to-left")
+-        .text("Image Representation Refiner")
++        .attr("role", "button")
++        .attr("tabindex", "0")
++        .attr("aria-expanded", "false")
++        .attr("aria-controls", "latent-denoiser-l2-expl-container")
++        .attr("aria-label", window.modelAtlasHtml("Open image representation refiner details", "이미지 표현 정제 상세 설명 열기"))
++        .text(window.modelAtlasText("Image Representation Refiner"))
++        .on("keydown", function (e) {
++            if (window.compare || (e.key !== "Enter" && e.key !== " ")) return;
++            e.preventDefault();
++            if (!window.latentDenoiserL2Expanded) expandLatentDenoiserL2(e);
++            if (window.latentDenoiserL2Expanded) document.getElementById("denoise-latent-l2-expl-guidance-scale-expl-text-how").focus();
++        })
+         .on("mouseover", (e) => {
+             if (!window.compare && !window.latentDenoiserL2Expanded) {
+                 d3.select("#latent-denoiser-container").style("background-color", "var(--img0)")
+@@ -521,8 +564,8 @@ d3.select("#improved-latent-container")
+ d3.select("#improved-latent-container")
+     .append("div")
+         .attr("id", "improved-latent-expl-container")
+-d3.select("#improved-latent-expl-container").append("div").attr("id", "denoise-latent-out-noise-expl-text-1").text("Refined")
+-d3.select("#improved-latent-expl-container").append("div").attr("id", "denoise-latent-out-noise-expl-text-2").text("Representation")
++d3.select("#improved-latent-expl-container").append("div").attr("id", "denoise-latent-out-noise-expl-text-1").text(window.modelAtlasText("Refined"))
++d3.select("#improved-latent-expl-container").append("div").attr("id", "denoise-latent-out-noise-expl-text-2").text(window.modelAtlasText("Representation"))
+ 
+ // Improved latent - Generated image arrow
+ d3.select("#architecture-container")
+@@ -542,7 +585,7 @@ d3.select("#architecture-container")
+ d3.select("#improved-latent-generated-image-container")
+     .append("div")
+     .attr("id", "improved-latent-generated-image-text")
+-    .text("Upscale")
++    .text(window.modelAtlasHtml("VAE decode", "VAE 디코딩"))
+ 
+ // Generated image
+ d3.select("#architecture-container")
+@@ -573,7 +616,7 @@ d3.select("#timestep-0-random-noise-container")
+ d3.select("#timestep-0-random-noise-expl")
+     .append("div")
+         .attr("id", "timestep-0-random-noise-expl-1-1")
+-        .text("Random noise")
++        .text(window.modelAtlasText("Random noise"))
+         .on("mouseover", function() {
+             // d3.select("#timestep-0-random-noise-expl-1-1").style("color", window.compare?"#67001f":"#8e0152")
+         })
+@@ -615,7 +658,7 @@ d3.select("#timestep-0-random-noise-expl")
+ d3.select("#timestep-0-random-noise-expl")
+     .append("div")
+         .attr("id", "timestep-0-random-noise-expl-2")
+-        .text("at timestep 0")
++        .text(window.modelAtlasText("at timestep 0"))
+ 
+ // Seed selector
+ d3.select("#architecture-container")
+@@ -625,7 +668,7 @@ d3.select("#architecture-container")
+ d3.select("#seed-control-container")
+     .append("div")
+         .attr("id", "seed-control-text")
+-        .text("Seed")
++        .text(window.modelAtlasText("Seed"))
+ d3.select("#seed-control-container")
+     .append("div")
+         .attr("id", "seed-control-dropdown-container")
+@@ -696,6 +739,7 @@ d3.select("#seed-dropdown-options-container")
+             window.seedHovered = true;
+             window.hoveredSeed = d3.select(`#${this.id}`).text()
+             d3.select("#improved-latent-img").attr("src", `./assets/latent_viz/${window.selectedPrompt}/${window.hoveredSeed}_${window.gs}_${window.timestep}.jpg`)
++            syncPreviousLatent();
+             d3.select("#generated-image").attr("src", `./assets/img/${window.selectedPrompt}/${window.hoveredSeed}_${window.gs}_${window.timestep}.jpg`)
+             d3.select("#improved-latent-img-2").attr("src", `./assets/latent_viz/${window.selectedPrompt2}/${window.hoveredSeed}_${window.gs}_${window.timestep}.jpg`)
+             d3.select("#generated-image-2").attr("src", `./assets/img/${window.selectedPrompt2}/${window.hoveredSeed}_${window.gs}_${window.timestep}.jpg`)
+@@ -705,6 +749,7 @@ d3.select("#seed-dropdown-options-container")
+             window.seedHovered = false;
+             window.hoveredSeed = -1;
+             d3.select("#improved-latent-img").attr("src", `./assets/latent_viz/${window.selectedPrompt}/${window.seed}_${window.gs}_${window.timestep}.jpg`)
++            syncPreviousLatent();
+             d3.select("#generated-image").attr("src", `./assets/img/${window.selectedPrompt}/${window.seed}_${window.gs}_${window.timestep}.jpg`)
+             d3.select("#improved-latent-img-2").attr("src", `./assets/latent_viz/${window.selectedPrompt2}/${window.seed}_${window.gs}_${window.timestep}.jpg`)
+             d3.select("#generated-image-2").attr("src", `./assets/img/${window.selectedPrompt2}/${window.seed}_${window.gs}_${window.timestep}.jpg`)
+@@ -712,7 +757,75 @@ d3.select("#seed-dropdown-options-container")
+         })
+         .on("click", seedChanged)
+ 
+-    
++// Model Atlas: expose the existing choices as keyboard-operable disclosure
++// buttons. Keep the original selection handlers and their data paths intact.
++function enableKeyboardChoices({triggerId, panelId, flag, optionSelector, label}) {
++    const trigger = document.getElementById(triggerId);
++    const panel = document.getElementById(panelId);
++    const options = [...panel.querySelectorAll(optionSelector)];
++    const open = () => getComputedStyle(panel).display !== "none";
++    const sync = () => {
++        trigger.setAttribute("aria-expanded", String(open()));
++        trigger.setAttribute("aria-label", label());
++    };
++    const close = () => {
++        window[flag] = false;
++        panel.style.display = "none";
++        sync();
++    };
++    trigger.setAttribute("role", "button");
++    trigger.setAttribute("tabindex", "0");
++    trigger.setAttribute("aria-controls", panelId);
++    options.forEach(option => {
++        option.setAttribute("role", "button");
++        option.setAttribute("tabindex", "0");
++        option.addEventListener("keydown", event => {
++            if (event.key === "Enter" || event.key === " ") {
++                event.preventDefault();
++                option.click();
++                sync();
++                trigger.focus();
++            } else if (event.key === "Escape") {
++                event.preventDefault();
++                event.stopPropagation();
++                close();
++                trigger.focus();
++            }
++        });
++    });
++    trigger.addEventListener("keydown", event => {
++        if (event.key === "Enter" || event.key === " ") {
++            event.preventDefault();
++            trigger.click();
++            sync();
++            if (open()) options.find(option => getComputedStyle(option).display !== "none")?.focus();
++        } else if (event.key === "Escape" && open()) {
++            event.preventDefault();
++            event.stopPropagation();
++            close();
++        }
++    });
++    document.addEventListener("focusin", event => {
++        if (open() && event.target !== trigger && !panel.contains(event.target)) close();
++    });
++    new MutationObserver(sync).observe(panel, {attributes:true, attributeFilter:["style"]});
++    sync();
++}
++enableKeyboardChoices({
++    triggerId:"dropdown-button-container", panelId:"prompt-selector-dropdown", flag:"promptDropdownExpanded",
++    optionSelector:".prompt-selector-dropdown-options",
++    label:() => window.modelAtlasHtml("Select another prompt", "다른 프롬프트 선택")
++});
++enableKeyboardChoices({
++    triggerId:"gs-dropdown-box", panelId:"gs-dropdown-options-container", flag:"gsDropdownExpanded",
++    optionSelector:".gs-dropdown-options",
++    label:() => `${window.modelAtlasText("Guidance scale")}: ${document.getElementById("gs-dropdown-box-text").textContent}`
++});
++enableKeyboardChoices({
++    triggerId:"seed-dropdown-box", panelId:"seed-dropdown-options-container", flag:"seedDropdownExpanded",
++    optionSelector:".seed-dropdown-options",
++    label:() => `${window.modelAtlasText("Seed")}: ${document.getElementById("seed-dropdown-box-text").textContent}`
++});
+ 
+ // Hide button
+ let animationDuration = 500;
+@@ -834,4 +947,4 @@ d3.select("#architecture-container-show-button-container-svg-g")
+         .attr("x1", "30")
+         .attr("y1", "0")
+         .attr("x2", "15")
+-        .attr("y2", "15")
+\ No newline at end of file
++        .attr("y2", "15")
+diff --git a/js/compare.js b/js/compare.js
+index c97043e8..603ed0ee 100644
+--- a/js/compare.js
++++ b/js/compare.js
+@@ -2,6 +2,18 @@ import {compareButtonClicked, drawUmap, setMinMaxCoord} from "./function.js";
+ 
+ let architectureLineWidth = 2;
+ let architectureCompLineColor = "var(--comp1)"
++
++// Model Atlas: explain the precomputed 2D comparison and its limits.
++d3.select("#model-atlas-trajectory-guide").html(window.modelAtlasHtml(
++    `<h2 id="model-atlas-trajectory-title">Reading the comparison trajectory</h2>
++    <p>Orange points represent the upper prompt; blue points represent the lower comparison prompt. Each point is a saved image representation projected into two dimensions with UMAP. The slider reveals points through the current display step; the two lines connect the current points to the upper and lower views.</p>
++    <p>Try display steps 1, 10 and 50 with the same seed and guidance scale, then compare the images and the two sets of points. Saved step 0 precedes the selectable slider range. These are saved examples, not a new model run. The axes have no individual semantic labels, and distance in this projection is not an exact distance or quality score in the original representation.</p>
++    <p>The starting images shown for the same seed can be identical even when the saved 2D coordinates differ slightly. Do not interpret that offset alone as a measured difference in the initial noise; the reason for the offset is not established by these files.</p>`,
++    `<h2 id="model-atlas-trajectory-title">비교 궤적 읽기</h2>
++    <p>주황색 점은 위의 원래 프롬프트, 파란색 점은 아래의 비교 프롬프트에 대응합니다. 각 점은 저장된 이미지 표현을 UMAP으로 2차원에 투영한 위치입니다. 슬라이더는 현재 표시 단계까지의 점을 보여 주며, 두 선은 현재 점을 각각 위·아래 화면과 연결합니다.</p>
++    <p>시드와 가이던스 스케일을 유지한 채 표시 단계 1, 10, 50을 살펴보고 이미지와 두 점의 변화를 비교해 보세요. 저장된 0단계는 슬라이더로 선택할 수 있는 범위보다 앞에 있습니다. 이는 저장된 예시이며 새 모델 실행 결과가 아닙니다. 두 축은 각각 특정 의미를 나타내지 않고, 투영된 거리도 원래 표현의 정확한 거리나 이미지 품질 점수가 아닙니다.</p>
++    <p>같은 시드에서 표시되는 시작 이미지가 같아도 저장된 2차원 좌표는 조금 다를 수 있습니다. 이 차이만으로 초기 노이즈의 차이를 측정했다고 해석하지 마세요. 이 파일만으로 좌표 차이의 원인은 확인되지 않습니다.</p>`
++));
+ // prompt box
+ d3.select("#your-text-prompt")
+     .append("div")
+@@ -27,16 +39,26 @@ d3.select("#prompt-text-vector-generator-container")
+ d3.select("#architecture-container")
+     .append("div")
+         .attr("id", "exit-button-container")
+-        .html('<i class="fa-solid fa-arrow-left" id="exit-button-arrow"></i><span id="exit-button-text">Back to Overview</span>')
++        .attr("role", "button")
++        .attr("tabindex", "-1")
++        .attr("aria-hidden", "true")
++        .html(window.modelAtlasHtml('<span id="exit-button-arrow" aria-hidden="true">←</span><span id="exit-button-text">Back to Overview</span>', '<span id="exit-button-arrow" aria-hidden="true">←</span><span id="exit-button-text">전체 화면으로 돌아가기</span>'))
+         .on("mouseover", () => d3.select("#exit-button-container").style("color", "var(--lightgray)"))
+         .on("mouseout", () => d3.select("#exit-button-container").style("color", "#a0a0a0"))
+-        .on("click", compareButtonClicked)
++        .on("click", () => { if (window.compare) compareButtonClicked(); })
++        .on("keydown", function(event) {
++            if (window.compare && (event.key === "Enter" || event.key === " ")) {
++                event.preventDefault();
++                this.click();
++                document.querySelector('#prompt-selector-dropdown-box-container .prompt-keyword')?.focus();
++            }
++        })
+ 
+ // text representation generator, image representation refiner hovering
+ d3.select("#architecture-container")
+     .append("div")
+         .attr("id", "text-representation-generator-alert-window-container")
+-        .text("Go back to Overview to expand")
++        .text(window.modelAtlasText("Go back to Overview to expand"))
+ 
+ // text generator - image refiner arrow
+ d3.select("#text-vector-generator-latent-denoiser-container")
+@@ -91,11 +113,11 @@ d3.select("#timestep-0-random-noise-container-2")
+ d3.select("#timestep-0-random-noise-expl-comp")
+     .append("div")
+         .attr("id", "timestep-0-random-noise-expl-comp-1")
+-        .text("Same random noise")
++        .text(window.modelAtlasText("Same random noise"))
+ d3.select("#timestep-0-random-noise-expl-comp")
+     .append("div")
+         .attr("id", "timestep-0-random-noise-expl-comp-2")
+-        .text("at timestep 0")
++        .text(window.modelAtlasText("at timestep 0"))
+ 
+ // refined representation 
+ d3.select("#architecture-container")
+@@ -118,11 +140,11 @@ d3.select("#global-umap-svg-container")
+         .attr("id", "global-umap-title-container")
+         .append("div")
+             .attr("id", "global-umap-title-1")
+-            .text("Evolution Trajectory")
++            .text(window.modelAtlasText("Evolution Trajectory"))
+ d3.select("#global-umap-title-container")
+         .append("div")
+             .attr("id", "global-umap-title-2")
+-            .text("Image representations projected onto 2D space")
++            .text(window.modelAtlasText("Image representations projected onto 2D space"))
+ d3.select("#architecture-container")
+     .append("div")
+         .attr("id", "global-umap-unscaled-svg-container")
+@@ -181,10 +203,22 @@ d3.select("#architecture-container")
+ d3.select("#global-umap-zoom-button-container")
+     .append("div")
+         .attr("id", "global-umap-zoom-in-button")
++        .attr("role", "button")
++        .attr("tabindex", "0")
++        .attr("aria-label", window.modelAtlasHtml("Zoom in on trajectory", "궤적 확대"))
++        .on("keydown", function(event) {
++            if (event.key === "Enter" || event.key === " ") { event.preventDefault(); this.click(); }
++        })
+         .text("+")
+ d3.select("#global-umap-zoom-button-container")
+     .append("div")
+         .attr("id", "global-umap-zoom-out-button")
++        .attr("role", "button")
++        .attr("tabindex", "0")
++        .attr("aria-label", window.modelAtlasHtml("Zoom out on trajectory", "궤적 축소"))
++        .on("keydown", function(event) {
++            if (event.key === "Enter" || event.key === " ") { event.preventDefault(); this.click(); }
++        })
+         .text("-")
+ d3.select("#global-umap-zoom-button-container")
+     .append("div")
+@@ -210,7 +244,7 @@ d3.select("#architecture-container")
+ d3.select("#improved-latent-generated-image-container-2")
+     .append("div")
+         .attr("id", "improved-latent-generated-image-text-2")
+-        .text("Upscale")
++        .text(window.modelAtlasHtml("VAE decode", "VAE 디코딩"))
+ 
+ // generated image
+ d3.select("#architecture-container")
+diff --git a/js/controller.js b/js/controller.js
+index ff578a03..8b210eba 100644
+--- a/js/controller.js
++++ b/js/controller.js
+@@ -1,5 +1,14 @@
+ import {controllerPlayButtonClicked, timestepSliderFunction, controllerButtonHovered, controllerButtonMouseout, controllerButtonClicked} from "./function.js";
+ 
++// Model Atlas: simple original symbols avoid using the upstream Pro icon files.
++const icon = inner => `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black">${inner}</svg>`)}`;
++const controllerIcons = {
++    backward: icon('<rect x="4" y="5" width="3" height="14"/><path d="M19 5 L8 12 L19 19 Z"/>'),
++    play: icon('<path d="M7 4 L20 12 L7 20 Z"/>'),
++    pause: icon('<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'),
++    forward: icon('<path d="M5 5 L16 12 L5 19 Z"/><rect x="17" y="5" width="3" height="14"/>')
++};
++
+ let controllerDiv = d3.select("#controller")
+ let controllerButtonsDiv = controllerDiv.append("div").attr("id", "controller-buttons")
+ 
+@@ -26,7 +35,7 @@ controllerButtonsDiv.append("div")
+ d3.select("#controller-button-backward-container")
+     .append("img")
+         .attr("class", "controller-button")
+-        .attr("src", "./icons/backward-step.svg")
++        .attr("src", controllerIcons.backward)
+         .attr("alt", "Backward Step SVG")
+         .attr("height", `${buttonHeight}px`)
+ 
+@@ -50,14 +59,14 @@ d3.select("#controller-button-play-container")
+     .append("img")
+         .attr("class", "controller-button")
+         .attr("id", "controller-button-play")
+-        .attr("src", "./icons/play.svg")
++        .attr("src", controllerIcons.play)
+         .attr("alt", "Play SVG")
+         .attr("height", `${18}px`)
+ d3.select("#controller-button-play-container")
+     .append("img")
+         .attr("class", "controller-button")
+         .attr("id", "controller-button-pause")
+-        .attr("src", "./icons/pause.svg")
++        .attr("src", controllerIcons.pause)
+         .attr("alt", "Pause SVG")
+         .attr("height", `${buttonHeight}px`)
+     
+@@ -80,13 +89,33 @@ controllerButtonsDiv.append("div")
+ d3.select("#controller-button-forward-container")
+     .append("img")
+         .attr("class", "controller-button")
+-        .attr("src", "./icons/forward-step.svg")
++        .attr("src", controllerIcons.forward)
+         .attr("alt", "Forward Step SVG")
+         .attr("height", `${buttonHeight}px`)
+ 
+ d3.selectAll(".controller-button-container")
+     .style("height", `${buttonBackgroundRadius*2}px`)
+     .style("width", `${buttonBackgroundRadius*2}px`)
++    // Model Atlas: the original SVG circles were mouse-only controls.
++    .attr("role", "button")
++    .attr("tabindex", "0")
++    .on("click", function(event) {
++        // Assistive technologies may activate the named container directly.
++        // Circle clicks already run the original handler before bubbling here.
++        if (event.target === this) controllerButtonClicked.call(this.querySelector("circle"));
++    })
++    .on("keydown", function(event) {
++        if (event.key === "Enter" || event.key === " ") {
++            event.preventDefault();
++            this.click();
++        }
++    });
++d3.select("#controller-button-backward-container")
++    .attr("aria-label", window.modelAtlasHtml("Previous display step", "이전 표시 단계"));
++d3.select("#controller-button-forward-container")
++    .attr("aria-label", window.modelAtlasHtml("Next display step", "다음 표시 단계"));
++d3.selectAll(".controller-button-container svg, .controller-button-container img")
++    .attr("aria-hidden", "true");
+ d3.selectAll(".controller-button-background")
+     .style("height", `${buttonBackgroundRadius*2}px`)
+     .style("width", `${buttonBackgroundRadius*2}px`)
+@@ -105,7 +134,7 @@ let controllerTimestepDiv = controllerDiv.append("div")
+     .attr("id", "controller-timestep")
+ controllerTimestepDiv.append("div")
+     .attr("id", "controller-timestep-text")
+-    .text("Timestep")
++    .text(window.modelAtlasText("Timestep"))
+ controllerTimestepDiv.append("div")
+     .attr("id", "controller-timestep-number")
+     .text("30")
+@@ -117,5 +146,6 @@ controllerTimestepDiv.append("div")
+         .attr("max", "50")
+         .attr("value", "30")
+         .attr("id", "controller-timestep-slider")
++        .attr("aria-label", window.modelAtlasHtml("Display step", "표시 단계"))
+         .on("input", timestepSliderFunction)
+-controllerPlayButtonClicked();  
+\ No newline at end of file
++controllerPlayButtonClicked();
+diff --git a/js/denoise_l2expl.js b/js/denoise_l2expl.js
+index b0010ca7..23d9bc66 100644
+--- a/js/denoise_l2expl.js
++++ b/js/denoise_l2expl.js
+@@ -1,7 +1,11 @@
+ import {reduceLatentDenoiserL2,expandLatentDenoiserL3} from "./function.js"
+ 
+ document.addEventListener("keydown", (e) => {
+-    if (window.latentDenoiserL2Expanded && !window.latentDenoiserL3Expanded && e.key == "Escape") reduceLatentDenoiserL2();
++    if (window.latentDenoiserL2Expanded && !window.latentDenoiserL3Expanded && e.key == "Escape") {
++        const focusWasInside = document.getElementById("latent-denoiser-l2-expl-container").contains(document.activeElement);
++        reduceLatentDenoiserL2();
++        if (focusWasInside) document.getElementById("latent-denoiser-container").focus();
++    }
+ })
+ 
+ document.addEventListener("mousedown", (e) => {
+@@ -38,31 +42,59 @@ d3.select("#architecture-container")
+             .append("img")
+                 .attr("id", "denoise-latent-l2-expl-reduce-button")
+                 .attr("src", "./icons/reduce.svg")
+-                .attr("alt", "Reduce SVG")
++                .attr("alt", "")
++                .attr("role", "button")
++                .attr("tabindex", "0")
++                .attr("aria-label", window.modelAtlasHtml("Close image representation refiner details", "이미지 표현 정제 상세 설명 닫기"))
+                 .attr("height", `20px`)
++                .on("keydown", function (e) {
++                    if (e.key !== "Enter" && e.key !== " ") return;
++                    e.preventDefault();
++                    reduceLatentDenoiserL2();
++                    document.getElementById("latent-denoiser-container").focus();
++                })
+                 .on("click", reduceLatentDenoiserL2)
+ 
+ d3.select("#latent-denoiser-l2-expl-container")
+     .append("div")
+         .attr("id", "latent-denoiser-l2-expl-info-button")
++        .attr("role", "button")
++        .attr("tabindex", "0")
++        .attr("aria-label", window.modelAtlasHtml("Read about image representation refining", "이미지 표현 정제 설명 읽기"))
+         .text("i")
+-        .on("click", () => {
++        .on("keydown", function (e) {
++            if (e.key !== "Enter" && e.key !== " ") return;
++            e.preventDefault();
++            this.click();
++        })
++        .on("click", (event) => {
+             window.scrollBy(0, 10)
+             document.getElementById("description-subsec-image-representation-refining").scrollIntoView({"behavior": "smooth"})
++            if (event.detail === 0) document.querySelector("#description-subsec-image-representation-refining h2").focus({preventScroll: true});
+         })
+ 
+ d3.select("#latent-denoiser-l2-expl-container")
+     .append("div")
+         .attr("id", "latent-denoiser-l2-expl-title")
+-        .text("Image Representation Refiner")
++        .text(window.modelAtlasText("Image Representation Refiner"))
+ 
+ d3.select("#latent-denoiser-l2-expl-container")
+     .append("div")
+         .attr("id", "denoise-latent-l2-expl-prev-latent-container")
+         .append("div")
+             .attr("id", "denoise-latent-l2-expl-prev-latent-image-container")
++            .attr("role", "img")
++            .attr("tabindex", "0")
++            .attr("aria-label", window.modelAtlasHtml("Previous display-step representation", "이전 표시 단계의 이미지 표현"))
++            .attr("aria-describedby", "denoise-latent-l2-expl-central-line-timestep-expl-text")
+             .on("mouseover", () => d3.select("#denoise-latent-l2-expl-central-line-timestep-expl-text").style("display", "block"))
+-            .on("mouseout", () => d3.select("#denoise-latent-l2-expl-central-line-timestep-expl-text").style("display", "none"))
++            .on("mouseout", function (event) {
++                if (!this.contains(event.relatedTarget) && document.activeElement !== this) d3.select("#denoise-latent-l2-expl-central-line-timestep-expl-text").style("display", "none");
++            })
++            .on("focus", () => d3.select("#denoise-latent-l2-expl-central-line-timestep-expl-text").style("display", "block"))
++            .on("blur", function () {
++                if (!this.matches(":hover")) d3.select("#denoise-latent-l2-expl-central-line-timestep-expl-text").style("display", "none");
++            })
+             .append("img")
+                 .attr("id", "denoise-latent-l2-expl-prev-latent-img")
+                 .attr("src", `./assets/latent_viz/${window.selectedPrompt}/${window.seed}_${window.gs}_${timestep-1}.jpg`)
+@@ -73,7 +105,7 @@ d3.select("#denoise-latent-l2-expl-prev-latent-image-container")
+ d3.select("#denoise-latent-l2-expl-prev-latent-container")
+         .append("div")
+             .attr("id", "denoise-latent-l2-expl-prev-latent-text")
+-            .text(`Representation of timestep ${window.timestep-1}`)
++            .text(window.modelAtlasHtml(`Representation of timestep ${window.timestep-1}`, `${window.timestep-1}단계의 이미지 표현`))
+ 
+ 
+ // latent to UNet arrow
+@@ -113,13 +145,13 @@ d3.select("#denoise-latent-l2-expl-unet-container")
+ d3.select("#denoise-latent-l2-expl-unet-container")
+     .append("div")
+         .attr("id", "denoise-latent-l2-expl-unet-desc-text")
+-        .text("predicts noise to remove")
++        .text(window.modelAtlasText("predicts noise to remove"))
+ 
+ // Guidance scale text 
+ d3.select("#latent-denoiser-l2-expl-container")
+     .append("div")
+     .attr("id", "denoise-latent-l2-expl-guidance-scale-text")
+-    .text("Guide image generation")
++    .text(window.modelAtlasText("Guide image generation"))
+ 
+ // ADD arrow and explanations for guidance scale
+ let x_=12;
+@@ -147,19 +179,30 @@ d3.select("#denoise-latent-l2-expl-guidance-scale-expl-container")
+ d3.select("#denoise-latent-l2-expl-guidance-scale-expl-text")
+     .append("div")
+     .attr("id", "denoise-latent-l2-expl-guidance-scale-expl-text-1")
+-        .text("controls")
++        .text(window.modelAtlasText("controls"))
+ d3.select("#denoise-latent-l2-expl-guidance-scale-expl-text")
+     .append("div")
+-        .text("how well the image representation adheres to text prompt.")
++        .text(window.modelAtlasText("how well the image representation adheres to text prompt."))
+ d3.select("#denoise-latent-l2-expl-guidance-scale-expl-text")
+     .append("div")
+         .attr("id", "denoise-latent-l2-expl-guidance-scale-expl-text-2")
+-        // .text("Higher means stronger adherence.")
+-        .text("Higher gives stronger adherence but can exaggerate.")
++        // .text(window.modelAtlasText("Higher means stronger adherence."))
++        .text(window.modelAtlasText("Higher gives stronger adherence but can exaggerate."))
+ d3.select("#denoise-latent-l2-expl-guidance-scale-expl-text")
+     .append("div")
+     .attr("id", "denoise-latent-l2-expl-guidance-scale-expl-text-how")
+-        .text("How?")
++        .attr("role", "button")
++        .attr("tabindex", "0")
++        .attr("aria-expanded", "false")
++        .attr("aria-controls", "latent-denoiser-l3-expl-container")
++        .attr("aria-label", window.modelAtlasHtml("Open guidance scale formula", "가이던스 스케일 수식 열기"))
++        .text(window.modelAtlasText("How?"))
++        .on("keydown", function (e) {
++            if (e.key !== "Enter" && e.key !== " ") return;
++            e.preventDefault();
++            if (!window.latentDenoiserL3Expanded) expandLatentDenoiserL3();
++            document.querySelector('#latent-denoiser-l3-expl-vis-tick-g circle[aria-pressed="true"]').focus();
++        })
+         .on("click", expandLatentDenoiserL3)
+ 
+ // ADD noise
+@@ -182,11 +225,21 @@ d3.select("#denoise-latent-l2-expl-noise-container")
+     .append("img")
+         .attr("id", "denoise-latent-l2-expl-noise-img")
+         .attr("class", "denoise-latent-l2-expl-noise")
++        .attr("alt", window.modelAtlasHtml("Fixed illustration of predicted noise", "예측 노이즈를 나타내는 고정 예시 그림"))
+         .attr("src", `./assets/noises/noise_pred_final.jpg`)
+ d3.select("#denoise-latent-l2-expl-noise-container")
+     .append("div")
+         .attr("id", "denoise-latent-l2-expl-noise-text")
+-        .text("Noise")
++        .text(window.modelAtlasHtml("Noise*", "노이즈*"))
++
++d3.select("#main")
++    .append("p")
++        .attr("id", "model-atlas-noise-illustration-note")
++        .attr("hidden", "")
++        .text(window.modelAtlasHtml(
++            "* The noise picture is fixed, not the selected step's prediction. The scheduler uses the predicted noise to update the representation.",
++            "* 노이즈 그림은 고정 예시로, 선택한 단계의 예측값이 아닙니다. 스케줄러는 예측 노이즈로 표현을 갱신합니다."
++        ))
+ 
+ // ADD Weaken and Arrow and explanations
+ x_=-4;
+@@ -200,9 +253,17 @@ dy_=-depth*Math.cos(lineAngle)
+ d3.select("#denoise-latent-l2-expl-noise-container")
+     .append("div")
+         .attr("id", "denoise-latent-l2-expl-weaken-text")
+-        .text("weaken")
++        .attr("tabindex", "0")
++        .attr("aria-describedby", "denoise-latent-l2-expl-weaken-expl")
++        .text(window.modelAtlasText("weaken"))
+         .on("mouseover", () => {d3.select("#denoise-latent-l2-expl-weaken-expl").style("display", "block")})
+-        .on("mouseout", () => {d3.select("#denoise-latent-l2-expl-weaken-expl").style("display", "none")})
++        .on("mouseout", function (event) {
++            if (!this.contains(event.relatedTarget) && document.activeElement !== this) d3.select("#denoise-latent-l2-expl-weaken-expl").style("display", "none");
++        })
++        .on("focus", () => {d3.select("#denoise-latent-l2-expl-weaken-expl").style("display", "block")})
++        .on("blur", function () {
++            if (!this.matches(":hover")) d3.select("#denoise-latent-l2-expl-weaken-expl").style("display", "none");
++        })
+ d3.select("#denoise-latent-l2-expl-noise-container")
+     .append("svg")
+         .attr("id", "denoise-latent-l2-expl-weaken-arrow-svg")
+@@ -230,8 +291,8 @@ d3.select("#denoise-latent-l2-expl-noise-container")
+ d3.select("#denoise-latent-l2-expl-noise-container")
+     .append("div")
+         .attr("id", "denoise-latent-l2-expl-weaken-expl")
+-        // .text("Multiply by a small number decided by scheduler to gradually denoise over multiple timesteps")
+-        .text("Multiply by a small number to gradually denoise over multiple timesteps")
++        .attr("role", "tooltip")
++        .text(window.modelAtlasHtml("Simplified: the scheduler uses the noise prediction to update the representation; its exact formula varies.", "단순화된 그림입니다. 스케줄러는 노이즈 예측으로 표현을 갱신하며, 정확한 식은 스케줄러마다 다릅니다."))
+ 
+ // central branch
+ let centralLineWidth = 5;
+@@ -308,22 +369,23 @@ d3.select("#denoise-latent-l2-expl-central-line-svg")
+ d3.select("#denoise-latent-l2-expl-central-line-container")
+     .append("div")
+         .attr("id", "denoise-latent-l2-expl-central-line-timestep-expl-text")
++        .attr("role", "tooltip")
+ d3.select("#denoise-latent-l2-expl-central-line-timestep-expl-text")
+     .append("div")
+         .attr("id", "denoise-latent-l2-expl-central-line-timestep-expl-text-1")
+-        .text("Timestep is also input to UNet.")
++        .text(window.modelAtlasHtml("UNet receives a scheduler timestep.", "UNet에는 스케줄러의 시간 단계가 입력됩니다."))
+ d3.select("#denoise-latent-l2-expl-central-line-timestep-expl-text")
+     .append("div")
+         .attr("id", "denoise-latent-l2-expl-central-line-timestep-expl-text-2")
+-        .text("A lower timestep value informs UNet")
++        .text(window.modelAtlasHtml("Here, step 0 is the starting noise.", "여기서 0은 시작 노이즈의 표시 순서입니다."))
+ d3.select("#denoise-latent-l2-expl-central-line-timestep-expl-text")
+     .append("div")
+         .attr("id", "denoise-latent-l2-expl-central-line-timestep-expl-text-3")
+-        .text("that the latent has more noise.")
++        .text(window.modelAtlasHtml("Display steps need not equal scheduler timesteps.", "표시 순서와 스케줄러 시간 단계는 다를 수 있습니다."))
+ 
+ d3.select("#architecture-wrapper")
+     .append("div")
+     .attr("id", "denoise-latent-l2-right-cover")
+ d3.select("#architecture-wrapper")
+     .append("div")
+-    .attr("id", "denoise-latent-l2-left-cover")
+\ No newline at end of file
++    .attr("id", "denoise-latent-l2-left-cover")
+diff --git a/js/denoise_l3expl.js b/js/denoise_l3expl.js
+index 07d6bed5..22961901 100644
+--- a/js/denoise_l3expl.js
++++ b/js/denoise_l3expl.js
+@@ -1,7 +1,11 @@
+ import {reduceLatentDenoiserL2, reduceLatentDenoiserL3, hyperparamChanged} from "./function.js"
+ 
+ document.addEventListener("keydown", (e) => {
+-    if (window.latentDenoiserL3Expanded && e.key == "Escape") reduceLatentDenoiserL3();
++    if (window.latentDenoiserL3Expanded && e.key == "Escape") {
++        const focusWasInside = document.getElementById("latent-denoiser-l3-expl-container").contains(document.activeElement);
++        reduceLatentDenoiserL3();
++        if (focusWasInside) document.getElementById("denoise-latent-l2-expl-guidance-scale-expl-text-how").focus();
++    }
+ })
+ 
+ document.addEventListener("mouseup", (e) => {
+@@ -94,6 +98,15 @@ d3.select("#latent-denoiser-l3-expl-vis-svg")
+         .data([[0,"#a0a0a0"],[1,"var(--text1)"],[7,"var(--text2)"],[20,"var(--text3)"]])
+         .enter()
+         .append("circle")
++            .attr("role", "button")
++            .attr("tabindex", "0")
++            .attr("aria-label", d => window.modelAtlasHtml(`Guidance scale ${d[0]}`, `가이던스 스케일 ${d[0]}`))
++            .attr("aria-pressed", d => String(d[0] === Number(window.gs)))
++            .on("keydown", function (e) {
++                if (e.key !== "Enter" && e.key !== " ") return;
++                e.preventDefault();
++                selectGuidance(d3.select(this).datum()[0], e);
++            })
+             .attr("cx", (d,i) => partitions[i]*sliderWidth)
+             .attr("cy", sliderHeight)
+             .attr("r", "5")
+@@ -102,10 +115,7 @@ d3.select("#latent-denoiser-l3-expl-vis-svg")
+             .attr("stroke-width", "3px")
+             .on("click", function (e) {
+                 let gs = d3.select(this).data()[0][0]
+-                d3.select("#gs-dropdown-box-text").text(gs)
+-                moveThumb(gs); // put circle and line on 0
+-                hyperparamChanged(e, window.seed, `${gs}.0`);
+-                // document.getElementById("guidance-scale-control-dropdown-select").selectedIndex = (gs<=1)?gs:((gs==7)?2:3)
++                selectGuidance(gs, e);
+             })
+ 
+ // Drag Functions
+@@ -136,31 +146,29 @@ function moveThumb(gs) {
+     d3.select("#latent-denoiser-l3-expl-vis-slider-thumb-line")
+         .attr("d", path[gs])
+ }
++function selectGuidance(gs, e) {
++    d3.select("#gs-dropdown-box-text").text(gs)
++    d3.select("#gs-dropdown-deco").style("width", gs === 20 ? "27px" : "22px")
++    moveThumb(gs)
++    hyperparamChanged(e, window.seed, `${gs}.0`)
++}
+ function dragStarted() {}
+ function dragged(e) {
+     // should move Noise, change border color as well!
+     if ((e.x-points[0][0])**2+(e.y-points[0][1])**2 < (e.x-points[1][0])**2+(e.y-points[1][1])**2) {
+-        moveThumb(0); // put circle and line on 0
+-        hyperparamChanged(e, window.seed, "0.0");  
+-        document.getElementById("guidance-scale-control-dropdown-select").selectedIndex = 0
++        selectGuidance(0, e);
+     }
+     else if ((e.x-points[1][0])**2+(e.y-points[1][1])**2 < (e.x-points[7][0])**2+(e.y-points[7][1])**2) {
+         // put circle and line on 1
+-        moveThumb(1);
+-        hyperparamChanged(e, window.seed, "1.0");
+-        document.getElementById("guidance-scale-control-dropdown-select").selectedIndex = 1
++        selectGuidance(1, e);
+     }
+     else if ((e.x-points[20][0])**2+(e.y-points[20][1])**2 < (e.x-points[7][0])**2+(e.y-points[7][1])**2) {
+         // put circle and line on 20
+-        moveThumb(20);
+-        hyperparamChanged(e, window.seed, "20.0");
+-        document.getElementById("guidance-scale-control-dropdown-select").selectedIndex = 3
++        selectGuidance(20, e);
+     }
+     else {
+         // put circle and line on 7
+-        moveThumb(7);
+-        hyperparamChanged(e, window.seed, "7.0");
+-        document.getElementById("guidance-scale-control-dropdown-select").selectedIndex = 2
++        selectGuidance(7, e);
+     }
+ }
+ function dragEnded(e) {
+@@ -222,9 +230,7 @@ d3.select("#latent-denoiser-l3-expl-vis-svg")
+             .style("cursor", "pointer")
+             .on("click", function (e) {
+                 let gs = d3.select(this).data()[0][0]
+-                d3.select("#gs-dropdown-box-text").text(gs)
+-                moveThumb(gs); // put circle and line on 0
+-                hyperparamChanged(e, window.seed, `${gs}.0`);
++                selectGuidance(gs, e);
+             })
+ 
+ d3.select("#latent-denoiser-l3-expl-container")
+@@ -232,22 +238,57 @@ d3.select("#latent-denoiser-l3-expl-container")
+         .attr("id", "latent-denoiser-l3-expl-text-container")
+ d3.select("#latent-denoiser-l3-expl-text-container")
+     .append("div")
+-        .text("UNet predicts two noises:")
++        .text(window.modelAtlasHtml("UNet noise predictions:", "UNet의 노이즈 예측:"))
+ d3.select("#latent-denoiser-l3-expl-text-container")
+     .append("div")
+-        .text("(1) generic noise conditioned on an empty prompt")
++        .text(window.modelAtlasHtml("(1) εempty: conditioned on an empty prompt", "(1) ε빈: 빈 프롬프트 조건"))
+ d3.select("#latent-denoiser-l3-expl-text-container")
+     .append("div")
+-        .text("(2) noise conditioned on your text prompt.")
++        .text(window.modelAtlasHtml("(2) εprompt: conditioned on your prompt", "(2) ε조건: 입력 프롬프트 조건"))
+         .style("padding-bottom", "8px")
+ d3.select("#latent-denoiser-l3-expl-text-container")
+     .append("div")
+-        .html('To generate images strongly adhering to your text prompt, Stable Diffusion computes the weighted sum of the two noises with the weights controlled by the <span style="font-weight:500">guidance scale</span>. The larger the guidance scale, the stronger adherence to the text prompt.')
++        .attr("id", "model-atlas-guidance-formula")
++        // CompVis DDIM combines predictions as uncond + scale * (cond - uncond).
++        .text(window.modelAtlasHtml('ε = εempty + s × (εprompt − εempty)', 'ε = ε빈 + s × (ε조건 − ε빈)'))
++        .style("font-weight", "500")
++d3.select("#latent-denoiser-l3-expl-text-container")
++    .append("div")
++        .attr("id", "model-atlas-guidance-scale-expl")
++        .html(window.modelAtlasHtml('<span style="font-weight:500">Guidance scale</span> s: 0 gives εempty; 1 gives εprompt. Larger values strengthen the prompt direction but can exaggerate the result.', '<span style="font-weight:500">가이던스 스케일</span> s: 0이면 ε빈, 1이면 ε조건입니다. 큰 값은 조건을 강화하지만 과장될 수 있습니다.'))
+         .style("display","inline-block")
+ 
++// One hypothetical component: the original lab displays precomputed images,
++// not the actual UNet prediction values for those images.
++window.updateModelAtlasGuidanceExample = function () {
++    const scale = Number(window.gs);
++    const result = (0.2 + scale * (0.3 - 0.2)).toFixed(1);
++    d3.select("#model-atlas-guidance-example").text(window.modelAtlasHtml(
++        `One noise-prediction component: εempty = 0.2, εprompt = 0.3. 0.2 + ${scale} × (0.3 − 0.2) = ${result}. These hypothetical values are not the image's predictions.`,
++        `노이즈 예측 한 성분의 예: ε빈 = 0.2, ε조건 = 0.3. 0.2 + ${scale} × (0.3 − 0.2) = ${result}. 가상의 숫자로, 이미지의 실제 예측값이 아닙니다.`
++    ));
++};
++d3.select("#latent-denoiser-l3-expl-text-container")
++    .append("div")
++    .attr("id", "model-atlas-guidance-example")
++    .attr("aria-live", "polite")
++    .style("margin-top", "5px")
++    .style("color", "#334155");
++window.updateModelAtlasGuidanceExample();
++
+ d3.select("#latent-denoiser-l3-expl-container")
+     .append("img")
+         .attr("id", "latent-denoiser-l3-expl-vis-leave-img")
++        .attr("alt", "")
++        .attr("role", "button")
++        .attr("tabindex", "0")
++        .attr("aria-label", window.modelAtlasHtml("Close guidance scale formula", "가이던스 스케일 수식 닫기"))
++        .on("keydown", function (e) {
++            if (e.key !== "Enter" && e.key !== " ") return;
++            e.preventDefault();
++            reduceLatentDenoiserL3();
++            document.getElementById("denoise-latent-l2-expl-guidance-scale-expl-text-how").focus();
++        })
+         .on("click", reduceLatentDenoiserL3)
+         .attr("src", "./icons/leave.svg")
+-        .attr("height", `25px`)
+\ No newline at end of file
++        .attr("height", `25px`)
+diff --git a/js/description.js b/js/description.js
+index adbff68b..f847e06c 100644
+--- a/js/description.js
++++ b/js/description.js
+@@ -1,34 +1,40 @@
+ d3.select("#description")
+-    .append("div")
++    .append("button")
+         .attr("id", "description-top-button-container")
++        .attr("type", "button")
+         .on("click", function() {
+             document.body.scrollTop = 0; // For Safari
+             document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
++            document.getElementById("header-title")?.focus({preventScroll: true});
+         })
+ d3.select("#description-top-button-container")
+     .append("img")
+         .attr("src", "icons/top.svg")
+         .attr("id", "description-top-button-img")
++        .attr("alt", "")
+ d3.select("#description-top-button-container")
+     .append("div")
+         .attr("id", "description-top-button-text")
+-        .text("top")
++        .text(window.modelAtlasText("top"))
+ d3.select("#description")
+     .append("div")
+         .attr("id", "description-section-what")
+         .attr("class", "description-sec")
+         .append("h1")
+-            .text("What is Stable Diffusion?")
++            .text(window.modelAtlasText("What is Stable Diffusion?"))
+ d3.select("#description-section-what")
+     .append("p")
+-        .html(`
++        .html(window.modelAtlasHtml(`
+         Stable Diffusion is a text-to-image model that transforms a text prompt into a high-resolution image. 
+         For example, if you type in 
+         <span style="color: var(--text3);">a cute and adorable bunny</span>, 
+         Stable Diffusion generates high-resolution images depicting that 
+-        &mdash; <span style="color: var(--text3);">a cute and adorable bunny</span> &mdash; 
+-        in a few seconds. 
+-        Click “Select another prompt” in Diffusion Explainer to change prompts and check the fascinating images generated from each prompt!`)
++        &mdash; <span style="color: var(--text3);">a cute and adorable bunny</span>.
++        Use “Select another prompt” to compare the examples.`, "Stable Diffusion은 텍스트 설명을 이미지로 바꾸는 모델입니다. 예를 들어 <span style=\"color: var(--text3);\">a cute and adorable bunny</span>라는 설명으로 토끼 이미지를 만들 수 있습니다. 이 실습에서 ‘다른 프롬프트 선택’을 눌러 미리 준비된 이미지를 비교해 보세요."))
++d3.select("#description-section-what")
++    .append("p")
++        .attr("id", "model-atlas-precomputed-note")
++        .text(window.modelAtlasHtml("This lab displays precomputed examples for the available prompts, seeds and guidance scales. Changing a control selects saved results; it does not run Stable Diffusion or generate a new image.", "이 실습은 준비된 프롬프트, 시드, 가이던스 스케일의 사전 계산 결과를 보여 줍니다. 조작하면 저장된 결과를 선택하며 Stable Diffusion을 실행하거나 새 이미지를 생성하지는 않습니다."))
+ 
+ // How does Stable Diffusion work?
+ d3.select("#description")
+@@ -36,50 +42,54 @@ d3.select("#description")
+         .attr("id", "description-section-how-work")
+         .attr("class", "description-sec")
+         .append("h1")
+-            .text("How does Stable Diffusion work?")
++            .text(window.modelAtlasText("How does Stable Diffusion work?"))
+ d3.select("#description-section-how-work")
+     .append("p")
+         // .text('Stable Diffusion first generates a vector representation of an image depicted in the text prompt. This image representation is then upscaled into a high-resolution image.')
+-        .html(`
++        .html(window.modelAtlasHtml(`
+         Stable Diffusion first changes the text prompt into a <span style="font-style: italic">text representation</span>, 
+         numerical values that summarize the prompt. 
+         The text representation is used to generate an <span style="font-style: italic">image representation</span>, 
+         which summarizes an image depicted in the text prompt. 
+-        This image representation is then upscaled into a high-resolution image.
+-        `)
++        A VAE decoder then converts this image representation into an image.
++        `, "먼저 프롬프트를 내용을 요약하는 숫자들의 묶음인 <em>텍스트 표현</em>으로 바꿉니다. 이를 이용해 이미지 특징을 요약하는 <em>이미지 표현</em>을 만들고 VAE 디코더로 이미지로 변환합니다."))
+ d3.select("#description-section-how-work")
+     .append("p")
+         // .html('You may wonder why Stable Diffusion introduces image representation instead of directly generating high-resolution images. The reason is <span style="font-style: italic;">computational cost efficiency</span>. Doing most computations on representation, which summarizes an image in a compact form, significantly reduces the computational cost while maintaining high image quality.')
+-        .html(`
++        .html(window.modelAtlasHtml(`
+         You may wonder why Stable Diffusion introduces image representation instead of directly generating high-resolution images. 
+         The reason is <span style="font-style: italic">computational efficiency</span>. 
+         Doing most computations on compact image representation instead of a high-resolution image significantly reduces the time and cost for the computations while maintaining high image quality.
+-        `)
++        `, "고해상도 이미지 전체 대신 크기가 작은 이미지 표현에서 대부분의 계산을 수행하면 계산 시간과 비용을 줄일 수 있습니다."))
+ d3.select("#description-section-how-work")
+     .append("p")
+         // .html('The image representation starts as a random noise and is refined over multiple timesteps to reach the image representation for your text prompt. The number of timesteps is a hyperparameter determined before refining and typically set to 50.')
+-        .html(`
++        .html(window.modelAtlasHtml(`
+         The image representation, which starts as a random noise, 
+         is refined over multiple timesteps to reach the image representation for a high-quality image with strong adherence to the text prompt. 
+         The number of refining timesteps is typically set as 50 or 100; we fix it to 50 in Diffusion Explainer.
+-        `)
++        `, "이미지 표현은 무작위 노이즈에서 시작해 여러 단계에 걸쳐 텍스트에 맞도록 정제됩니다. 정제 단계 수는 보통 50 또는 100이며 이 실습은 50단계로 고정되어 있습니다."))
++d3.select("#description-section-how-work")
++    .append("p")
++        .attr("id", "model-atlas-scheduler-steps-note")
++        .html(window.modelAtlasHtml('The visualization numbers its saved results in processing order: 0 is the starting noise and 50 is the final result. These display indices need not equal the scheduler timesteps passed to the UNet; for example, a scheduler can use a descending sequence. See the <a href="https://huggingface.co/docs/diffusers/using-diffusers/schedulers" target="_blank" rel="noopener noreferrer">Diffusers scheduler guide</a>.', '시각화는 저장된 결과를 처리 순서로 번호 매깁니다. 0은 시작 노이즈, 50은 최종 결과입니다. 이 표시 번호는 UNet에 입력되는 스케줄러 시간 단계와 같을 필요가 없습니다. 예를 들어 스케줄러는 감소하는 시간 단계 순서를 사용할 수 있습니다. <a href="https://huggingface.co/docs/diffusers/using-diffusers/schedulers" target="_blank" rel="noopener noreferrer">Diffusers 스케줄러 안내</a>를 참고하세요.'))
+ d3.select("#description-section-how-work")
+     .append("p")
+-        .html('We break down the image generation process of Stable Diffusion into three main steps:')
++        .html(window.modelAtlasHtml('We break down the image generation process of Stable Diffusion into three main steps:', "이미지 생성 과정은 크게 세 단계로 나눌 수 있습니다:"))
+         .append("ol")
+         .attr("id", "description-generation-main-steps-ol")
+ d3.select("#description-generation-main-steps-ol")
+     .append("li")
+-        .html('<a style="font-weight: 500" href="#description-subsec-text-representation-generation">Text Representation Generation</a>: Stable Diffusion converts a text prompt into a text vector representation.')
++        .html(window.modelAtlasHtml('<a style="font-weight: 500" href="#description-subsec-text-representation-generation">Text Representation Generation</a>: Stable Diffusion converts a text prompt into a text vector representation.', "<a style=\"font-weight: 500\" href=\"#description-subsec-text-representation-generation\">텍스트 표현 생성</a>: 프롬프트를 텍스트 벡터 표현으로 바꿉니다."))
+ d3.select("#description-generation-main-steps-ol")
+     .append("li")
+-        .html('<a style="font-weight: 500" href="#description-subsec-image-representation-refining">Image Representation Refining</a>: Starting with random noise, Stable Diffusion refines the image representation little by little, with the guidance of the text representation. Stable Diffusion repeats the refining over multiple timesteps (50 in our Diffusion Explainer).')
++        .html(window.modelAtlasHtml('<a style="font-weight: 500" href="#description-subsec-image-representation-refining">Image Representation Refining</a>: Starting with random noise, Stable Diffusion refines the image representation little by little, with the guidance of the text representation. Stable Diffusion repeats the refining over multiple timesteps (50 in our Diffusion Explainer).', "<a style=\"font-weight: 500\" href=\"#description-subsec-image-representation-refining\">이미지 표현 정제</a>: 무작위 노이즈에서 시작해 텍스트 표현의 안내를 받아 여러 단계에 걸쳐 이미지 표현을 정제합니다."))
+ d3.select("#description-generation-main-steps-ol")
+     .append("li")
+-        .html('<a style="font-weight: 500" href="#description-subsec-image-upscaling">Image Upscaling</a>: Stable Diffusion upscales the image representation into a high-resolution image.')
++        .html(window.modelAtlasHtml('<a style="font-weight: 500" href="#description-subsec-image-upscaling">VAE decoding</a>: A learned decoder converts the final latent representation into an image.', "<a style=\"font-weight: 500\" href=\"#description-subsec-image-upscaling\">VAE 디코딩</a>: 학습된 디코더가 최종 잠재표현을 이미지로 변환합니다."))
+ d3.select("#description-section-how-work")
+     .append("p")
+-        .text("Now, let's look closer into each process.")
++        .text(window.modelAtlasText("Now, let's look closer into each process."))
+ 
+ // Text Representation Generation
+ d3.select("#description-section-how-work")
+@@ -87,7 +97,8 @@ d3.select("#description-section-how-work")
+         .attr("id", "description-subsec-text-representation-generation")
+         .attr("class", "description-subsec")
+         .append("h2")
+-            .text("Text Representation Generation")
++            .attr("tabindex", "-1")
++            .text(window.modelAtlasText("Text Representation Generation"))
+ d3.select("#description-subsec-text-representation-generation")
+     .append("img")
+         .attr("class", "description-gif")
+@@ -95,14 +106,14 @@ d3.select("#description-subsec-text-representation-generation")
+         .attr("src", "assets/gif/trg.gif")
+ d3.select("#description-subsec-text-representation-generation")
+     .append("p")
+-        // .text("Text representation generation consists of tokenizing and text encoding.")
+-        .html(`
++        // .text(window.modelAtlasText("Text representation generation consists of tokenizing and text encoding."))
++        .html(window.modelAtlasHtml(`
+         Clicking Text Representation Generation shows how a text prompt is converted into a text representation, 
+         a vector that summarizes the prompt. 
+         It consists of two steps: 
+         <span style="font-style: italic">tokenizing</span> 
+         and 
+-        <span style="font-style: italic">text encoding</span>.`)
++        <span style="font-style: italic">text encoding</span>.`, "텍스트 표현 생성을 누르면 프롬프트가 내용을 요약하는 벡터로 바뀌는 과정을 볼 수 있습니다. 이 과정은 <em>토큰화</em>와 <em>텍스트 인코딩</em>으로 나뉩니다."))
+ // Tokenizing
+ d3.select("#description-subsec-text-representation-generation")
+     .append("div")
+@@ -111,26 +122,26 @@ d3.select("#description-subsec-text-representation-generation")
+ d3.select("#description-subsubsec-tokenizing")
+     .append("div")
+         .attr("class", "description-subsubsec-title")
+-        .html('1. Tokenizing')
++        .html(window.modelAtlasHtml('1. Tokenizing', "1. 토큰화"))
+ d3.select("#description-subsubsec-tokenizing")
+     .append("p")
+         // .html("Tokenizing is a common way to handle text input to standardize the format of the input and enable the text input to be processed by neural networks.")
+-        .html(`Tokenizing is a common way to handle text data to change the text into numbers and process them with neural networks.`)
++        .html(window.modelAtlasHtml(`Tokenizing is a common way to handle text data to change the text into numbers and process them with neural networks.`, "토큰화는 텍스트를 신경망에서 처리할 수 있는 숫자 단위로 바꾸는 과정의 첫 단계입니다."))
+ d3.select("#description-subsubsec-tokenizing")
+     .append("div")
+         .attr("class", "description-paragraph")
+         .attr("id", "description-subsubsec-tokenizing-token-example-paragraph")
+ d3.select("#description-subsubsec-tokenizing-token-example-paragraph")
+     .append("span")
+-    .html(`Stable Diffusion tokenizes a text prompt into a sequence of tokens. 
+-    For example, it splits the text prompt `)
++    .html(window.modelAtlasHtml(`Stable Diffusion tokenizes a text prompt into a sequence of tokens.
++    For a simplified illustration, consider the text prompt `, "Stable Diffusion은 프롬프트를 토큰의 순서열로 나눕니다. 간단한 그림으로 다음 텍스트를 살펴보겠습니다: "))
+ d3.select("#description-subsubsec-tokenizing-token-example-paragraph")
+     .append("span")
+         .style("color", "var(--text3)")
+         .text("a cute and adorable bunny ")
+ d3.select("#description-subsubsec-tokenizing-token-example-paragraph")
+     .append("span")
+-        .text("into the tokens ")
++        .text(window.modelAtlasText("into the tokens "))
+ d3.select("#description-subsubsec-tokenizing-token-example-paragraph")
+     .append("span")
+         .attr("class", "text-vector-generator-token description-token")
+@@ -158,28 +169,28 @@ d3.select("#description-subsubsec-tokenizing-token-example-paragraph")
+         .text("adorable")
+ d3.select("#description-subsubsec-tokenizing-token-example-paragraph")
+     .append("span")
+-        .text(", and ")
++        .text(window.modelAtlasText(", and "))
+ d3.select("#description-subsubsec-tokenizing-token-example-paragraph")
+     .append("span")
+         .attr("class", "text-vector-generator-token description-token")
+         .text("bunny")
+ d3.select("#description-subsubsec-tokenizing-token-example-paragraph")
+     .append("span")
+-        .text(". Also, to mark the beginning and end of the prompt, Stable Diffusion adds ")
++        .text(window.modelAtlasText(". Also, to mark the beginning and end of the prompt, Stable Diffusion adds "))
+ d3.select("#description-subsubsec-tokenizing-token-example-paragraph")
+     .append("span")
+         .attr("class", "text-vector-generator-token description-token")
+         .text("<start>")
+ d3.select("#description-subsubsec-tokenizing-token-example-paragraph")
+     .append("span")
+-        .text(" and ")
++        .text(window.modelAtlasText(" and "))
+ d3.select("#description-subsubsec-tokenizing-token-example-paragraph")
+     .append("span")
+         .attr("class", "text-vector-generator-token description-token")
+         .text("<end>")
+ d3.select("#description-subsubsec-tokenizing-token-example-paragraph")
+     .append("span")
+-        .text(" tokens at the beginning and the end of the tokens. The resulting token sequence for the above example would be ")
++        .text(window.modelAtlasText(" tokens at the beginning and the end of the tokens. An illustrative sequence for the above example is "))
+ d3.select("#description-subsubsec-tokenizing-token-example-paragraph")
+     .append("span")
+         .attr("class", "text-vector-generator-token description-token")
+@@ -221,7 +232,7 @@ d3.select("#description-subsubsec-tokenizing-token-example-paragraph")
+         .text("bunny")
+ d3.select("#description-subsubsec-tokenizing-token-example-paragraph")
+     .append("span")
+-        .text(", and ")
++        .text(window.modelAtlasText(", and "))
+ d3.select("#description-subsubsec-tokenizing-token-example-paragraph")
+     .append("span")
+         .attr("class", "text-vector-generator-token description-token")
+@@ -230,10 +241,14 @@ d3.select("#description-subsubsec-tokenizing-token-example-paragraph")
+     .append("span")
+         .text(".")
+ 
++d3.select("#description-subsubsec-tokenizing")
++    .append("p")
++        .attr("id", "model-atlas-tokenizer-caveat")
++        .html(window.modelAtlasHtml(`The diagram splits the prompt on spaces and abbreviates the special tokens; it is a conceptual illustration, not the output of the CLIP tokenizer. CLIP can split a word into several tokens, so word count and token count can differ. The 77 positions include beginning and end tokens. See the <a href="https://huggingface.co/openai/clip-vit-large-patch14/blob/main/tokenizer_config.json" target="_blank" rel="noopener noreferrer">CLIP tokenizer configuration</a>.`, `이 그림은 공백으로 나눈 단어와 간략한 특수 토큰을 보여 주는 개념도이며, 실제 CLIP 토크나이저의 결과가 아닙니다. CLIP은 한 단어를 여러 토큰으로 나눌 수 있어 단어 수와 토큰 수가 다를 수 있습니다. 77칸에는 시작·종료 토큰도 포함됩니다. <a href="https://huggingface.co/openai/clip-vit-large-patch14/blob/main/tokenizer_config.json" target="_blank" rel="noopener noreferrer">CLIP 토크나이저 설정</a>을 참고하세요.`))
+ d3.select("#description-subsubsec-tokenizing")
+     .append("p")
+         // .html('To ensure that all token sequences have the same length for easier computation, Stable Diffusion pads or truncates the token sequences to exactly 77 tokens. If the input prompt has fewer than 77 tokens, <span class="text-vector-generator-token description-token" id="description-token-end"></span> tokens are added to the end of the sequence until it reaches 77 tokens. If the input prompt has more than 77 tokens, the last 77 tokens are retained and the rest are truncated. The number of tokens was set to balance performance and computational efficiency.')
+-        .html('For easier computation, Stable Diffusion keeps the token sequences of any text prompts to have the same length of 77 by padding or truncating. If the input prompt has fewer than 77 tokens, <span class="text-vector-generator-token description-token" id="description-token-end"></span> tokens are added to the end of the sequence until it reaches 77 tokens. If the input prompt has more than 77 tokens, the first 77 tokens are retained and the rest are truncated. The length of 77 was set to balance performance and computational efficiency.')
++        .html(window.modelAtlasHtml('For easier computation, Stable Diffusion keeps the token sequences of any text prompts to have the same length of 77 by padding or truncating. If the input prompt has fewer than 77 tokens, <span class="text-vector-generator-token description-token" id="description-token-end"></span> tokens are added to the end of the sequence until it reaches 77 tokens. If the sequence is too long, it is truncated while preparing the model input. The length of 77 was set to balance performance and computational efficiency.', "계산을 일정하게 처리하기 위해 토큰 순서열의 길이를 77로 맞춥니다. 짧으면 종료 토큰으로 채우고, 너무 길면 잘라냅니다."))
+ d3.select("#description-token-end").text("<end>")
+ // Text encoding
+ d3.select("#description-subsec-text-representation-generation")
+@@ -243,13 +258,17 @@ d3.select("#description-subsec-text-representation-generation")
+ d3.select("#description-subsubsec-text-encoding")
+     .append("div")
+         .attr("class", "description-subsubsec-title")
+-        .html('2. Text encoding')
++        .html(window.modelAtlasHtml('2. Text encoding', "2. 텍스트 인코딩"))
+ d3.select("#description-subsubsec-text-encoding")
+     .append("p")
+-        .html(`Stable Diffusion converts the token sequence into a text representation. To use the text representation for guiding image generation, Stable Diffusion ensures that the text representation contains the information related to the image depicted in the prompt. This is done by using a special neural network called <a href="https://openai.com/research/clip">CLIP</a>.`)
++        .html(window.modelAtlasHtml(`Stable Diffusion converts the token sequence into a text representation. To use the text representation for guiding image generation, Stable Diffusion ensures that the text representation contains the information related to the image depicted in the prompt. This is done by using a special neural network called <a href="https://openai.com/research/clip">CLIP</a>.`, "토큰 순서열을 텍스트 표현으로 바꿉니다. 이미지 생성을 안내할 수 있도록 텍스트와 이미지의 의미가 대응하는 표현을 사용합니다."))
+ d3.select("#description-subsubsec-text-encoding")
+     .append("p")
+-        .html("CLIP, which consists of an image encoder and a text encoder, is trained to encode an image and its text description into vectors that are similar to each other. Therefore, the text representation for a prompt computed by CLIP’s text encoder is likely to contain information about the images described in the prompt. You can display the visual explanations by clicking the Text Encoder above.")
++        .html(window.modelAtlasHtml("CLIP, which consists of an image encoder and a text encoder, is trained to encode an image and its text description into vectors that are similar to each other. Therefore, the text representation for a prompt computed by CLIP’s text encoder is likely to contain information about the images described in the prompt. You can display the visual explanations by clicking the Text Encoder above.", "CLIP은 이미지 인코더와 텍스트 인코더를 함께 학습합니다. 서로 대응하는 이미지와 설명이 가까운 벡터로 표현되도록 학습하므로, 텍스트 표현을 이미지 생성의 조건으로 사용할 수 있습니다."))
++d3.select("#description-subsubsec-text-encoding")
++    .append("p")
++        .attr("id", "model-atlas-clip-conditioning-note")
++        .html(window.modelAtlasHtml(`The diagram above illustrates <a href="https://arxiv.org/abs/2103.00020" target="_blank" rel="noopener noreferrer">CLIP pretraining</a>: matching image and text embeddings should be more similar than mismatched ones. Its words and numbers are illustrative, not measured outputs. For image generation, the Stable Diffusion implementation instead passes the text encoder's sequence of hidden states to the UNet as conditioning; it does not run the CLIP image encoder at this step. See the <a href="https://github.com/CompVis/stable-diffusion/blob/main/ldm/modules/encoders/modules.py" target="_blank" rel="noopener noreferrer">original text encoder implementation</a>.`, `위 그림은 <a href="https://arxiv.org/abs/2103.00020" target="_blank" rel="noopener noreferrer">CLIP 사전 학습</a>을 설명합니다. 짝인 이미지·텍스트 임베딩의 유사도가 짝이 아닌 조합보다 높아지도록 학습합니다. 그림의 단어와 숫자는 실제 출력이 아닌 예시입니다. 이미지를 생성할 때 Stable Diffusion 구현은 텍스트 인코더의 은닉 상태 순서열을 UNet의 조건으로 전달하며, 이 단계에서 CLIP 이미지 인코더를 실행하지 않습니다. <a href="https://github.com/CompVis/stable-diffusion/blob/main/ldm/modules/encoders/modules.py" target="_blank" rel="noopener noreferrer">원본 텍스트 인코더 구현</a>을 참고하세요.`))
+ 
+ // Image Representation Refining
+ d3.select("#description-section-how-work")
+@@ -257,7 +276,8 @@ d3.select("#description-section-how-work")
+         .attr("id", "description-subsec-image-representation-refining")
+         .attr("class", "description-subsec")
+         .append("h2")
+-            .text("Image Representation Refining")
++            .attr("tabindex", "-1")
++            .text(window.modelAtlasText("Image Representation Refining"))
+ d3.select("#description-subsec-image-representation-refining")
+     .append("img")
+         .attr("class", "description-gif")
+@@ -265,7 +285,7 @@ d3.select("#description-subsec-image-representation-refining")
+         .attr("src", "assets/gif/irr.gif")
+ d3.select("#description-subsec-image-representation-refining")
+     .append("p")
+-        .html("Stable Diffusion generates image representation, a vector that numerically summarizes a high-resolution image depicted in the text prompt. This is done by refining a randomly initialized noise over multiple timesteps to gradually improve the image quality and adherence to the prompt. You can change the initial random noise by adjusting the <span style='font-style: italic;'>seed </span> in Diffusion Explainer. Click Image Representation Refiner to visualize each refinement step, which involves noise prediction and removal.")
++        .html(window.modelAtlasHtml("Stable Diffusion starts with random noise in a compact, multidimensional image representation (latent). At each step the UNet predicts noise and a scheduler uses the prediction to update the latent. A VAE decoder converts the final latent into an image. In this lab, choose a seed to compare saved starting noises, then open Image Representation Refiner to follow the saved steps; changing the controls does not run the model.", "Stable Diffusion은 압축된 다차원 이미지 표현(잠재 표현)의 무작위 노이즈에서 시작합니다. 각 단계에서 UNet이 노이즈를 예측하면 스케줄러가 그 예측으로 잠재 표현을 갱신합니다. 마지막 잠재 표현은 VAE 디코더가 이미지로 변환합니다. 이 실습에서는 시드를 선택해 저장된 시작 노이즈를 비교하고, 이미지 표현 정제기를 열어 저장된 단계들을 살펴보세요. 조작해도 모델을 새로 실행하지는 않습니다."))
+ // Noise Prediction
+ d3.select("#description-subsec-image-representation-refining")
+     .append("div")
+@@ -274,35 +294,31 @@ d3.select("#description-subsec-image-representation-refining")
+ d3.select("#description-subsubsec-noise-prediction")
+     .append("div")
+         .attr("class", "description-subsubsec-title")
+-        .html('1. Noise Prediction')
++        .html(window.modelAtlasHtml('1. Noise Prediction', "1. 노이즈 예측"))
+ d3.select("#description-subsubsec-noise-prediction")
+     .append("p")
+-        .html("At each timestep, a neural network called UNet predicts noise in the image representation of the current timestep. UNet takes three inputs:")
++        .html(window.modelAtlasHtml("At each timestep, a neural network called UNet predicts noise in the image representation of the current timestep. UNet takes three inputs:", "각 단계에서 UNet이라는 신경망이 현재 이미지 표현에 남은 노이즈를 예측합니다. UNet에는 세 가지를 입력합니다:"))
+ d3.select("#description-subsubsec-noise-prediction")
+     .append("ol")
+         .attr("id", "description-unet-input-ol")
+ d3.select("#description-unet-input-ol")
+     .append("li")
+-    .html(`<span style="font-weight: 500;">Image representation</span> of the current timestep`)
++    .html(window.modelAtlasHtml(`<span style="font-weight: 500;">Image representation</span> of the current timestep`, "현재 단계의 <span style=\"font-weight: 500;\">이미지 표현</span>"))
+ d3.select("#description-unet-input-ol")
+     .append("li")
+-    .html(`<span style="font-weight: 500; color: var(--text3);">Text representation</span> of the prompt to guide what noise should be removed from the current image representation to generate an image adhering to the text prompt`)
++    .html(window.modelAtlasHtml(`<span style="font-weight: 500; color: var(--text3);">Text representation</span> of the prompt to guide what noise should be removed from the current image representation to generate an image adhering to the text prompt`, "제거할 노이즈의 방향을 안내하는 프롬프트의 <span style=\"font-weight: 500; color: var(--text3);\">텍스트 표현</span>"))
+ d3.select("#description-unet-input-ol")
+     .append("li")
+-    .html(`<span style="font-weight: 500;">Timestep</span> to indicate the amount of noise remaining in the current image representation`)
++    .html(window.modelAtlasHtml(`<span style="font-weight: 500;">Timestep</span> to indicate the amount of noise remaining in the current image representation`, "현재 이미지 표현의 노이즈 수준을 나타내는 <span style=\"font-weight: 500;\">시간 단계</span>"))
+ 
+ d3.select("#description-subsubsec-noise-prediction")
+     .append("p")
+-        .html(`In other words, 
++        .html(window.modelAtlasHtml(`In other words,
+         UNet predicts a <span style="color: var(--text3);">prompt-conditioned noise</span> in the current image representation 
+-        under the guidance of the text prompt's representation and timestep.`)
++        under the guidance of the text prompt's representation and timestep.`, "UNet은 텍스트 표현을 조건으로 현재 이미지 표현에서 제거할 <span style=\"color: var(--text3);\">프롬프트 조건 노이즈</span>를 예측합니다."))
+ d3.select("#description-subsubsec-noise-prediction")
+     .append("p")
+-        .html(`However, even though we condition the noise prediction with the text prompt, 
+-        the generated image representation usually does not adhere strongly enough to the text prompt. 
+-        To improve the adherence, 
+-        Stable Diffusion measures the impact of the prompt by additionally predicting <span style="color: #909090;">generic noise conditioned on an empty prompt (" ")</span>
+-        and subtracting it from the prompt-conditioned noise:`) 
++        .html(window.modelAtlasHtml(`Classifier-free guidance compares two UNet predictions for the same latent and timestep: one conditioned on the prompt, and a baseline <span style="color: #909090;">conditioned on an empty prompt</span>. Their difference represents the change in the prediction caused by the prompt for this step:`, `분류기 없는 가이던스는 같은 잠재 표현과 시간 단계에 대한 UNet 예측 두 개를 비교합니다. 하나는 입력 프롬프트를 조건으로 하고, 기준 예측은 <span style="color: #909090;">빈 프롬프트를 조건으로</span> 합니다. 두 예측의 차이는 이 단계에서 프롬프트가 예측을 어떻게 바꾸는지 나타냅니다:`))
+         // The final noise prediction is a weighted sum of the predicted 
+         // <span style="color: #a0a0a0;">generic noise</span> and the
+         // <span style="color: var(--text3);">prompt-conditioned noise</span>
+@@ -310,18 +326,20 @@ d3.select("#description-subsubsec-noise-prediction")
+ d3.select("#description-subsubsec-noise-prediction")
+     .append("p")
+         .attr("class", "description-equation")
+-        .html(`
++        .html(window.modelAtlasHtml(`
+         <span class="description-equation-term" style="color: var(--text3); background-color: #4d922110;">impact of prompt</span> 
+         <span class="description-equation-op">=</span> 
+-        <span class="description-equation-term" style="color: var(--text3); background-color: #4d922110;">prompt-conditioned noise</span> 
++        <span class="description-equation-term" style="color: var(--text3); background-color: #4d922110;">prompt-conditioned prediction</span>
+         <span class="description-equation-op">-</span> 
+-        <span class="description-equation-term" style="color: #909090; background-color: #a0a0a020;">generic noise</span>`)
++        <span class="description-equation-term" style="color: #909090; background-color: #a0a0a020;">empty-prompt prediction</span>`,
++        `<span class="description-equation-term" style="color: var(--text3); background-color: #4d922110;">프롬프트의 영향</span>
++        <span class="description-equation-op">=</span>
++        <span class="description-equation-term" style="color: var(--text3); background-color: #4d922110;">프롬프트 조건 예측</span>
++        <span class="description-equation-op">-</span>
++        <span class="description-equation-term" style="color: #909090; background-color: #a0a0a020;">빈 프롬프트 예측</span>`))
+ d3.select("#description-subsubsec-noise-prediction")
+     .append("p")
+-    .html(`
+-    In other words, the generic noise contributes to better image quality, 
+-    while the impact of the prompt contributes to the adherence to the prompt. 
+-    The final noise is a weighted sum of them controlled by a value called <span style="color: var(--text3);">guidance scale</span>:`)
++    .html(window.modelAtlasHtml(`The <span style="color: var(--text3);">guidance scale</span> multiplies that difference and adds it to the empty-prompt baseline. The result is a guided noise prediction passed to the scheduler, not the image itself. See the <a href="https://github.com/CompVis/stable-diffusion/blob/main/ldm/models/diffusion/ddim.py" target="_blank" rel="noopener noreferrer">CompVis DDIM implementation</a>.`, `<span style="color: var(--text3);">가이던스 스케일</span>을 그 차이에 곱한 뒤 빈 프롬프트 기준 예측에 더합니다. 결과는 이미지 자체가 아니라 스케줄러에 전달할 조건 강화 노이즈 예측입니다. <a href="https://github.com/CompVis/stable-diffusion/blob/main/ldm/models/diffusion/ddim.py" target="_blank" rel="noopener noreferrer">CompVis DDIM 구현</a>을 참고하세요.`))
+ d3.select("#description-subsubsec-noise-prediction")
+     .append("p")
+         .attr("class", "description-equation")
+@@ -331,7 +349,7 @@ d3.select("#description-equation-gs")
+         .attr("class", "description-equation-term")
+         .style("background-color", "#a0a0a020")
+         .style("color", "#909090")
+-        .text("generic noise")
++        .text(window.modelAtlasHtml("empty-prompt prediction", "빈 프롬프트 예측"))
+ d3.select("#description-equation-gs")
+     .append("span")
+         .attr("class", "description-equation-op")
+@@ -341,7 +359,7 @@ d3.select("#description-equation-gs")
+         .attr("class", "description-equation-term")
+         .style("background-color", "#27641910")
+         .style("color", "var(--text3)")
+-        .text("guidance scale")
++        .text(window.modelAtlasText("guidance scale"))
+ d3.select("#description-equation-gs")
+     .append("span")
+         .attr("class", "description-equation-op")
+@@ -351,14 +369,10 @@ d3.select("#description-equation-gs")
+         .style("background-color", "#27641910")
+         .style("color", "var(--text3)")
+         .attr("class", "description-equation-term")
+-        .text("impact of prompt")
++        .text(window.modelAtlasText("impact of prompt"))
+ d3.select("#description-subsubsec-noise-prediction")
+     .append("p")
+-    .html(`A guidance scale of 0 means no adherence to the text prompt, 
+-    while a guidance scale of 1 means using the original prompt-conditioned noise. 
+-    Larger guidance scales result in stronger adherence to the text prompt, 
+-    while too large values can lower the image quality. 
+-    Change the guidance scale value in Diffusion Explainer and see how it changes the generated images.`)
++    .html(window.modelAtlasHtml(`In this formula, scale 0 yields the empty-prompt prediction, and scale 1 yields the prompt-conditioned prediction. Values above 1 extrapolate beyond the prompt-conditioned prediction; they can strengthen prompt influence but may also cause artifacts. Compare the saved results at scales 0, 1, 7 and 20 in the lab.`, "이 식에서 스케일 0은 빈 프롬프트 예측, 1은 입력 프롬프트 조건 예측이 됩니다. 1보다 큰 값은 조건부 예측을 넘어 차이 방향으로 외삽합니다. 프롬프트의 영향이 강해질 수 있지만 이미지에 왜곡이 생길 수도 있습니다. 실습에서 저장된 스케일 0, 1, 7, 20의 결과를 비교해 보세요."))
+ 
+ // Noise Removal
+ d3.select("#description-subsec-image-representation-refining")
+@@ -368,13 +382,13 @@ d3.select("#description-subsec-image-representation-refining")
+ d3.select("#description-subsubsec-noise-removal")
+     .append("div")
+         .attr("class", "description-subsubsec-title")
+-        .html('2. Noise Removal')
++        .html(window.modelAtlasHtml('2. Noise Removal', "2. 노이즈 제거"))
+ d3.select("#description-subsubsec-noise-removal")
+     .append("p")
+-        .html("Stable Diffusion then decides how much of the predicted noise to actually remove from the image, as determined by an algorithm called scheduler. Removing small amounts of noise helps refine the image gradually and produce sharper images.")
++        .html(window.modelAtlasHtml("A scheduler combines the current latent and guided prediction according to its update rule to produce the next latent. Depending on the scheduler, the update can also use coefficients and additional noise; predicted noise is not necessarily subtracted directly.", "스케줄러는 자신의 갱신 규칙에 따라 현재 잠재 표현과 조건 강화 예측을 결합해 다음 잠재 표현을 만듭니다. 스케줄러에 따라 계수와 추가 노이즈도 사용할 수 있으며, 예측 노이즈를 항상 그대로 빼는 것은 아닙니다."))
+ d3.select("#description-subsubsec-noise-removal")
+     .append("p")
+-        .html("The scheduler makes this decision by accounting for the total number of timesteps. The downscaled noise is then subtracted from the image representation of the current timestep to obtain the refined representation, which becomes the image representation of the next timestep:")
++        .html(window.modelAtlasHtml("The following diagram is a simplified intuition for refinement, not the exact scheduler equation. The exact update depends on the scheduler. The lab's display indices count saved steps in processing order; scheduler timestep values can follow a different order:", "아래 식은 정제를 이해하기 위한 단순한 개념도이며 실제 스케줄러의 정확한 갱신식은 아닙니다. 정확한 갱신식은 스케줄러에 따라 다릅니다. 실습의 표시 번호는 저장된 결과의 처리 순서를 세며, 스케줄러 시간 단계 값은 다른 순서를 따를 수 있습니다:"))
+ d3.select("#description-subsubsec-noise-removal")
+     .append("p")
+         .attr("class", "description-equation")
+@@ -383,7 +397,7 @@ d3.select("#description-equation-denoise")
+     .append("span")
+         .attr("class", "description-equation-term")
+         .style("background-color", "#a0a0a020")
+-        .html(`image representation of timestep <span style="font-style: italic;">t+1</span>`)
++        .html(window.modelAtlasHtml(`image representation of timestep <span style="font-style: italic;">t+1</span>`, `<span style="font-style: italic;">t+1</span> 단계의 이미지 표현`))
+ d3.select("#description-equation-denoise")
+     .append("span")
+         .attr("class", "description-equation-op")
+@@ -392,7 +406,7 @@ d3.select("#description-equation-denoise")
+     .append("span")
+         .attr("class", "description-equation-term")
+         .style("background-color", "#a0a0a020")
+-        .html(`image representation of timestep <span style="font-style: italic;">t</span>`)
++        .html(window.modelAtlasHtml(`image representation of timestep <span style="font-style: italic;">t</span>`, `<span style="font-style: italic;">t</span> 단계의 이미지 표현`))
+ d3.select("#description-equation-denoise")
+     .append("span")
+         .attr("class", "description-equation-op")
+@@ -401,7 +415,7 @@ d3.select("#description-equation-denoise")
+     .append("span")
+         .attr("class", "description-equation-term")
+         .style("background-color", "#a0a0a020")
+-        .html(`downscaled noise`)
++        .html(window.modelAtlasHtml(`downscaled noise`, `크기를 조절한 노이즈`))
+ 
+ // Image Upscaling
+ d3.select("#description-section-how-work")
+@@ -409,14 +423,14 @@ d3.select("#description-section-how-work")
+         .attr("id", "description-subsec-image-upscaling")
+         .attr("class", "description-subsec")
+             .append("h2")
+-                .text("Image Upscaling")
++                .text(window.modelAtlasHtml("VAE decoding", "VAE 디코딩"))
+ d3.select("#description-subsec-image-upscaling")
+     .append("img")
+     .attr("class", "description-gif")
+     .attr("src", "assets/gif/upscale.gif")
+ d3.select("#description-subsec-image-upscaling")
+     .append("p")
+-        .text("After all denoising steps have been completed, Stable Diffusion uses a neural network called Decoder to upscale the image representation into a high-resolution image. The refined image representation fully denoised with the guidance of the text representations would result in a high-resolution image strongly adhering to the text prompt.")
++        .text(window.modelAtlasHtml("After denoising, the VAE decoder converts the final latent representation into an image. The decoder is a learned neural network, not just a resize. Text conditioning guides denoising, but does not guarantee that the result follows the prompt.", "노이즈 제거가 끝나면 VAE 디코더가 최종 잠재표현을 이미지로 변환합니다. 디코더는 단순한 크기 확대가 아닌 학습된 신경망입니다. 텍스트 조건은 노이즈 제거를 안내하지만 결과가 프롬프트를 반드시 따르도록 보장하지는 않습니다."))
+ 
+ // Comparison View
+ d3.select("#description")
+@@ -424,7 +438,7 @@ d3.select("#description")
+         .attr("id", "description-section-comparison")
+         .attr("class", "description-sec")
+         .append("h1")
+-            .text("How do prompt keywords affect image generation?")
++            .text(window.modelAtlasText("How do prompt keywords affect image generation?"))
+             .style("margin-bottom", "0.5em")
+ d3.select("#description-section-comparison")
+     .append("img")
+@@ -433,18 +447,20 @@ d3.select("#description-section-comparison")
+         .attr("src", "assets/gif/rcv.gif")
+ d3.select("#description-section-comparison")
+     .append("p")
+-        .html(`
++        .html(window.modelAtlasHtml(`
+         Writing text prompts can be very heuristic and repetitive. 
+         For example, starting from the prompt 
+         <span style="color: var(--text3); font-style: italic;">a cute bunny</span>, 
+         you should repetitively add and remove keywords such as 
+         <span style="color: var(--text3); font-style: italic;">in the style of cute pixar character</span>, 
+-        until you reach to the desired image.`)
++        until you reach to the desired image.`,
++        `프롬프트 작성은 여러 번 표현을 바꿔 보는 시행착오가 필요할 수 있습니다. 예를 들어 <span style="color: var(--text3); font-style: italic;">a cute bunny</span>에서 시작해 <span style="color: var(--text3); font-style: italic;">in the style of cute pixar character</span> 같은 표현을 추가하거나 제거하며 결과를 비교할 수 있습니다.`))
+ d3.select("#description-section-comparison")
+     .append("p")
+-        .text(`
++        .text(window.modelAtlasHtml(`
+         Therefore, understanding how prompt keywords affect image generation would be greatly helpful for writing and refining your prompt. 
+-        Click the keywords highlighted in the text prompt and compare the image generation of the two prompts that differ only in the keywords.`)
++        Click the keywords highlighted in the text prompt and compare the image generation of the two prompts that differ only in the keywords.`,
++        `프롬프트에서 강조된 단어를 눌러 그 표현만 다른 두 예제의 생성 과정을 비교해 보세요.`))
+ 
+ // What can we change
+ d3.select("#description")
+@@ -452,25 +468,25 @@ d3.select("#description")
+         .attr("id", "description-section-change")
+         .attr("class", "description-sec")
+         .append("h1")
+-            .text("What can we change?")
++            .text(window.modelAtlasText("What can we change?"))
+ d3.select("#description-section-change")
+     .append("p")
+-        .text("You have control over text prompt and hyperparameters in our Diffusion Explainer to change the generated images:")
++        .text(window.modelAtlasText("You have control over text prompt and hyperparameters in our Diffusion Explainer to change the generated images:"))
+ d3.select("#description-section-change")
+     .append("ul")
+         .attr("id", "description-hyperparameter-ol")
+ d3.select("#description-hyperparameter-ol")
+     .append("li")
+-    .html(`Text prompt: Description of the image you want to generate. A more detailed text prompt generally leads to better quality images.`)
++    .html(window.modelAtlasHtml(`Text prompt: Description of the image you want to generate. A more detailed text prompt generally leads to better quality images.`, "<b>텍스트 프롬프트:</b> 만들고 싶은 이미지를 설명합니다. 더 구체적인 표현이 결과에 도움이 될 수 있습니다."))
+ d3.select("#description-hyperparameter-ol")
+     .append("li")
+-    .html(`Seed: Random seed for the initialization of the image representation at timestep 0. Changing the seed will result in different image representation at timestep 0 and therefore different images.`)
++    .html(window.modelAtlasHtml(`Seed: Random seed for the initialization of the image representation at timestep 0. Changing the seed will result in different image representation at timestep 0 and therefore different images.`, "<b>시드:</b> 시작 이미지 표현의 무작위 값을 결정합니다. 시드를 바꾸면 시작 노이즈와 결과가 달라집니다."))
+ d3.select("#description-hyperparameter-ol")
+     .append("li")
+-    .html(`Guidance scale: How closely the generated image adheres to the text prompt. Increasing the guidance scale leads to stronger adherence but may make the generated images overly exaggerated.`)
++    .html(window.modelAtlasHtml(`Guidance scale: How closely the generated image adheres to the text prompt. Increasing the guidance scale leads to stronger adherence but may make the generated images overly exaggerated.`, "<b>가이던스 스케일:</b> 이미지가 프롬프트를 따르는 정도를 조절합니다. 높은 값은 조건을 강화하지만 이미지를 과장할 수 있습니다."))
+ d3.select("#description-section-change")
+     .append("p")
+-        .text("Additionally, there are other hyperparameters that are not included in the Diffusion Explainer, such as the total number of timesteps, image size, and the type of scheduler.")
++        .text(window.modelAtlasText("Additionally, there are other hyperparameters that are not included in the Diffusion Explainer, such as the total number of timesteps, image size, and the type of scheduler."))
+ 
+ // How implemented?
+ d3.select("#description")
+@@ -478,10 +494,10 @@ d3.select("#description")
+         .attr("id", "description-section-implement")
+         .attr("class", "description-sec")
+         .append("h1")
+-            .text("How is Diffusion Explainer implemented?")
++            .text(window.modelAtlasText("How is Diffusion Explainer implemented?"))
+ d3.select("#description-section-implement")
+     .append("p")
+-        .text("We implement the interactive visualizations for Diffusion Explainer using Javascript and D3.js.")
++        .text(window.modelAtlasText("We implement the interactive visualizations for Diffusion Explainer using Javascript and D3.js."))
+ 
+ // How implemented?
+ d3.select("#description")
+@@ -489,10 +505,10 @@ d3.select("#description")
+         .attr("id", "description-section-who")
+         .attr("class", "description-sec")
+         .append("h1")
+-            .text("Who developed the Diffusion Explainer?")
++            .text(window.modelAtlasText("Who developed the Diffusion Explainer?"))
+ d3.select("#description-section-who")
+     .append("p")
+-        .html(`Diffusion Explainer was developed by 
++        .html(window.modelAtlasHtml(`Diffusion Explainer was developed by `, `Diffusion Explainer는 다음 연구진이 개발했습니다: `) + `
+         <a href="http://www.seongmin.xyz">Seongmin Lee</a>, 
+         <a href="https://bhoov.com">Ben Hoover</a>, 
+         <a href="http://hendrik.strobelt.com">Hendrik Strobelt</a>, 
+@@ -502,5 +518,5 @@ d3.select("#description-section-who")
+         <a href="https://www.linkedin.com/in/kevinyli/">Kevin Li</a>, 
+         <a href="https://haekyu.com">Haekyu Park</a>, 
+         <a href="https://alexanderyang.me">Alex Yang</a>, 
+-        and 
+-        <a href="https://poloclub.github.io/polochau/">Polo Chau</a>.`)
+\ No newline at end of file
++        ` + window.modelAtlasHtml(`and `, `그리고 `) +
++        `<a href="https://poloclub.github.io/polochau/">Polo Chau</a>.`)
+diff --git a/js/function.js b/js/function.js
+index 7c2ecec1..9ad7cc66 100644
+--- a/js/function.js
++++ b/js/function.js
+@@ -1,13 +1,48 @@
++// Keep dynamically replaced prompt keywords and the comparison exit in the tab order only when usable.
++window.modelAtlasSyncCompareControls = () => {
++    document.querySelectorAll('#prompt-selector-dropdown-box-container .prompt-keyword').forEach(keyword => {
++        keyword.setAttribute('role', 'button');
++        keyword.setAttribute('tabindex', window.compare ? '-1' : '0');
++        keyword.setAttribute('aria-label', window.modelAtlasHtml(`Compare changes to: ${keyword.textContent}`, `비교할 문구: ${keyword.textContent}`));
++        keyword.setAttribute('aria-disabled', String(!!window.compare));
++    });
++    const guide = document.getElementById('model-atlas-trajectory-guide');
++    if (guide) guide.hidden = !window.compare;
++    for (const id of ['text-vector-generator-container', 'latent-denoiser-container']) {
++        const detail = document.getElementById(id);
++        if (detail) {
++            detail.setAttribute('tabindex', window.compare ? '-1' : '0');
++            detail.setAttribute('aria-disabled', String(!!window.compare));
++        }
++    }
++    const exit = document.getElementById('exit-button-container');
++    if (exit) {
++        exit.setAttribute('tabindex', window.compare ? '0' : '-1');
++        exit.setAttribute('aria-hidden', String(!window.compare));
++    }
++};
++
++// The detailed input must use the same prompt, seed and guidance as the
++// currently displayed output, including temporary pointer previews.
++function syncPreviousLatent() {
++    const current = document.getElementById('improved-latent-img')?.getAttribute('src');
++    if (!current || !/_\d+\.jpg$/.test(current)) return;
++    d3.select('#denoise-latent-l2-expl-prev-latent-img')
++        .attr('src', current.replace(/_(\d+)\.jpg$/, (_match, step) => `_${Number(step) - 1}.jpg`));
++}
++
+ function promptChanged() {
+-    let p = d3.select(`#${this.id}`).text()
+     let i = this.id.split("-")[4]
++    let p = window.prompts[+i][0]
+     // change generated image and latent visualization
+     window.selectedPrompt = p
+     window.selectedPromptGroupIdx = +i
++    window.updateModelAtlasPromptTranslations();
+     window.selectedPrompt2 = window.prompts[window.selectedPromptGroupIdx][1];
+     window.selectedPromptHtmlCode = window.promptsHtmlCode[window.selectedPromptGroupIdx][0];
+     window.selectedPromptHtmlCode2 = window.promptsHtmlCode[window.selectedPromptGroupIdx][1];
+     d3.select("#improved-latent-img").attr("src", `./assets/latent_viz/${window.selectedPrompt}/${window.seed}_${window.gs}_${window.timestep}.jpg`)
++    syncPreviousLatent();
+     d3.select("#generated-image").attr("src", `./assets/img/${window.selectedPrompt}/${window.seed}_${window.gs}_${window.timestep}.jpg`)
+     d3.select("#improved-latent-img-2").attr("src", `./assets/latent_viz/${window.selectedPrompt2}/${window.seed}_${window.gs}_${window.timestep}.jpg`)
+     d3.select("#generated-image-2").attr("src", `./assets/img/${window.selectedPrompt2}/${window.seed}_${window.gs}_${window.timestep}.jpg`)
+@@ -58,6 +93,7 @@ function promptChanged() {
+             d3.select("#prompt-keyword-popup-container").style("display", "none")
+             onCompare();
+         })
++    window.modelAtlasSyncCompareControls();
+ }
+ 
+ 
+@@ -100,6 +136,8 @@ function controllerPlayerRepeatButtonClicked() {
+ 
+ function controllerPlayButtonClicked() {
+     animateArchCycle();
++    d3.select("#controller-button-play-container")
++        .attr("aria-label", window.modelAtlasHtml("Pause playback", "재생 일시정지"));
+     
+     d3.select("#controller-button-pause").style("display", "inline-block");
+     d3.select("#controller-button-play").style("display", "none");
+@@ -154,6 +192,10 @@ function updateStep(timestep) {
+     d3.select("#global-umap-g-1").selectAll("circle").style("opacity", (d,i) => (i<=window.timestep)?fullOpacity:0)
+     d3.select("#global-umap-g-2").selectAll("circle").style("opacity", (d,i) => (i<=window.timestep)?fullOpacity:0)
+ 
++    // The controller can start before the UMAP nodes have finished rendering.
++    // Update the rest of the diagram while the nodes are unavailable.
++    if (document.getElementById(`global-umap-node-1-${window.timestep}`) &&
++        document.getElementById(`global-umap-node-2-${window.timestep}`)) {
+     // Highlight lines
+     let currentNode1X = +(d3.select(`#global-umap-node-1-${window.timestep}`).attr("cx"))
+     let currentNode1Y = +(d3.select(`#global-umap-node-1-${window.timestep}`).attr("cy"))
+@@ -174,21 +216,24 @@ function updateStep(timestep) {
+         .style("opacity", translated2X>=0&&translated2X<=150&&translated2Y>=0&&translated2Y<=150?1:0)
+     d3.select("#umap-gradient-1").attr("x2", (translated1X)+1).attr("y2", (translated1Y)+7.5)
+     d3.select("#umap-gradient-2").attr("x2", (translated2X)+1).attr("y2", (translated2Y)+7.5)
++    }
+ 
+     // Latent denoiser l2 expl update
+     d3.select("#denoise-latent-l2-expl-prev-latent-timestep").text(timestep-1)
+-    d3.select("#denoise-latent-l2-expl-prev-latent-text").text(`Representation of timestep ${window.timestep-1}`)
++    d3.select("#denoise-latent-l2-expl-prev-latent-text").text(window.modelAtlasHtml(`Representation of timestep ${window.timestep-1}`, `${window.timestep-1}단계의 이미지 표현`))
+     d3.select("#improved-latent-timestep").text(timestep)
+-    if (window.promptHovered) {
+-        d3.select("#denoise-latent-l2-expl-prev-latent-img").attr("src", `./assets/latent_viz/${window.hoveredPrompt}/${window.seed}_${window.gs}_${timestep-1}.jpg`)
+-    }
+-    else {
+-        d3.select("#denoise-latent-l2-expl-prev-latent-img").attr("src", `./assets/latent_viz/${window.selectedPrompt}/${window.seed}_${window.gs}_${timestep-1}.jpg`)
+-    }
++    syncPreviousLatent();
+         
+ }
+ 
++window.addEventListener("pagehide", () => {
++    const controller = document.getElementById("controller");
++    if (controller) clearInterval(controller.playingInterval);
++});
++
+ function controllerPauseButtonClicked() {
++    d3.select("#controller-button-play-container")
++        .attr("aria-label", window.modelAtlasHtml("Play", "재생"));
+     d3.select("#controller-button-pause").style("display", "none");
+     d3.select("#controller-button-play").style("display", "inline-block");
+ 
+@@ -274,12 +319,16 @@ function hyperparamChanged(e, newSeed, newGs) {
+     // when seed or guidance scale is changed
+     window.seed = newSeed;
+     window.gs = newGs;
++    window.updateModelAtlasGuidanceExample?.();
++    d3.select('#gs-dropdown-box').attr('aria-label', `${window.modelAtlasText('Guidance scale')}: ${Number(newGs)}`);
++    d3.selectAll('#latent-denoiser-l3-expl-vis-tick-g circle')
++        .attr('aria-pressed', d => String(d[0] === Number(newGs)));
+     let timestep = window.timestep;
+     let p = window.selectedPrompt
+     let p2 = window.selectedPrompt2
+     // 1. change the image
+     d3.select("#improved-latent-img").attr("src", `./assets/latent_viz/${p}/${newSeed}_${newGs}_${timestep}.jpg`)
+-    d3.select("#denoise-latent-l2-expl-prev-latent-img").attr("src", `./assets/latent_viz/${p}/${newSeed}_${newGs}_${timestep-1}.jpg`)
++    syncPreviousLatent();
+     d3.select("#generated-image").attr("src", `./assets/img/${p}/${newSeed}_${newGs}_${timestep}.jpg`)
+     d3.select("#improved-latent-img-2").attr("src", `./assets/latent_viz/${p2}/${newSeed}_${newGs}_${timestep}.jpg`)
+     d3.select("#generated-image-2").attr("src", `./assets/img/${p2}/${newSeed}_${newGs}_${timestep}.jpg`)
+@@ -293,7 +342,9 @@ function drawTokens() {
+     tokenList.push("<end>", "<end>", "<end>")
+     let containerId = "text-vector-generator-l2-tokens-container"
+     d3.selectAll("#text-vector-generator-l2-tokens-container > *").remove()
+-    d3.select("#text-vector-generator-l2-expl-container").style("display", "block")
++    const tokenPanel = d3.select("#text-vector-generator-l2-expl-container");
++    const previousDisplay = tokenPanel.node().style.display;
++    tokenPanel.style("display", "block")
+     
+     let full = false;
+     d3.select(`#${containerId}`)
+@@ -326,18 +377,23 @@ function drawTokens() {
+             }
+         }
+     }
+-    d3.select("#text-vector-generator-l2-expl-container").style("display", "none")
++    tokenPanel.style("display", previousDisplay || null)
+     d3.select(`#${containerId}`).append("svg").attr("id", "text-vector-generator-l2-tokens-dots-svg")
+     d3.select("#text-vector-generator-l2-tokens-dots-svg").append("circle").attr("r", "1.5").attr("cx","68").attr("cy", "10").attr("class", "text-dot")
+     d3.select("#text-vector-generator-l2-tokens-dots-svg").append("circle").attr("r", "1.5").attr("cx","68").attr("cy", "17").attr("class", "text-dot")
+     d3.select("#text-vector-generator-l2-tokens-dots-svg").append("circle").attr("r", "1.5").attr("cx","68").attr("cy", "24").attr("class", "text-dot")
+ }
+ 
++let textVectorRequest = 0;
+ function drawTextVectors() {
++    const request = ++textVectorRequest;
++    const prompt = window.selectedPrompt;
++    const status = document.getElementById("model-atlas-text-vector-status");
++    if (status) status.textContent = window.modelAtlasHtml(" Loading saved values…", " 저장된 값을 불러오는 중…");
+     // TEXT TOKENS
+     let containerId = "text-vector-generator-l2-vectors-container"
+     d3.selectAll(`#${containerId} > *`).remove()
+-    let tokenList = window.selectedPrompt.split(" ")
++    let tokenList = prompt.split(" ")
+     let tokenNum = 3;
+     let vectorDim = 3;
+     for (let i = 0 ; i < tokenNum; i++){
+@@ -380,12 +436,32 @@ function drawTextVectors() {
+ 
+     d3.json("./assets/json/text_vector.json")
+         .then(function(d){
++            if (request !== textVectorRequest) return;
++            const rows = d?.[prompt];
++            if (!Array.isArray(rows) || rows.length < tokenNum ||
++                rows.slice(0, tokenNum).some(row => !Array.isArray(row) || row.length < vectorDim ||
++                    row.slice(0, vectorDim).some(value => typeof value !== "number" || !Number.isFinite(value)))) {
++                throw new Error("Invalid saved text vectors");
++            }
+             for (let i = 0 ; i< tokenNum ; i++) {
+                 for (let j = 0 ; j< vectorDim ; j++) {
+                     d3.select(`#text-vector-generator-l2-vector-cell-${i}-${j}`)
+-                        .text(Number(d[window.selectedPrompt][i][j]).toFixed(2))
++                        .text(rows[i][j].toFixed(2))
++                }
++            }
++            if (status) status.textContent = window.modelAtlasHtml(" Saved values loaded.", " 저장된 값을 불러왔습니다.");
++        })
++        .catch(function() {
++            if (request !== textVectorRequest) return;
++            for (let i = 0; i < tokenNum; i++) {
++                for (let j = 0; j < vectorDim; j++) {
++                    d3.select(`#text-vector-generator-l2-vector-cell-${i}-${j}`).text("—");
+                 }
+             }
++            if (status) status.textContent = window.modelAtlasHtml(
++                " Could not load saved values. Select another prompt to retry.",
++                " 저장된 값을 불러오지 못했습니다. 다른 프롬프트를 선택해 재시도하세요."
++            );
+         })
+ }
+ 
+@@ -690,6 +766,8 @@ function expandTextVectorGeneratorL2(e) {
+         reduceLatentDenoiserL2();
+     }
+     window.textVectorGeneratorL2Expanded = true;
++    document.getElementById('model-atlas-text-vector-note').hidden = false;
++    d3.select("#text-vector-generator-container").attr("aria-expanded", "true");
+     let textVectorGeneratorRectExpandedWidth = 550
+     let textVectorGeneratorRectExpandedHeight = 230
+     let textVectorGeneratorRectOrigWidth = 145
+@@ -700,6 +778,7 @@ function expandTextVectorGeneratorL2(e) {
+     d3.interrupt(d3.select("#text-vector-generator-l2-right-cover"))
+     
+     d3.select("#text-vector-generator-l2-expl-container")
++        .attr("inert", null)
+         .style("display", "block")
+         .style("pointer-events", "initial")
+         .transition()
+@@ -884,13 +963,18 @@ function reduceTextVectorGeneratorL2(e) {
+     if (window.textVectorGeneratorL3Expanded) {
+         d3.select("#generate-text-vector-l3-expl-container").style("display", "none")
+         window.textVectorGeneratorL3Expanded = false;
++        d3.select("#text-vector-generator-l2-text-encoder-container").attr("aria-expanded", "false");
+     }
+     window.textVectorGeneratorL2Expanded = false;
++    document.getElementById('model-atlas-text-vector-note').hidden = true;
++    d3.select("#text-vector-generator-container").attr("aria-expanded", "false");
+     
+     let textVectorGeneratorRectOrigWidth = 145
+     let textVectorGeneratorRectOrigHeight = 80
+     let animationDuration = 1000
+     d3.select("#text-vector-generator-l2-expl-container")
++        .attr("inert", "")
++        .style("pointer-events", "none")
+         .transition()
+             .duration(animationDuration)
+             .style("opacity", "0")
+@@ -1055,6 +1139,8 @@ function reduceTextVectorGeneratorL2(e) {
+ 
+ function expandLatentDenoiserL2(e) {
+     window.latentDenoiserL2Expanded = true;
++    document.getElementById('model-atlas-noise-illustration-note').hidden = false;
++    d3.select('#latent-denoiser-container').attr('aria-expanded', 'true');
+     let latentDenoiserExpandedWidth = 323;
+     let latentDenoiserExpandedHeight = 230;
+     let latentDenoiserGeneratorOrigWidth = 145;
+@@ -1072,6 +1158,7 @@ function expandLatentDenoiserL2(e) {
+ 
+     // show hidden elements
+     d3.select("#latent-denoiser-l2-expl-container")
++        .attr("inert", null)
+         .style("pointer-events", "initial")
+         .style("display", "block")
+         .transition()
+@@ -1285,7 +1372,10 @@ function expandLatentDenoiserL2(e) {
+ function reduceLatentDenoiserL2 () {
+     if (window.latentDenoiserL3Expanded) reduceLatentDenoiserL3();
+     window.latentDenoiserL2Expanded = false;
++    document.getElementById('model-atlas-noise-illustration-note').hidden = true;
+     window.latentDenoiserL3Expanded = false;
++    d3.select('#latent-denoiser-container').attr('aria-expanded', 'false');
++    d3.select('#denoise-latent-l2-expl-guidance-scale-expl-text-how').attr('aria-expanded', 'false');
+     let animationDuration = 1000
+ 
+     d3.interrupt(d3.select("#timestep-0-random-noise-container"))
+@@ -1296,6 +1386,7 @@ function reduceLatentDenoiserL2 () {
+ 
+     // hide elements
+     d3.select("#latent-denoiser-l2-expl-container")
++        .attr("inert", "")
+         .style("pointer-events", "none")
+         .transition()
+             .duration(animationDuration)
+@@ -1501,11 +1592,13 @@ function reduceLatentDenoiserL2 () {
+ 
+ function expandLatentDenoiserL3 () {
+     window.latentDenoiserL3Expanded = true;
++    d3.select('#denoise-latent-l2-expl-guidance-scale-expl-text-how').attr('aria-expanded', 'true');
+     let animationDuration = 1000
+     // ADD Interrupt
+     d3.interrupt(d3.select("#latent-denoiser-l3-expl-container"))    
+ 
+-    d3.select("#latent-denoiser-l3-expl-container")    
++    d3.select("#latent-denoiser-l3-expl-container")
++        .attr("inert", null)
+         .style("display", "block")
+         .transition()
+         .duration(animationDuration)
+@@ -1516,13 +1609,13 @@ function expandLatentDenoiserL3 () {
+         .transition()
+         .duration(animationDuration)
+             // .style("height", "383px")
+-            .style("height", "363px")
++            .style("height", "415px")
+     
+     // Change the height of main
+     d3.select("#architecture-wrapper")
+         .transition()
+             .duration(animationDuration)
+-            .style("height", "495px")
++            .style("height", "547px")
+ 
+     // hide guidance scale expl ...
+     d3.select("#text-vector-generator-latent-denoiser-text")
+@@ -1568,14 +1661,14 @@ function expandLatentDenoiserL3 () {
+     // description
+     let stickyFlag = d3.select("#main").style("position") == "sticky"
+     d3.select("#description-subsec-text-representation-generation")
+-            .style("padding-top", stickyFlag&&window.showVisualization?"535px":"5px")
+-            .style("margin-top", stickyFlag&&window.showVisualization?"-535px":"-5px")
++            .style("padding-top", stickyFlag&&window.showVisualization?"587px":"5px")
++            .style("margin-top", stickyFlag&&window.showVisualization?"-587px":"-5px")
+     d3.select("#description-subsec-image-representation-refining")
+-            .style("padding-top", stickyFlag&&window.showVisualization?"535px":"5px")
+-            .style("margin-top", stickyFlag&&window.showVisualization?"-535px":"-5px")
++            .style("padding-top", stickyFlag&&window.showVisualization?"587px":"5px")
++            .style("margin-top", stickyFlag&&window.showVisualization?"-587px":"-5px")
+     d3.select("#description-subsec-image-upscaling")
+-            .style("padding-top", stickyFlag&&window.showVisualization?"535px":"5px")
+-            .style("margin-top", stickyFlag&&window.showVisualization?"-535px":"-5px")
++            .style("padding-top", stickyFlag&&window.showVisualization?"587px":"5px")
++            .style("margin-top", stickyFlag&&window.showVisualization?"-587px":"-5px")
+ 
+     if (d3.select("#main").style("position") == "sticky" && !window.showVisualization) {
+         setTimeout(function(){
+@@ -1587,6 +1680,7 @@ function expandLatentDenoiserL3 () {
+ 
+ function reduceLatentDenoiserL3 () {
+     window.latentDenoiserL3Expanded = false;
++    d3.select('#denoise-latent-l2-expl-guidance-scale-expl-text-how').attr('aria-expanded', 'false');
+     let animationDuration = 1000
+     // ADD interrupt 
+     d3.interrupt(d3.select("#guidance-scale-control-dropdown-container"))
+@@ -1595,7 +1689,8 @@ function reduceLatentDenoiserL3 () {
+     d3.interrupt(d3.select("#denoise-latent-l2-expl-question-mark"))
+ 
+     // Hide L3 Explanations
+-    d3.select("#latent-denoiser-l3-expl-container")    
++    d3.select("#latent-denoiser-l3-expl-container")
++        .attr("inert", "")
+         .transition()
+         .duration(animationDuration)
+             .style("opacity", "0%")
+@@ -1630,8 +1725,7 @@ function reduceLatentDenoiserL3 () {
+         .duration(animationDuration)
+             .style("opacity", "100%")
+     d3.select("#denoise-latent-l2-expl-guidance-scale-expl-container")
+-        .transition()
+-            .style("display","block")
++        .style("display", "block")
+         .transition()
+         .duration(animationDuration)
+             .style("opacity", "100%")
+@@ -1675,6 +1769,7 @@ function compareButtonClicked () {
+ 
+ function onCompare () {
+     window.compare = true;
++    window.modelAtlasSyncCompareControls();
+     if (window.firstCompare){window.firstCompare = false;}
+     if (window.textVectorGeneratorL3Expanded || window.textVectorGeneratorL2Expanded) reduceTextVectorGeneratorL2();
+     if (window.latentDenoiserL2Expanded || window.latentDenoiserL3Expanded) reduceLatentDenoiserL2(); 
+@@ -2070,6 +2165,7 @@ function onCompare () {
+ 
+ function offCompare () {
+     window.compare = false;
++    window.modelAtlasSyncCompareControls();
+     let animationDuration = 1000;
+     let h1 = +getComputedStyle(document.getElementById("prompt-selector-dropdown-container")).height.slice(0,-2)
+     let h2 = +getComputedStyle(document.getElementById("prompt-box-2")).height.slice(0,-2)
+@@ -2440,4 +2536,4 @@ function offCompare () {
+     }
+ }
+ 
+-export {promptChanged, timestepSliderFunction, controllerButtonHovered, controllerButtonMouseout, controllerButtonClicked, controllerPlayButtonClicked, updateStep, controllerPauseButtonClicked, seedChanged, gsChanged, drawUmap, expandTextVectorGeneratorL2, reduceTextVectorGeneratorL2, expandLatentDenoiserL2, reduceLatentDenoiserL2, expandLatentDenoiserL3,reduceLatentDenoiserL3, hyperparamChanged, drawTokens, drawTextVectors, compareButtonClicked, setMinMaxCoord};
++export {promptChanged, timestepSliderFunction, controllerButtonHovered, controllerButtonMouseout, controllerButtonClicked, controllerPlayButtonClicked, updateStep, controllerPauseButtonClicked, seedChanged, gsChanged, drawUmap, expandTextVectorGeneratorL2, reduceTextVectorGeneratorL2, expandLatentDenoiserL2, reduceLatentDenoiserL2, expandLatentDenoiserL3,reduceLatentDenoiserL3, hyperparamChanged, drawTokens, drawTextVectors, compareButtonClicked, setMinMaxCoord, syncPreviousLatent};
+diff --git a/js/header.js b/js/header.js
+index ab7baf8c..9037fc5b 100644
+--- a/js/header.js
++++ b/js/header.js
+@@ -16,19 +16,19 @@ d3.select("#header")
+ d3.select("#header-message")
+     .append("div")
+         .attr("id", "header-message-1")
+-        .text("Learn how Stable Diffusion transforms")
++        .text(window.modelAtlasText("Learn how Stable Diffusion transforms"))
+ d3.select("#header-message")
+     .append("div")
+         .attr("id", "header-message-2")
+-        .text("your text prompt")
++        .text(window.modelAtlasText("your text prompt"))
+ d3.select("#header-message")
+     .append("div")
+         .attr("id", "header-message-3")
+-        .text("into")
++        .text(window.modelAtlasText("into"))
+ d3.select("#header-message")
+     .append("div")
+         .attr("id", "header-message-4")
+-        .text("image")
++        .text(window.modelAtlasText("image"))
+ d3.select("#header-message")
+     .append("div")
+         .attr("id", "header-message-5")
+@@ -53,7 +53,7 @@ d3.select("#header-link-github")
+     .append("div")
+         .attr("id", "header-link-text-github")
+         .attr("class", "header-link-text")
+-        .text("Code")
++        .text(window.modelAtlasText("Code"))
+ 
+ d3.select("#header-links")
+     .append("a")
+@@ -69,7 +69,7 @@ d3.select("#header-link-paper")
+     .append("div")
+         .attr("id", "header-link-text-paper")
+         .attr("class", "header-link-text")
+-        .text("Paper")
++        .text(window.modelAtlasText("Paper"))
+ 
+ d3.select("#header-links")
+     .append("a")
+@@ -86,7 +86,7 @@ d3.select("#header-link-youtube")
+     .append("div")
+         .attr("id", "header-link-text-youtube")
+         .attr("class", "header-link-text")
+-        .text("Video")
++        .text(window.modelAtlasText("Video"))
+ 
+ d3.select("#header-links")
+     .append("a")
+@@ -103,5 +103,5 @@ d3.select("#header-link-medium")
+     .append("div")
+         .attr("id", "header-link-text-medium")
+         .attr("class", "header-link-text")
+-        .text("Blog")
++        .text(window.modelAtlasText("Blog"))
+ 
+diff --git a/js/prompts.js b/js/prompts.js
+index e99cf0a2..c0992b72 100644
+--- a/js/prompts.js
++++ b/js/prompts.js
+@@ -28,11 +28,36 @@ window.promptsHtmlCode = [
+     ["a cute rabbit knight, <span class='prompt-keyword'>big eyes</span>, holding up a carrot, zootopia", "a cute rabbit knight, holding up a carrot, zootopia"],
+     ["a cute puppy, <span class='prompt-keyword'>in the style of Albert Marquet</span>", "a cute puppy"],
+ ]
++// Korean descriptions explain the fixed English inputs; they are not model inputs.
++window.modelAtlasPromptKo = [
++    ["크고 맑은 눈을 가진 귀여운 토끼가 꽃다발을 들고 있는 모습, 귀여운 픽사 캐릭터 스타일", "크고 맑은 눈을 가진 귀여운 토끼가 꽃다발을 들고 있는 모습"],
++    ["매우 매우 매우 매우 매우 아름다운 도시 풍경", "아름다운 도시 풍경"],
++    ["아이폰을 들고 있는 활기찬 귀부인의 생동감 있는 르네상스 초상화", "아이폰을 들고 있는 슬픈 귀부인의 차분한 르네상스 초상화"],
++    ["대나무 숲에서 기타를 연주하는 귀여운 판다", "기타를 연주하는 귀여운 판다"],
++    ["아름다운 해변의 물가에 있는 파인애플", "아름다운 해변의 물가에 있는 바오바브나무"],
++    ["우주에 있는 스파이더맨", "우주에 있는 곰돌이 푸"],
++    ["바닷가의 성, 아트스테이션에서 인기 있는", "바닷가의 성"],
++    ["마법의 힘과 우주 에너지, 사랑스러운 미소를 가진 귀여운 네 살 여자아이, 디지털 페인팅, 극사실적, 매우 세밀한, 선명한, 걸작", "마법의 힘과 우주 에너지, 사랑스러운 미소를 가진 귀여운 네 살 여자아이, 디지털 페인팅, 극사실적"],
++    ["마법의 물약을 만드는 소년의 수채화, 매우 세밀한, 판타지", "마법의 물약을 만드는 소년의 수채화, 매우 세밀한"],
++    ["로봇 말을 타고 있는 카우보이 사이보그, 아톰펑크", "로봇 말을 타고 있는 카우보이 사이보그"],
++    ["고요한 겨울밤, 토머스 킨케이드", "고요한 겨울밤, 반 고흐"],
++    ["당근을 들고 있는 귀여운 토끼 기사, 큰 눈, 주토피아", "당근을 들고 있는 귀여운 토끼 기사, 주토피아"],
++    ["귀여운 강아지, 알베르 마르케의 화풍", "귀여운 강아지"]
++];
++window.updateModelAtlasPromptTranslations = () => {
++    const panel = document.getElementById('model-atlas-prompt-translation');
++    if (!panel || window.modelAtlasHtml(false, true) !== true) return;
++    const [selected, comparison] = window.modelAtlasPromptKo[window.selectedPromptGroupIdx];
++    panel.hidden = false;
++    document.getElementById('model-atlas-prompt-selected').textContent = selected;
++    document.getElementById('model-atlas-prompt-comparison').textContent = comparison;
++};
+ window.selectedPromptGroupIdx = 0;
+ window.selectedPrompt = window.prompts[window.selectedPromptGroupIdx][0];
+ window.selectedPrompt2 = window.prompts[window.selectedPromptGroupIdx][1];
+ window.selectedPromptHtmlCode = window.promptsHtmlCode[window.selectedPromptGroupIdx][0];
+ window.selectedPromptHtmlCode2 = window.promptsHtmlCode[window.selectedPromptGroupIdx][1];
++window.updateModelAtlasPromptTranslations();
+ window.seed_list = [1,2,3]
+ window.seed = 1
+ window.gs_list = ["0.0", "1.0", "7.0", "20.0"]
+@@ -63,4 +88,4 @@ window.umapNodeHovered = false;
+ window.compare = false;
+ window.firstCompare = true;
+ window.showVisualization = true;
+-window.textEncoderClicked = false;
+\ No newline at end of file
++window.textEncoderClicked = false;
+diff --git a/js/text_l2expl.js b/js/text_l2expl.js
+index 13686896..435756c4 100644
+--- a/js/text_l2expl.js
++++ b/js/text_l2expl.js
+@@ -1,7 +1,11 @@
+ import {reduceTextVectorGeneratorL2, drawTokens, drawTextVectors} from "./function.js"
+ 
+ document.addEventListener("keydown", (e) => {
+-    if (window.textVectorGeneratorL2Expanded && !window.textVectorGeneratorL3Expanded && e.key == "Escape") reduceTextVectorGeneratorL2();
++    if (window.textVectorGeneratorL2Expanded && !window.textVectorGeneratorL3Expanded && e.key == "Escape") {
++        const focusWasInside = document.getElementById("text-vector-generator-l2-expl-container").contains(document.activeElement);
++        reduceTextVectorGeneratorL2();
++        if (focusWasInside) document.getElementById("text-vector-generator-container").focus();
++    }
+ })
+ 
+ document.addEventListener("mouseup", (e) => {
+@@ -31,6 +35,7 @@ document.addEventListener("mouseup", (e) => {
+ let textGeneratorL2ExplDiv = d3.select("#architecture-container")
+     .append("div")
+     .attr("id", "text-vector-generator-l2-expl-container")
++    .attr("inert", "")
+ 
+ // leave button
+ textGeneratorL2ExplDiv
+@@ -39,25 +44,42 @@ textGeneratorL2ExplDiv
+         .append("img") 
+             .attr("id", "text-vector-generator-l2-expl-reduce-button")
+             .attr("src", "./icons/reduce.svg")
+-            .attr("alt", "Reduce SVG")
++            .attr("alt", "")
++            .attr("role", "button")
++            .attr("tabindex", "0")
++            .attr("aria-label", window.modelAtlasHtml("Close text representation details", "텍스트 표현 상세 설명 닫기"))
++            .on("keydown", function (e) {
++                if (e.key !== "Enter" && e.key !== " ") return;
++                e.preventDefault();
++                reduceTextVectorGeneratorL2();
++                document.getElementById("text-vector-generator-container").focus();
++            })
+             .on("click", reduceTextVectorGeneratorL2)
+ 
+ // info button
+ textGeneratorL2ExplDiv
+     .append("div")
+         .attr("id", "text-vector-generator-l2-expl-info-button")
++        .attr("role", "button")
++        .attr("tabindex", "0")
++        .attr("aria-label", window.modelAtlasHtml("Read about text representation", "텍스트 표현 설명 읽기"))
+         .text("i")
+-        .on("click", () => {
+-            // document.getElementById("description-subsec-image-representation-refining").scrollIntoView({"behavior": "smooth"})
++        .on("keydown", function (e) {
++            if (e.key !== "Enter" && e.key !== " ") return;
++            e.preventDefault();
++            this.click();
++        })
++        .on("click", (event) => {
+             window.scrollBy(0, 10)
+             document.getElementById("description-subsec-text-representation-generation").scrollIntoView({"behavior": "smooth"})
++            if (event.detail === 0) document.querySelector("#description-subsec-text-representation-generation h2").focus({preventScroll: true});
+         })
+ 
+ 
+ // tokenizer
+ textGeneratorL2ExplDiv.append("div")
+     .attr("id", "text-vector-generator-l2-tokenizer-container")
+-    .text("Tokenizer")
++    .text(window.modelAtlasText("Tokenizer"))
+ 
+ textGeneratorL2ExplDiv
+     .append("div")
+@@ -76,7 +98,7 @@ textGeneratorL2ExplDiv
+ textGeneratorL2ExplDiv
+     .append("div")
+         .attr("id", "text-vector-generator-l2-tokenizer-out-expl-text")
+-        .text("77 tokens")
++        .text(window.modelAtlasHtml("77 positions (diagram)", "77칸 (개념도)"))
+ 
+ // Arrow and explain truncate/padding
+ textGeneratorL2ExplDiv
+@@ -102,7 +124,7 @@ d3.select("#text-vector-generator-l2-tokenizer-out-detailed-expl-arrow g")
+ d3.select("#text-vector-generator-l2-tokenizer-out-detailed-expl-container")
+     .append("div")
+         .attr("id", "text-vector-generator-l2-tokenizer-out-detailed-expl-text")
+-        .text("Truncate if prompt consists of more than 77 tokens (words) Pad with <end> if less than 77 tokens")
++        .text(window.modelAtlasHtml("Words shown are illustrative, not actual CLIP tokens.", "표시된 단어는 예시이며 실제 CLIP 토큰과 다릅니다."))
+ 
+ // Add tokens (implement this at function and import)
+ textGeneratorL2ExplDiv
+@@ -113,7 +135,18 @@ drawTokens()
+ // Text Encoder
+ textGeneratorL2ExplDiv.append("div")
+     .attr("id", "text-vector-generator-l2-text-encoder-container")
+-    .text("Text Encoder")
++    .attr("role", "button")
++    .attr("tabindex", "0")
++    .attr("aria-expanded", "false")
++    .attr("aria-controls", "generate-text-vector-l3-expl-container")
++    .attr("aria-label", window.modelAtlasHtml("Open CLIP text encoder details", "CLIP 텍스트 인코더 상세 설명 열기"))
++    .text(window.modelAtlasText("Text Encoder"))
++    .on("keydown", function (e) {
++        if (e.key !== "Enter" && e.key !== " ") return;
++        e.preventDefault();
++        this.click();
++        document.getElementById("generate-text-vector-l3-expl-x-svg").focus();
++    })
+     .on("mouseover", () => {
+         d3.select(`#text-vector-generator-l2-text-encoder-container`)
+             .style("background-color", "var(--text1)")
+@@ -133,6 +166,7 @@ textGeneratorL2ExplDiv.append("div")
+     })
+     .on("click", (e) => {
+         window.textVectorGeneratorL3Expanded = true;
++        d3.select("#text-vector-generator-l2-text-encoder-container").attr("aria-expanded", "true");
+         window.textEncoderClicked = true;
+         d3.select("#generate-text-vector-l3-expl-container")
+             .style("display", "block")
+@@ -142,10 +176,18 @@ textGeneratorL2ExplDiv.append("div")
+ textGeneratorL2ExplDiv
+     .append("div")
+         .attr("id", "text-vector-generator-l2-text-encoder-expl-text")
+-        .text("vector for each token")
++        .text(window.modelAtlasText("vector for each token"))
+ textGeneratorL2ExplDiv
+     .append("div")
+         .attr("id", "text-vector-generator-l2-vectors-container")
++d3.select("#main").append("p")
++    .attr("id", "model-atlas-text-vector-note")
++    .attr("hidden", "")
++    .text(window.modelAtlasHtml(
++        "The nine numbers are a small part of a saved upstream file. Word labels are split at spaces; their alignment with CLIP tokens is not verified. The encoder is not run here.",
++        "숫자 9개는 원본에 저장된 값의 일부입니다. 단어 표시는 공백으로 나눈 그림이며 실제 CLIP 토큰과의 대응은 확인되지 않았습니다. 여기서는 인코더를 실행하지 않습니다."
++    ))
++    .append("span").attr("id", "model-atlas-text-vector-status").attr("role", "status").attr("aria-live", "polite");
+ drawTextVectors()
+ 
+ // covers
+diff --git a/js/text_l3expl.js b/js/text_l3expl.js
+index 8e873cc3..69e2573f 100644
+--- a/js/text_l3expl.js
++++ b/js/text_l3expl.js
+@@ -1,9 +1,17 @@
+ document.addEventListener("keydown", (e) => {
+-    if (window.textVectorGeneratorL3Expanded && e.key == "Escape") 
+-        d3.select("#generate-text-vector-l3-expl-container").style("display", "none")
+-        window.textVectorGeneratorL3Expanded = false;
++    if (window.textVectorGeneratorL3Expanded && e.key == "Escape") {
++        const focusWasInside = document.getElementById("generate-text-vector-l3-expl-container").contains(document.activeElement);
++        closeTextEncoderDetails();
++        if (focusWasInside) document.getElementById("text-vector-generator-l2-text-encoder-container").focus();
++    }
+ })
+ 
++function closeTextEncoderDetails() {
++    d3.select("#generate-text-vector-l3-expl-container").style("display", "none");
++    d3.select("#text-vector-generator-l2-text-encoder-container").attr("aria-expanded", "false");
++    window.textVectorGeneratorL3Expanded = false;
++}
++
+ document.addEventListener("mouseup", (e) => {
+     if (window.textVectorGeneratorL2Expanded && window.textVectorGeneratorL3Expanded) {
+         let textVectorGeneratorBox = document.getElementById("generate-text-vector-l3-expl-container").getBoundingClientRect()
+@@ -21,8 +29,7 @@ document.addEventListener("mouseup", (e) => {
+         else if (document.querySelector("#architecture-container-hide-button-container:hover") != null) {}
+         // else if (e.clientY > descriptionBox.y) {}
+         else if (e.clientX > mainLeft && e.clientX < mainRight && e.clientY > mainTop && e.clientY < mainBottom) {
+-            d3.select("#generate-text-vector-l3-expl-container").style("display", "none")
+-            window.textVectorGeneratorL3Expanded = false;
++            closeTextEncoderDetails();
+             // reduceTextVectorGeneratorL2();
+         }
+         else {
+@@ -46,27 +53,27 @@ d3.select("#generate-text-vector-l3-expl-text-container")
+         .append("div")
+             .attr("id", "generate-text-vector-l3-expl-text-1-1")
+             // .text("Stable Diffusion uses CLIP's")
+-            .text("Stable Diffusion uses a special")
++            .text(window.modelAtlasHtml("CLIP pretrains an image encoder and a", "CLIP은 이미지 인코더와"))
+ d3.select("#generate-text-vector-l3-expl-text-1")
+     .append("div")
+         .attr("id", "generate-text-vector-l3-expl-text-1-2")
+-        .text("Text Encoder")
++        .text(window.modelAtlasText("Text Encoder"))
+ d3.select("#generate-text-vector-l3-expl-text-1")
+     .append("div")
+         .attr("id", "generate-text-vector-l3-expl-text-1-3")
+-        .text("that connects text with image.")
++        .text(window.modelAtlasHtml("together.", "를 함께 사전 학습합니다."))
+ d3.select("#generate-text-vector-l3-expl-text-container")
+     .append("div")
+     .attr("id", "generate-text-vector-l3-expl-text-2")
+-    .text("For an image-caption pair, the Text Encoder converts the caption's tokens")
++    .text(window.modelAtlasHtml("Matched image-caption pairs are trained to have higher similarity than mismatched pairs.", "서로 짝인 이미지와 설명의 유사도가 다른 조합보다 높아지도록 학습합니다."))
+ d3.select("#generate-text-vector-l3-expl-text-container")
+     .append("div")
+     .attr("id", "generate-text-vector-l3-expl-text-3")
+-    .text("into a vector that is close to the image's vector, produced by a paired")
++    .text(window.modelAtlasHtml("The words and numbers above are illustrative, not measured CLIP outputs. The word splits are not actual tokenization.", "위 단어와 숫자는 이해를 위한 예시이며 실제 CLIP 출력이 아닙니다. 단어 구분도 실제 토큰화가 아닙니다."))
+ d3.select("#generate-text-vector-l3-expl-text-container")
+     .append("div")
+     .attr("id", "generate-text-vector-l3-expl-text-4")
+-    .text("image encoder (not used in Stable Diffusion), in hybrid text-image space.")
++    .text(window.modelAtlasHtml("During generation, Stable Diffusion uses a sequence of text-encoder states to guide the UNet; it does not use the CLIP image encoder here.", "이미지 생성 시 Stable Diffusion은 텍스트 인코더의 상태 순서열로 UNet을 안내하며 CLIP 이미지 인코더는 이 과정에 사용하지 않습니다."))
+ 
+ d3.select("#generate-text-vector-l3-expl-container")
+     .append("div")
+@@ -74,15 +81,20 @@ d3.select("#generate-text-vector-l3-expl-container")
+ d3.select("#generate-text-vector-l3-expl-vis-container")
+     .append("div")
+     .attr("id", "generate-text-vector-l3-expl-vis-input-container")
++// Original diagrams for the instructional pairs; no model inference is performed here.
++const clipDogIllustration = `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="#e7f2e1"/><path d="M12 10C7 5 3 9 5 20l5 4M28 10c5-5 9-1 7 10l-5 4" fill="#c9ced1" stroke="#66756d" stroke-width="1.5"/><ellipse cx="20" cy="21" rx="12" ry="13" fill="#fff" stroke="#66756d" stroke-width="1.5"/><circle cx="15" cy="18" r="1.5" fill="#3b4a42"/><circle cx="25" cy="18" r="1.5" fill="#3b4a42"/><ellipse cx="20" cy="24" rx="3.5" ry="2.5" fill="#3b4a42"/><path d="M20 26v2m0 0c-2 2-4 1-5 0m5 0c2 2 4 1 5 0" fill="none" stroke="#3b4a42" stroke-width="1.2"/></svg>')}`;
++const clipFlowerIllustration = `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="#fff6e8"/><path d="M20 22v15m0-5c-4-5-7-4-8-4 1 4 4 6 8 6m0-5c4-5 7-4 8-4-1 4-4 6-8 6" fill="#7fac70" stroke="#507d4b" stroke-width="1.5"/><g fill="#f8ce42" stroke="#c69725" stroke-width="1"><ellipse cx="20" cy="9" rx="4" ry="7"/><ellipse cx="20" cy="23" rx="4" ry="7"/><ellipse cx="13" cy="16" rx="7" ry="4"/><ellipse cx="27" cy="16" rx="7" ry="4"/></g><circle cx="20" cy="16" r="4" fill="#a86424"/></svg>')}`;
++
+ d3.select("#generate-text-vector-l3-expl-vis-input-container")
+     .append("img")
+     .attr("id", "generate-text-vector-l3-expl-vis-input-img-1")
+-    .attr("src", "./icons/whitedog.jpg")
++    .attr("src", clipDogIllustration)
++    .attr("alt", window.modelAtlasHtml("Illustration of a white dog", "흰 강아지 그림"))
+ d3.select("#generate-text-vector-l3-expl-vis-input-container")
+     .append("div")
+     .attr("id", "generate-text-vector-l3-expl-vis-input-tokens-1")
+         .selectAll("div")
+-        .data([["34px", "photo"],["12px", "of"],["30px", "white"],["21px", "dog"]])
++        .data(window.modelAtlasHtml([["34px", "image"],["12px", "of"],["30px", "white"],["40px", "dog"]], [["26px", "흰"],["44px", "강아지"],["14px", "의"],["32px", "그림"]]))
+         .enter()
+             .append("div")
+                 .attr("class", `generate-text-vector-l3-expl-vis-token-1`)
+@@ -92,16 +104,17 @@ d3.select("#generate-text-vector-l3-expl-vis-input-container")
+ d3.select("#generate-text-vector-l3-expl-vis-input-container")
+     .append("img")
+     .attr("id", "generate-text-vector-l3-expl-vis-input-img-2")
+-    .attr("src", "./icons/yellowflower.jpg")
++    .attr("src", clipFlowerIllustration)
++    .attr("alt", window.modelAtlasHtml("Illustration of a yellow flower", "노란 꽃 그림"))
+ d3.select("#generate-text-vector-l3-expl-vis-input-container")
+     .append("div")
+     .attr("id", "generate-text-vector-l3-expl-vis-input-tokens-2")
+         .selectAll("div")
+-        .data([["43px", "drawing"],["12px", "of"],["35px", "yellow"],["34px", "flower"]])
++        .data(window.modelAtlasHtml([["43px", "drawing"],["12px", "of"],["35px", "yellow"],["34px", "flower"]], [["40px", "노란"],["22px", "꽃"],["14px", "의"],["40px", "그림"]]))
+         .enter()
+             .append("div")
+                 .attr("class", `generate-text-vector-l3-expl-vis-token-2`)
+-                .attr("id", (d,i) => `generate-text-vector-l3-expl-vis-token-1-${i}`)
++                .attr("id", (d,i) => `generate-text-vector-l3-expl-vis-token-2-${i}`)
+                 .text(d => d[1])
+                 .style("width", d => d[0])
+ 
+@@ -111,7 +124,7 @@ d3.select("#generate-text-vector-l3-expl-vis-container")
+     .attr("id", "generate-text-vector-l3-expl-image-encoder-container")
+         .append("div")
+         .attr("id", "generate-text-vector-l3-expl-image-encoder-text")
+-            .text("Image Encoder")
++            .text(window.modelAtlasText("Image Encoder"))
+ d3.select("#generate-text-vector-l3-expl-image-encoder-container")
+     .append("div")
+         .attr("id", "generate-text-vector-l3-expl-image-encoder-rect")
+@@ -121,7 +134,7 @@ d3.select("#generate-text-vector-l3-expl-vis-container")
+     .attr("id", "generate-text-vector-l3-expl-text-encoder-container")
+         .append("div")
+         .attr("id", "generate-text-vector-l3-expl-text-encoder-text")
+-            .text("Text Encoder")
++            .text(window.modelAtlasText("Text Encoder"))
+ d3.select("#generate-text-vector-l3-expl-text-encoder-container")
+     .append("div")
+         .attr("id", "generate-text-vector-l3-expl-text-encoder-rect")
+@@ -132,7 +145,7 @@ d3.select("#generate-text-vector-l3-expl-vis-container")
+         .attr("id", "generate-text-vector-l3-expl-space-container")
+         .append("div")
+             .attr("id", "generate-text-vector-l3-expl-space-text")
+-            .text("Hybrid Text-Image Space")
++            .text(window.modelAtlasText("Hybrid Text-Image Space"))
+ d3.select("#generate-text-vector-l3-expl-space-container")
+     .append("div")
+         .attr("id", "generate-text-vector-l3-expl-space-vis")
+@@ -412,9 +425,18 @@ d3.select("#generate-text-vector-l3-expl-vis-lines-2-text-g")
+ d3.select("#generate-text-vector-l3-expl-container")
+     .append("svg")
+         .attr("id", "generate-text-vector-l3-expl-x-svg")
++        .attr("role", "button")
++        .attr("tabindex", "0")
++        .attr("aria-label", window.modelAtlasHtml("Close CLIP text encoder details", "CLIP 텍스트 인코더 상세 설명 닫기"))
++        .on("keydown", function (e) {
++            if (e.key !== "Enter" && e.key !== " ") return;
++            e.preventDefault();
++            this.dispatchEvent(new MouseEvent("click", {bubbles: true}));
++        })
+         .on("click", function () {
+-            d3.select("#generate-text-vector-l3-expl-container").style("display", "none")
+-            window.textVectorGeneratorL3Expanded = false;
++            const focusWasInside = document.getElementById("generate-text-vector-l3-expl-container").contains(document.activeElement);
++            closeTextEncoderDetails();
++            if (focusWasInside) document.getElementById("text-vector-generator-l2-text-encoder-container").focus();
+         })
+         .append("g")
+         .attr("id", "generate-text-vector-l3-expl-x-g")
+@@ -433,4 +455,4 @@ d3.select("#generate-text-vector-l3-expl-x-g")
+         .attr("x2","15")
+         .attr("y2","0")
+         .attr("stroke", "#bdbdbd")
+-        .attr("stroke-width", "1px")
+\ No newline at end of file
++        .attr("stroke-width", "1px")
+diff --git a/style.css b/style.css
+index 15a90313..0987afba 100644
+--- a/style.css
++++ b/style.css
+@@ -301,6 +301,7 @@ svg {
+ #prompt-keyword-popup-container {
+     position: absolute;
+     z-index: 2;
++    pointer-events: none;
+     /* background-color: var(--text00); */
+     background-color: var(--white);
+     border: 1px solid var(--light);
+@@ -374,6 +375,27 @@ svg {
+     background-color: var(--text00);
+ }
+ 
++.model-atlas-prompt-option-ko {
++    display: block;
++    color: #555;
++    font-size: 12px;
++    line-height: 1.4;
++    margin-top: 4px;
++}
++
++#model-atlas-prompt-translation {
++    max-width: 1120px;
++    margin: 16px auto 24px;
++    padding: 14px 18px;
++    border-left: 3px solid #578542;
++    background: #f4f7ef;
++    color: #263323;
++    line-height: 1.5;
++    font-size: 14px;
++}
++#model-atlas-prompt-translation[hidden] { display: none; }
++#model-atlas-prompt-translation p { margin: 5px 0 0; }
++
+ #dropdown-button-container {
+     font-size: 14px;
+     color: var(--lightgray);
+@@ -1155,6 +1177,16 @@ input:checked + .slider:before {
+     filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(1deg) brightness(103%) contrast(107%);;
+ }
+ 
++#text-vector-generator-l2-expl-reduce-button-container:focus-within,
++#latent-denoiser-l2-expl-reduce-button-container:focus-within,
++#text-vector-generator-l2-expl-info-button:focus-visible,
++#latent-denoiser-l2-expl-info-button:focus-visible,
++#denoise-latent-l2-expl-prev-latent-image-container:focus-visible,
++#denoise-latent-l2-expl-weaken-text:focus-visible {
++    outline: 2px solid #222;
++    outline-offset: 2px;
++}
++
+ #text-vector-generator-l2-expl-reduce-button-container:hover,
+ #text-vector-generator-l2-expl-info-button:hover {    
+     background-color: #afafaf;
+@@ -1304,6 +1336,10 @@ input:checked + .slider:before {
+     box-sizing: border-box;
+ }
+ 
++html[lang="ko"] #text-vector-generator-l2-text-encoder-container {
++    word-break: keep-all;
++}
++
+ @keyframes text-encoder-animation {
+     /* 0% {background-color: var(--text0);}
+     50% {background-color: var(--text1);}
+@@ -1556,8 +1592,8 @@ input:checked + .slider:before {
+ 
+ #denoise-latent-l2-expl-central-line-timestep-expl-text {
+     font-size: 12px;
+-    color: var(--lightgray);
+-    font-style: italic;
++    color: #484848;
++    font-style: normal;
+     position: absolute;
+     top: -57px;
+     left: 140px;
+@@ -1716,9 +1752,23 @@ input:checked + .slider:before {
+     color: var(--lightgray);
+     position: absolute;
+     top: -27px;
+-    left: 12px;
++    left: 0;
++    white-space: nowrap;
+ }
+ 
++#model-atlas-noise-illustration-note,
++#model-atlas-text-vector-note {
++    max-width: 1008px;
++    box-sizing: border-box;
++    margin: 0 auto;
++    padding: 4px 16px 10px;
++    color: #5f4654;
++    font-size: 13px;
++    line-height: 1.4;
++}
++#model-atlas-noise-illustration-note[hidden],
++#model-atlas-text-vector-note[hidden] { display: none; }
++
+ #denoise-latent-l2-expl-weaken-text {
+     font-size: 12px;
+     color: var(--lightgray);
+@@ -1740,9 +1790,9 @@ input:checked + .slider:before {
+ }
+ 
+ #denoise-latent-l2-expl-weaken-expl {
+-    color: var(--lightgray);
++    color: #484848;
+     font-size: 12px;
+-    font-style: italic;
++    font-style: normal;
+     width: 210px;
+     position: absolute;
+     /* top: 2px; 
+@@ -1795,7 +1845,7 @@ input:checked + .slider:before {
+ }
+ 
+ #generate-text-vector-l3-expl-text-container {
+-    color: var(--lightgray); 
++    color: #595959;
+     font-size: 15px;
+     text-align: center;
+     position: absolute;
+@@ -1890,7 +1940,7 @@ input:checked + .slider:before {
+ #generate-text-vector-l3-expl-image-encoder-text,
+ #generate-text-vector-l3-expl-text-encoder-text {
+     font-size: 15px;
+-    color: #aaaaaa;
++    color: #595959;
+     position: absolute;
+     top: -39px;
+     width: 65px;
+@@ -1921,7 +1971,7 @@ input:checked + .slider:before {
+ 
+ #generate-text-vector-l3-expl-space-text {
+     font-size: 15px;
+-    color: #aaaaaa;
++    color: #595959;
+     position: absolute;
+     top: -24px;
+     width: 180px;
+@@ -2033,6 +2083,8 @@ input:checked + .slider:before {
+     font-weight: 300;
+     font-size: 13px;
+     color: var(--gray);
++    word-break: keep-all;
++    overflow-wrap: break-word;
+     position: absolute;
+     left: 316px;
+     top: 380px;
+@@ -2207,6 +2259,33 @@ input:checked + .slider:before {
+     margin: 1px;
+ }
+ 
++.controller-button-container:focus-visible {
++    outline: 2px solid #145c4e;
++    outline-offset: 2px;
++}
++
++#dropdown-button-container:focus-visible,
++#text-vector-generator-container:focus-visible,
++#latent-denoiser-container:focus-visible,
++#denoise-latent-l2-expl-reduce-button:focus-visible,
++#denoise-latent-l2-expl-guidance-scale-expl-text-how:focus-visible,
++#latent-denoiser-l3-expl-vis-leave-img:focus-visible,
++#latent-denoiser-l3-expl-vis-tick-g circle:focus-visible,
++#text-vector-generator-l2-text-encoder-container:focus-visible,
++#generate-text-vector-l3-expl-x-svg:focus-visible,
++#gs-dropdown-box:focus-visible,
++#seed-dropdown-box:focus-visible {
++    outline: 2px solid #145c4e;
++    outline-offset: 2px;
++}
++
++.prompt-selector-dropdown-options:focus-visible,
++.gs-dropdown-options:focus-visible,
++.seed-dropdown-options:focus-visible {
++    outline: 2px solid #145c4e;
++    outline-offset: -2px;
++}
++
+ .controller-button-background {
+     position: absolute;
+ }
+@@ -2368,6 +2447,9 @@ input:checked + .slider:before {
+ 
+ #description-top-button-container {
+     width: 55px;
++    border: 0;
++    padding: 0;
++    font: inherit;
+     border-radius: 50%;
+     background-color: #000000;
+     height: 55px;
+@@ -2382,6 +2464,15 @@ input:checked + .slider:before {
+     opacity: 0.35;
+ }
+ 
++#description-top-button-container:focus-visible {
++    opacity: 0.8;
++}
++
++#description-top-button-container:focus-visible {
++    outline: 3px solid #145c4e;
++    outline-offset: 3px;
++}
++
+ #description-top-button-img {
+     width: 22px;
+     top: 7.5px;
+@@ -2562,4 +2653,47 @@ input:checked + .slider:before {
+     left: 290px;
+     top: 101px;
+     z-index: 10;
+-}
+\ No newline at end of file
++}
++/* Model Atlas: keep Korean words intact in the original fixed-width diagram. */
++html[lang="ko"] #text-vector-generator-container,
++html[lang="ko"] #latent-denoiser-container {
++    word-break: keep-all;
++}
++html[lang="ko"] #generate-text-vector-l3-expl-image-encoder-text,
++html[lang="ko"] #generate-text-vector-l3-expl-text-encoder-text {
++    word-break: keep-all;
++}
++html[lang="ko"] #seed-control-text,
++html[lang="ko"] #improved-latent-generated-image-text,
++html[lang="ko"] #improved-latent-generated-image-text-2 {
++    white-space: nowrap;
++}
++
++/* Both translations explain pretraining and generation in the same panel. */
++#generate-text-vector-l3-expl-container {
++    height: 420px;
++}
++
++/* Model Atlas: comparison controls remain visible when reached by keyboard. */
++#prompt-selector-dropdown-box-container .prompt-keyword:focus-visible,
++#exit-button-container:focus-visible,
++#global-umap-zoom-in-button:focus-visible,
++#global-umap-zoom-out-button:focus-visible {
++    outline: 2px solid #145c4e;
++    outline-offset: 2px;
++}
++
++/* Model Atlas: the comparison explanation stays outside the compact graph. */
++#model-atlas-trajectory-guide {
++    max-width: 1120px;
++    margin: 16px auto 24px;
++    padding: 14px 18px;
++    border-left: 3px solid #437aa1;
++    background: #f1f7fa;
++    color: #21333e;
++    line-height: 1.5;
++    font-size: 14px;
++}
++#model-atlas-trajectory-guide[hidden] { display: none; }
++#model-atlas-trajectory-guide h2 { font-size: 16px; margin: 0; }
++#model-atlas-trajectory-guide p { margin: 5px 0 0; }

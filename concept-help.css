@@ -1,0 +1,21 @@
+.concept-help-chips{margin:16px 0 22px;font:13px/1.5 system-ui,sans-serif;color:#5d6c7b}
+.concept-help-chips>span{display:block;margin-bottom:8px;font-size:12px}
+.concept-help-chips>div{display:flex;gap:8px;flex-wrap:wrap}
+.concept-help-chips button{display:inline-flex;align-items:center;gap:8px;min-height:36px;max-width:100%;padding:7px 12px;border:1px solid #ced0d4;border-radius:100px;background:#fff;color:#0064e0;font:500 12px/1.4 system-ui,sans-serif;cursor:help;text-align:left}
+.concept-help-chips button>span{display:grid;place-items:center;flex-shrink:0;width:16px;height:16px;border:1px solid currentColor;border-radius:50%;font-size:10px}
+.concept-help-chips button:is(:hover,[aria-expanded=true]){background:#edf4ff;border-color:#0064e0}
+.concept-help-chips button:focus-visible{outline:3px solid #0064e0;outline-offset:3px}
+.atlas-math [data-math-concept]{cursor:help}
+.atlas-math .mop[data-math-concept]{text-decoration:underline dotted #8fa7c3;text-underline-offset:4px}
+.atlas-math [data-math-concept]:hover{background:#e7f0ff}
+/* KaTeX's second vertical-list row is an empty depth strut. It can overlap
+   the denominator and intercept hover without drawing any mathematical ink. */
+.atlas-math .katex-html .vlist-r+.vlist-r{pointer-events:none}
+.atlas-concept-popover{position:fixed;inset:auto;margin:0;width:360px;max-width:calc(100vw - 24px);max-height:calc(100dvh - 24px);overflow:auto;padding:22px;border:1px solid #ced0d4;border-radius:20px;background:#fff;color:#0a1317;box-shadow:0 12px 48px #0a131724;font:14px/1.65 system-ui,sans-serif;z-index:2147483647}
+.atlas-concept-popover::backdrop{background:transparent;pointer-events:none}
+.atlas-concept-popover strong{display:block;font-size:17px;font-weight:600;line-height:1.4}
+.atlas-concept-popover p{margin:12px 0;font:14px/1.65 system-ui,sans-serif;color:#465563}
+.atlas-concept-popover .math-block{font-size:14px;color:#0a1317}
+.atlas-concept-popover .concept-example{padding:12px;border-radius:10px;background:#f1f4f7;font-size:13px}
+.atlas-concept-popover small{font-size:11px;color:#5d6c7b}
+@media(max-width:600px){.concept-help-chips button{min-height:44px}.atlas-concept-popover{padding:18px}}

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>개념 찾아보기 — Model Atlas</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="meta-theme.css">
+</head>
+<body>
+  <a class="skip" href="#main" id="skip-to-content">본문으로 건너뛰기</a>
+  <div class="shell">
+    <aside class="sidebar library-sidebar">
+      <a class="brand" href="index.html#foundation"><span>MODEL <b>ATLAS</b><small>LEARN BY LOOKING CLOSER</small></span></a>
+      <div class="sidebar-tools"><button id="language" class="language" type="button">EN</button></div>
+      <a class="concept-library-link" id="back-course" href="index.html#foundation">← 학습 경로</a>
+      <div id="formula-navigation"></div>
+      <details id="library-navigation" open>
+        <summary id="library-summary">개념 찾아보기</summary>
+        <label class="library-search-label" for="concept-search" id="search-label">개념 검색</label>
+        <input class="library-search" id="concept-search" type="search" autocomplete="off">
+        <div id="library-list" class="library-list" role="navigation"></div>
+      </details>
+    </aside>
+    <main id="main" class="concept-page" tabindex="-1">
+      <section class="startup-notice">
+        <h1>개념 설명을 불러오는 중입니다</h1>
+        <p>이 안내가 계속 보이면 프로젝트 폴더의 <strong>START_MODEL_ATLAS.bat</strong>을 두 번 클릭해 학습 화면을 열어 주세요. 명령 창은 학습 중에 닫지 마세요. 다른 운영체제에서는 <code>python3 scripts/serve.py</code>를 실행합니다.</p>
+        <p lang="en">If this message remains, double-click <strong>START_MODEL_ATLAS.bat</strong> in the project folder and keep its command window open. On other systems, run <code>python3 scripts/serve.py</code>.</p>
+      </section>
+    </main>
+  </div>
+  <script type="module" src="concepts-ui.js"></script>
+</body>
+</html>

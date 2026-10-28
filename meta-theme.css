@@ -1,0 +1,102 @@
+/* Own-site chrome only. Mathematical diagrams retain their semantic colors. */
+:root{--ink:#0a1317;--muted:#5d6c7b;--line:#dee3e9;--paper:#fff;--white:#fff;--green:#0064e0;--mint:#edf4ff;color:var(--ink);background:var(--paper)}
+body{line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select{font-family:inherit}
+a{text-underline-offset:4px}
+:is(a,button,input,select,summary):focus-visible{outline:3px solid #0064e0;outline-offset:3px}
+.brand{font-family:inherit;font-size:14px;font-weight:600;letter-spacing:.04em}
+.brand b{font-weight:400}.brand small{font-family:var(--mono);font-size:8px;color:var(--muted)}
+.brand-mark{background:#0064e0;border-radius:12px;font-family:var(--mono)}.brand-mark span{color:#fff}
+.language{min-height:44px;min-width:64px;border-radius:100px;font-family:inherit;font-size:12px;font-weight:500}
+.shell{max-width:1680px;margin-inline:auto;grid-template-columns:248px minmax(0,1fr);min-height:100dvh;align-items:start}
+.sidebar{position:sticky;top:0;height:100dvh;overflow-y:auto;scrollbar-width:thin;padding:28px 20px 24px;background:#fff;border-color:var(--line);gap:0}
+.sidebar>*{flex-shrink:0}
+.sidebar>.brand{margin:0 0 24px;font-size:13px;gap:9px}
+.sidebar-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:24px}
+.sidebar-tools .progress-label{font-size:10px}
+.sidebar-tools .language{margin-left:auto}
+.sidebar-formulas{padding-top:24px;margin-top:24px;border-top:1px solid #dee3e9}
+.sidebar-formulas h2{font-size:13px;font-weight:500;line-height:1.6;margin:0 0 12px;color:#0a1317;letter-spacing:-.01em}
+.sidebar-formulas [role=navigation]{display:grid;gap:6px}
+.sidebar-formula-link{display:grid;gap:4px;padding:12px;border:1px solid transparent;border-radius:14px;text-decoration:none;color:#465563;font-size:13px;line-height:1.5}
+.sidebar-formula-link>span:first-child{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#0064e0;font-weight:500}
+.sidebar-formula-link small{font:10px var(--mono);white-space:nowrap;color:#5d6c7b}
+.sidebar-formula-caption{font-size:11px;line-height:1.7}
+.sidebar-formula-link:is(:hover,:focus-visible),.sidebar-formula-link.is-current{background:#f1f4f7;border-color:#dee3e9}
+.sidebar .eyebrow{margin-left:12px;color:#5d6c7b}
+.nav-item{border-radius:100px;color:#465563;font-weight:500;min-height:44px;padding:12px 14px}
+.nav-item .num{color:#7b8794}.nav-item.active{background:#0a1317;color:#fff}.nav-item.active .num{color:#bdc8d3}
+.nav-item:hover:not(.active){background:#f1f4f7}
+.concept-library-link{border-color:#ced0d4;border-radius:16px;color:#0064e0;font-weight:500;line-height:1.7;margin-top:20px}
+.concept-library-link:is(:hover,:focus-visible){background:#edf4ff}
+.side-footer{color:#5d6c7b;padding-top:24px}.dot{background:#0064e0}
+.eyebrow,.breadcrumb{color:#5d6c7b}
+main{padding:40px clamp(24px,3.4vw,56px) 80px;max-width:none}
+.hero{margin:32px 0 40px;gap:24px}.hero h1{font-size:clamp(36px,4vw,56px);font-weight:500;line-height:1.15;letter-spacing:-.045em}
+.hero p{font-size:16px;line-height:1.8;color:#5d6c7b;max-width:70ch}
+.hero-index{color:#e5eaf0;font-weight:400}.chapter-tag{color:#0064e0}
+.overview{background:#f1f4f7;border-color:#dee3e9;border-radius:24px;padding:24px;grid-template-columns:144px minmax(0,1fr)}
+.overview strong{font-weight:500}.overview p{font-size:14px;color:#465563;line-height:1.8}
+.section-heading{margin-top:48px}.section-heading h2{font-size:26px;font-weight:500;letter-spacing:-.03em}.section-heading p{color:#5d6c7b}
+.step,.worked-note,.resource-panel,.resource,.question,.metric-lab{border-color:#dee3e9;border-radius:20px;background:#fff}
+.step-head{padding:24px}.step-head strong{font-weight:500;font-size:16px}.step-head small{line-height:1.7;color:#5d6c7b}
+.step-number{background:#f1f4f7;border-radius:50%;color:#0064e0}.step-head .chevron{color:#5d6c7b}
+.step-body{border-color:#dee3e9}.step-body p,.worked-note p,.concept-page p,.concept-page li{color:#465563}
+.formula{background:#f1f4f7;border-color:#0064e0;border-radius:0 16px 16px 0}
+.explain-grid div{background:#f1f4f7;border-color:transparent;border-radius:12px;padding:16px}.explain-grid span{color:#465563;line-height:1.8}
+.worked-note{padding:24px}.worked-note summary{font-weight:500;font-size:15px}.worked-note p{font-size:14px;line-height:1.8}
+.resource-panel,.resource{padding:24px}.resource-panel summary{font-weight:500;font-size:16px}.resource-panel p{font-size:13px;line-height:1.8}
+.resource a,.next,.lab-scroll-controls button,.sequence-actions button,.skipgram-actions button{border-radius:100px;min-height:44px;padding:11px 18px;font-weight:500;border-color:#ced0d4}
+.next{border-color:#0064e0}.resource a:hover{background:#edf4ff}
+.lab-guide,.lab-connection,.glossary{background:#f1f4f7;color:#465563;border-color:#dee3e9;border-radius:16px}
+.lab-connection{border-left:0}.lab-guide{padding-block:20px}.glossary summary{font-weight:500}
+.lab-scroll-controls button{background:#fff}.lab-viewport{border-radius:16px}
+.lab{background:#0a1317;border-radius:24px;padding:28px}.lab .eyebrow{color:#9dbfff}.lab p{color:#bdc8d3}
+.lab h2{font-weight:500}.control label{color:#dbe3ed}.control input{accent-color:#81b3ff}
+.result{background:#18252e;border-color:#40505d;color:#eef3fa;border-radius:16px}.lab .lab-note{color:#bdc8d3!important}
+.lab-actions span{color:#bdc8d3}.lab-actions button{background:#edf4ff;color:#0457cb;border-radius:100px;min-height:44px;font-weight:500}
+.lab-actions button:last-child{color:#dbe3ed;border-color:#5d6c7b}
+.sequence-lab{background:#f1f4f7;border-color:#dee3e9;border-radius:24px}.sequence-lab p{color:#465563}
+.sequence-fixed{background:#e8edf3}.sequence-control label,.sequence-actions span{color:#465563}
+.sequence-steps li{border-color:#dee3e9;border-radius:16px}.sequence-actions button{color:#0064e0}
+.answers button{background:#f1f4f7;border-color:#dee3e9;color:#465563;border-radius:12px;min-height:44px}
+.answers button:is(:hover,:focus-visible){background:#edf4ff;border-color:#0064e0}
+.concept-page{max-width:920px}.concept-page h1{font-weight:500;letter-spacing:-.04em}.concept-page h2{font-weight:500;font-size:24px}
+.concept-page .example-card{background:#f1f4f7;border-color:#dee3e9;border-radius:24px;padding:24px}
+.library-search{border-color:#ced0d4;border-radius:12px;min-height:44px}.library-list a{color:#465563;line-height:1.6}
+.library-list a[aria-current]{color:#0064e0}.library-group{color:#5d6c7b}.library-sidebar summary{font-weight:500}
+.credits-page{padding-top:40px;margin-inline:0}.credits-page a{color:#0064e0}
+.architecture-map{background:#fff!important;border-color:#dee3e9!important;border-radius:24px!important;padding:24px!important}
+.architecture-map>p{color:#5d6c7b}.architecture-map h2{color:#0a1317;font-weight:500}
+.architecture-map button[data-architecture-step]{border-color:#ced0d4;background:#f1f4f7;color:#465563;border-radius:16px}
+.architecture-map button[data-architecture-step][aria-pressed=true]{border-color:#0064e0;background:#edf4ff;color:#0457cb}
+.architecture-map :is(select,input){accent-color:#0064e0}
+footer{color:#5d6c7b;margin-top:48px;padding-top:24px}
+@media(max-width:1100px) and (min-width:821px){.shell{grid-template-columns:224px minmax(0,1fr)}main{padding-inline:24px}.sidebar{padding-inline:16px}}
+@media(max-width:820px){
+ .shell{display:block}.sidebar{position:static;height:auto;overflow:visible;padding:20px;border-right:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0 12px}
+ .sidebar>.brand{margin:0;align-self:center}.sidebar-tools{margin:0;align-self:center}.sidebar-tools .progress-label{display:none}
+ .sidebar>:is(nav,details,#formula-navigation,.concept-library-link,.sidebar-formulas){grid-column:1/-1}
+ .sidebar .eyebrow,.side-footer{display:none}.sidebar #navigation{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;overflow:visible;margin-top:20px}
+ .nav-item{padding:10px 8px;justify-content:center;white-space:normal;text-align:center;font-size:12px}
+ .concept-library-link{margin-top:12px;padding:12px 16px;border-radius:12px;font-size:12px}
+ .sidebar-formulas{margin-top:20px;padding-top:16px}.sidebar-formulas h2{margin-bottom:10px}
+ .sidebar-formulas [role=navigation]{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+ .sidebar-formula-link{padding:12px 8px;border-color:#dee3e9;background:#fff;font-size:12px}
+ .sidebar-formula-link>span:first-child{display:grid;gap:4px}.sidebar-formula-caption{display:none}
+ .library-sidebar #library-navigation{margin-top:16px}.library-sidebar #formula-navigation{margin-bottom:4px}
+ main{padding:32px 20px 64px}.hero{margin:24px 0 32px}.hero h1{font-size:40px}.hero p{font-size:15px}
+ .overview{grid-template-columns:minmax(0,1fr);padding:20px;gap:8px}.section-heading{margin-top:40px}
+ .step-head{padding:20px 16px;gap:8px}.step-body{padding:20px}.worked-note,.resource-panel,.resource{padding:20px}
+ .architecture-map{padding:20px 16px!important}.lab,.sequence-lab{padding:24px 20px}
+ .library-sidebar .eyebrow{display:block}.concept-page h2{font-size:22px}
+}
+.formula-shell .formula-page{width:100%;max-width:none;margin:0;padding-top:40px}
+.formula-shell .formula-page h1{margin-top:0}
+.beginner-route{background:#f1f4f7;border-radius:20px;padding:24px;margin-top:24px}
+.beginner-route h2{color:#0a1317;font-weight:500}.beginner-route p{color:#5d6c7b;line-height:1.8}
+.beginner-route li{padding:5px 0}.beginner-route button{line-height:1.8}
+.unit-contents{background:#fff;border-radius:16px;padding:16px 20px}.unit-contents summary{font-weight:500}
+:is(#concept-title,#math-basics-title,#symbols-title,#worked-title,#main-lab-title,.sequence-lab>h2,#quiz-title,#resource-title,#architecture-title,#formula-title,#formula-current-title){scroll-margin-top:24px}
+@media(max-width:600px){.formula-shell .formula-page{padding:28px 16px 48px}.beginner-route{padding:20px}}
+@media(prefers-reduced-motion:no-preference){.nav-item,.language,.next,.formula-controls button,.concept-help-chips button{transition:background-color .16s,border-color .16s}}

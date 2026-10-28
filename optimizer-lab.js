@@ -1,0 +1,22 @@
+// All three methods start at w=0 and minimize the same deterministic loss.
+export const optimizerInitial=()=>({step:0,sgd:{w:0},momentum:{w:0,v:0},adam:{w:0,m:0,v:0}});
+export function optimizerStep(state,rate){
+ if(!Number.isFinite(rate)||rate<0||rate>0.5||!Number.isInteger(state.step)||state.step<0||state.step>=200)throw new RangeError('invalid optimizer settings');
+ const t=state.step+1,sgdG=2*(state.sgd.w-3),momentumG=2*(state.momentum.w-3),adamG=2*(state.adam.w-3);
+ const velocity=0.9*state.momentum.v+momentumG;
+ const m=0.9*state.adam.m+0.1*adamG,v=0.999*state.adam.v+0.001*adamG*adamG;
+ const mHat=m/(1-0.9**t),vHat=v/(1-0.999**t);
+ const next={step:t,sgd:{w:state.sgd.w-rate*sgdG},momentum:{w:state.momentum.w-rate*velocity,v:velocity},adam:{w:state.adam.w-rate*mHat/(Math.sqrt(vHat)+1e-8),m,v}};
+ return {next,detail:{sgdG,momentumG,adamG,velocity,m,v,mHat,vHat,rate}};
+}
+const f=x=>(Math.abs(x)<0.00005?0:x).toFixed(4);
+const loss=w=>(w-3)**2;
+export function optimizerMarkup(state,rate,lang){
+ const ko=lang==='ko';
+ return `<section class="metric-lab optimizer-lab" aria-labelledby="optimizer-title"><h2 id="optimizer-title">${ko?'SGD·모멘텀·Adam의 갱신 비교':'Compare SGD, momentum and Adam updates'}</h2><p>${ko?'세 방법 모두 w=0에서 시작해 같은 손실 L=(w−3)²를 줄입니다. 각 방법은 자기 현재 위치의 기울기 g=2(w−3)를 사용합니다. 1회 갱신 후 값과 누적 상태를 비교해 보세요.':'All three start at w=0 and minimize the same loss L=(w−3)². Each uses the gradient g=2(w−3) at its own current position. Compare their parameters and accumulated states after an update.'}</p><label class="tfidf-choice" for="optimizer-rate">${ko?'학습률 η':'Learning rate η'} <select id="optimizer-rate" data-optimizer-rate>${[0,0.01,0.1,0.5].map(n=>`<option value="${n}" ${rate===n?'selected':''}>${n}</option>`).join('')}</select></label><p class="skipgram-actions"><button type="button" data-optimizer-action="one" ${state.step>=200?'disabled':''}>${ko?'1회 갱신':'Update once'}</button> <button type="button" data-optimizer-action="ten" ${state.step>=200?'disabled':''}>${ko?'최대 10회 갱신':'Update up to 10 times'}</button> <button type="button" data-optimizer-action="reset">${ko?'초기화':'Reset'}</button></p><div id="optimizer-output" aria-live="polite"></div><p>${ko?'결정적인 하나의 손실을 사용하므로 여기서 SGD는 확률적 미니배치의 변동을 보여주지 않습니다. 학습률을 바꾸어도 누적 상태는 유지됩니다. 학습률이 0이면 가중치는 유지되지만 모멘텀과 Adam의 상태 및 시간은 갱신됩니다. 최대 200회까지 계산합니다. 이 예제의 결과가 어떤 방법이 항상 더 좋다는 뜻은 아닙니다.':'The loss is deterministic, so SGD here does not show stochastic mini-batch noise. Changing the learning rate preserves accumulated state. At learning rate 0, weights stay fixed but momentum and Adam states and the step count still update. Up to 200 updates are available. This example does not establish a universally best method.'}</p><p><a href="https://docs.pytorch.org/docs/stable/optim.html" target="_blank" rel="noopener noreferrer">${ko?'PyTorch 최적화 문서':'PyTorch optimization documentation'} ↗</a></p></section>`;
+}
+export function optimizerOutput(state,last,lang){
+ const ko=lang==='ko',d=last?.detail;
+ const table=[['SGD',state.sgd.w],['Momentum',state.momentum.w],['Adam',state.adam.w]].map(([name,w])=>`<tr><th scope="row">${name}</th><td>${f(w)}</td><td>${f(loss(w))}</td></tr>`).join('');
+ return `<p><strong>${ko?'갱신 횟수':'Updates'}: <span data-optimizer-count>${state.step}</span> / 200</strong></p><div class="training-history" role="region" tabindex="0" aria-label="${ko?'현재 가중치와 손실':'Current weights and losses'}"><table><thead><tr><th scope="col">${ko?'방법':'Method'}</th><th scope="col">w</th><th scope="col">L</th></tr></thead><tbody>${table}</tbody></table></div><div class="tfidf-results"><p><b>SGD</b><br><code>w′ = w − ηg</code><br>${ko?'현재 기울기만 사용합니다.':'Uses the current gradient only.'}</p><p><b>Momentum (β=0.9)</b><br><code>vₜ = 0.9vₜ₋₁ + gₜ; w′ = w − ηvₜ</code><br>${ko?'이전 방향 v를 누적합니다.':'Accumulates the previous direction v.'}</p><p><b>Adam (β₁=0.9, β₂=0.999, ε=10⁻⁸)</b><br><code>mₜ=0.9mₜ₋₁+0.1gₜ; vₜ=0.999vₜ₋₁+0.001gₜ²<br>m̂=mₜ/(1−0.9ᵗ); v̂=vₜ/(1−0.999ᵗ); w′=w−ηm̂/(√v̂+ε)</code><br>${ko?'기울기와 제곱 기울기의 이동평균을 초기 편향 보정한 뒤 사용합니다.':'Uses bias-corrected moving averages of the gradient and squared gradient.'}</p>${d?`<p><b>${ko?'마지막 갱신에 사용한 값':'Values used in the last update'}</b> (${ko?'학습률':'learning rate'} ${f(d.rate)})<br>g(SGD)=${f(d.sgdG)}; g(momentum)=${f(d.momentumG)}; g(Adam)=${f(d.adamG)}<br>momentum v=${f(d.velocity)}<br>Adam m=${f(d.m)}, v=${f(d.v)}, m̂=${f(d.mHat)}, v̂=${f(d.vHat)}</p>`:`<p>${ko?'아직 갱신하지 않았습니다.':'No updates yet.'}</p>`}</div>`;
+}

@@ -1,0 +1,13 @@
+{
+  "name": "model-atlas",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:browser": "node tests/browser.mjs",
+    "test:browser:full": "node tests/browser.mjs --full"
+  },
+  "devDependencies": {
+    "d3": "5.16.0",
+    "playwright": "^1.64.1"
+  }
+}

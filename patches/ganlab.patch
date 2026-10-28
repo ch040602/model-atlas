@@ -1,0 +1,2066 @@
+diff --git a/demo/ganlab.html b/demo/ganlab.html
+index 6c3a693..4b7c6dd 100644
+--- a/demo/ganlab.html
++++ b/demo/ganlab.html
+@@ -1,13 +1,14 @@
++<!-- Modified by Model Atlas: Korean labels, locally pinned UI libraries, generated distribution diagrams, and checkpoint status. -->
+ <link rel="import" href="../node_modules/@bower_components/polymer/polymer.html">
+ <link rel="import" href="../node_modules/@bower_components/paper-checkbox/paper-checkbox.html">
+ <link rel="import" href="../node_modules/@bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+ <link rel="import" href="../node_modules/@bower_components/paper-listbox/paper-listbox.html">
+ <link rel="import" href="../node_modules/@bower_components/paper-item/paper-item.html">
+ <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+-<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.amber-blue.min.css" />
++<link rel="stylesheet" href="../../../vendor/ganlab/material.amber-blue-1.3.0.min.css" />
+ 
+-<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
++<script defer src="../../../vendor/ganlab/material-1.3.0.min.js"></script>
++<script src="../../../vendor/ganlab/chart-bundle-2.4.0.min.js"></script>
+ 
+ <dom-module id="gan-lab">
+   <style>
+@@ -80,6 +81,12 @@
+       opacity: 0.5;
+     }
+ 
++    .distribution-item:focus-visible {
++      outline: 3px solid #2456a6;
++      outline-offset: 2px;
++      opacity: 1;
++    }
++
+     .distribution-item.selected {
+       border-color: #888;
+       opacity: 1.0;
+@@ -93,6 +100,12 @@
+       --paper-checkbox-size: 11px;
+       --paper-checkbox-unchecked-color: #888;
+     }
++
++    #pretrained-status {
++      max-width: 200px;
++      font-size: 11px;
++      color: #8a3324;
++    }
+     
+     #timeline-controls {
+       align-items: center;
+@@ -305,6 +318,10 @@
+       width: 100px;
+     }
+ 
++    /* Match the noise control's content width so it does not cover the
++       adjacent generator layer buttons. */
++    #component-options-noise { width: 80px; }
++
+     .component-label {
+       color: #000;
+       font-size: 13px;
+@@ -366,6 +383,8 @@
+       width: 70px;
+     }
+ 
++    #component-options-loss .config-item { width: 84px; }
++
+     .config-item label {
+       color: rgb(82, 82, 82);
+       font-size: 11px;
+@@ -451,6 +470,11 @@
+       -webkit-text-decoration-style: dashed;
+     }
+     
++    #layers-descriptions .toggle-right:focus-visible {
++      outline: 2px solid #245fc4;
++      outline-offset: 2px;
++    }
++
+     #layers-descriptions .toggle-right.checked {
+       text-decoration-style: solid;
+       -webkit-text-decoration-style: solid;
+@@ -464,6 +488,10 @@
+       position: absolute;
+     }
+ 
++    #input-drawing-canvas {
++      touch-action: none;
++    }
++
+     #drawing-disable-background {
+       background: rgba(0, 0, 0, 0.5);
+       display: none;
+@@ -649,66 +677,68 @@
+         <div id="page-title" class="top-panel-item"><strong>GAN</strong> Lab</div>
+ 
+         <div id="distribution-selection" class="top-panel-item">
+-          <div class="top-column-title">Data Distribution</div>
++          <div class="top-column-title" data-model-atlas-ko="데이터 분포">Data Distribution</div>
+           <div id="distribution-image-list">
+             <div class="distribution-image">
+               <img class="distribution-item"
+                 id="distribution-item-line" 
+                 data-distribution-name="line" 
+-                title="Simple line"
+-                src="images/distribution-line.png" />
++                title="Simple line" data-model-atlas-title="단순한 선"
++                src="../../../vendor/ganlab/distribution-line.svg" />
+             </div>
+             <div class="distribution-image">
+               <img class="distribution-item selected" 
+                 id="distribution-item-gaussians" 
+                 data-distribution-name="gaussians" 
+-                title="Mixture of Gaussians" 
+-                src="images/distribution-gaussians.png" />
++                title="Mixture of Gaussians" data-model-atlas-title="가우시안 혼합 분포"
++                src="../../../vendor/ganlab/distribution-gaussians.svg" />
+             </div>
+             <div class="distribution-image">
+               <img class="distribution-item" 
+                 id="distribution-item-ring" 
+                 data-distribution-name="ring"
+-                title="Ring" 
+-                src="images/distribution-ring.png" />
++                title="Ring" data-model-atlas-title="고리"
++                src="../../../vendor/ganlab/distribution-ring.svg" />
+             </div>
+             <div class="distribution-image">
+               <img class="distribution-item" 
+                 id="distribution-item-disjoint" 
+                 data-distribution-name="disjoint" 
+-                title="3 disjoint regions" 
+-                src="images/distribution-disjoint.png" />
++                title="3 disjoint regions" data-model-atlas-title="분리된 세 영역"
++                src="../../../vendor/ganlab/distribution-disjoint.svg" />
+             </div>
+             <div class="distribution-image">
+               <i class="distribution-item material-icons" 
+                 id="distribution-item-drawing" 
+                 data-distribution-name="drawing"
+-                title="Draw one by yourself">brush</i>
++                title="Draw one by yourself" data-model-atlas-title="직접 그리기">brush</i>
+             </div>
+           </div>
+           <div id="distribution-selection-checkbox">
+             <paper-checkbox id="toggle-pretrained" 
+               title="Train on top of a pre-trained model or train from scratch"
++              data-model-atlas-title="사전 학습 모델을 이어서 사용하거나 처음부터 학습합니다"
+               checked>
+-              Use pre-trained model
++              <span data-model-atlas-ko="사전 학습 모델 사용">Use pre-trained model</span>
+             </paper-checkbox>
++            <div id="pretrained-status" role="status" aria-live="polite"></div>
+           </div>
+         </div>
+ 
+         <div id="timeline-controls" class="top-panel-item">
+           <button 
+             class="mdl-button mdl-js-button mdl-button--icon ui-resetButton"
+-            id="reset-button" title="Reset the model">
++            id="reset-button" title="Reset the model" data-model-atlas-title="모델 초기화">
+             <i class="material-icons" id="button-top-reset">replay</i>
+           </button>
+           <button class="mdl-button mdl-js-button mdl-button--fab 
+             mdl-button--colored ui-playButton"
+-            id="play-pause-button" title="Run/Pause training">
++            id="play-pause-button" title="Run/Pause training" data-model-atlas-title="학습 실행 / 일시 정지">
+             <i class="material-icons" id="button-top-play">play_arrow</i>
+             <i class="material-icons" id="button-top-pause">pause</i>
+           </button>
+           <button class="mdl-button mdl-js-button mdl-button--icon"
+-            id="slow-step" title="Slow-motion mode" 
++            id="slow-step" title="Slow-motion mode" data-model-atlas-title="느리게 진행"
+             style="margin-left: 5px">
+             <i class="material-icons" id="button-top-slow">
+               slow_motion_video
+@@ -716,35 +746,35 @@
+           </button>
+           <button 
+             class="mdl-button mdl-js-button mdl-button--icon ui-stepButton"
+-            id="next-step-button" title="Train for one epoch" 
++            id="next-step-button" title="Show or hide single-step controls" data-model-atlas-title="단계별 학습 메뉴 열기 / 닫기"
+             style="margin-left: 5px">
+             <i class="material-icons" id="button-top-next">skip_next</i>
+           </button>
+ 
+           <div id="step-buttons" style="display: none">
+             <button id="next-step-g-button" 
+-              title="Train only generator for one epoch">
+-              Generator
++              title="Update the generator once" data-model-atlas-title="생성자 한 번 갱신">
++              <span data-model-atlas-ko="생성자">Generator</span>
+             </button>
+             <button id="next-step-d-button" 
+-              title="Train only discriminator for one epoch">
+-              Discriminator
++              title="Update the discriminator once" data-model-atlas-title="판별자 한 번 갱신">
++              <span data-model-atlas-ko="판별자">Discriminator</span>
+             </button>
+             <button id="next-step-all-button" 
+-              title="Train both discriminator and generator for one epoch">
+-              Both
++              title="Run one iteration using the configured update counts" data-model-atlas-title="설정된 횟수로 한 반복 실행">
++              <span data-model-atlas-ko="둘 다">Both</span>
+             </button>
+           </div>
+         </div>
+ 
+         <div id="iteration" class="top-panel-item">
+-          <div class="top-column-title">Epoch</div>
++          <div class="top-column-title" data-model-atlas-ko="반복 횟수">Iteration</div>
+           <div id="iteration-count">0</div>
+         </div>
+ 
+         <div id="save" class="top-panel-item">
+           <button class="mdl-button mdl-js-button mdl-button--icon"
+-            id="save-model" title="Save model" style="margin-left: 5px">
++            id="save-model" title="Save model" data-model-atlas-title="모델 저장" style="margin-left: 5px">
+             <i class="material-icons">save_alt</i>
+           </button>
+         </div>
+@@ -755,10 +785,10 @@
+       <div id="main-panel-container" class="panel-container">
+         <div id="model-visualization-container" class="panel-item">
+           <div class="panel-title" style="padding-left: 5px;"
+-            title="Shows the architecture of a model and data flow">
+-            Model Overview Graph
++            title="Shows the architecture of a model and data flow" data-model-atlas-title="모델 구조와 데이터 흐름을 보여줍니다">
++            <span data-model-atlas-ko="모델 전체 구조">Model Overview Graph</span>
+             <button class="mdl-button mdl-js-button mdl-button--icon"
+-              id="edit-model-button" title="Show/hide hyperparameters">
++              id="edit-model-button" title="Show/hide hyperparameters" data-model-atlas-title="하이퍼파라미터 보이기 / 숨기기">
+               <i class="material-icons" id="button-graph-edit">mode_edit</i>
+             </button>
+           </div>
+@@ -798,7 +828,7 @@
+               <div id="component-d-loss" class="model-component"
+                 style="top: 160px; left: 667px">
+                 <div id="d-loss-bar" class="loss-bar" title=""></div>
+-                <div class="component-loss-label">Discriminator<br />loss</div>
++                <div class="component-loss-label" data-model-atlas-ko="판별자 손실">Discriminator<br />loss</div>
+                 <div class="component-tooltip">
+                   <span id="d-loss-value" title="loss"></span>
+                 </div>
+@@ -807,22 +837,22 @@
+               <div id="component-g-loss" class="model-component"
+                 style="top: 275px; left: 667px">
+                 <div id="g-loss-bar" class="loss-bar" title=""></div>
+-                <div class="component-loss-label">Generator<br />loss</div>
++                <div class="component-loss-label" data-model-atlas-ko="생성자 손실">Generator<br />loss</div>
+                 <div class="component-tooltip">
+                   <span id="g-loss-value" title="loss"></span>
+                 </div>
+               </div>
+ 
+               <div id="component-options-loss" class="model-component"
+-              style="top: 220px; left: 667px">
++              style="top: 220px; left: 653px">
+                 <div class="config-item">
+                   <paper-dropdown-menu no-animations no-label-float>
+                     <paper-listbox attr-for-selected="value"
+                       id="loss-type-dropdown" class="dropdown-content"
+                       selected="{{lossType}}">
+                       <template is="dom-repeat" items="[[lossTypeOptions]]">
+-                        <paper-item value="[[item]]" label="[[item]]">
+-                          [[item]]
++                        <paper-item value="[[item]]" label="[[optionLabel(item)]]">
++                          [[optionLabel(item)]]
+                         </paper-item>
+                       </template>
+                     </paper-listbox>
+@@ -836,7 +866,7 @@
+                   <div class="up-down-buttons">
+                     <button class="mdl-button mdl-js-button mdl-button--icon"
+                       id="k-d-steps-add-button" 
+-                      title="Increase a step per epoch">
++                      title="Increase updates per iteration" data-model-atlas-title="판별자 업데이트 횟수 늘리기">
+                       <i class="material-icons" id="button-k-d-steps-up">
+                         keyboard_arrow_up
+                       </i>
+@@ -844,7 +874,7 @@
+                     <br />
+                     <button class="mdl-button mdl-js-button mdl-button--icon"
+                       id="k-d-steps-remove-button" 
+-                      title="Decrease a step per iter">
++                      title="Decrease updates per iteration" data-model-atlas-title="판별자 업데이트 횟수 줄이기">
+                       <i class="material-icons" id="button-k-d-steps-down">
+                         keyboard_arrow_down
+                       </i>
+@@ -852,7 +882,7 @@
+                   </div>
+                   <div class="up-down-buttons">
+                     <label>
+-                      <span id="k-d-steps">2</span> update(s) per epoch</label>
++                      <span id="k-d-steps">2</span><span data-model-atlas-ko="회 / 반복"> update(s) per iteration</span></label>
+                   </div>
+                 </div>
+               </div>
+@@ -863,7 +893,7 @@
+                   <div class="up-down-buttons">
+                     <button class="mdl-button mdl-js-button mdl-button--icon"
+                       id="k-g-steps-add-button" 
+-                      title="Increase a step per epoch">
++                      title="Increase updates per iteration" data-model-atlas-title="생성자 업데이트 횟수 늘리기">
+                       <i class="material-icons" id="button-k-g-steps-up">
+                         keyboard_arrow_up
+                       </i>
+@@ -871,7 +901,7 @@
+                     <br />
+                     <button class="mdl-button mdl-js-button mdl-button--icon"
+                       id="k-g-steps-remove-button" 
+-                      title="Decrease a step per epoch">
++                      title="Decrease updates per iteration" data-model-atlas-title="생성자 업데이트 횟수 줄이기">
+                       <i class="material-icons" id="button-k-g-steps-down">
+                         keyboard_arrow_down
+                       </i>
+@@ -879,7 +909,7 @@
+                   </div>
+                   <div class="up-down-buttons">
+                     <label>
+-                      <span id="k-g-steps">1</span> update(s) per epoch</label>
++                      <span id="k-g-steps">1</span><span data-model-atlas-ko="회 / 반복"> update(s) per iteration</span></label>
+                   </div>
+                 </div>
+               </div>
+@@ -889,7 +919,7 @@
+                 style="top: 55px; left: 440px">
+                 <div class="config-item" style="width: 120px">
+                   <div class="up-down-buttons">
+-                    <label>Optimizer:</label>
++                    <label data-model-atlas-ko="최적화:">Optimizer:</label>
+                   </div>
+                   <div class="up-down-buttons" style="width: 65px">
+                     <paper-dropdown-menu no-animations no-label-float>
+@@ -908,7 +938,7 @@
+                 </div>
+                 <div class="config-item" style="width: 120px">
+                   <div class="up-down-buttons">
+-                    <label>Learning rate:</label>
++                    <label data-model-atlas-ko="학습률:">Learning rate:</label>
+                   </div>
+                   <div class="up-down-buttons" style="width: 48px">
+                     <paper-dropdown-menu no-animations no-label-float>
+@@ -931,7 +961,7 @@
+                 style="top: 335px; left: 180px">
+                 <div class="config-item" style="width: 120px">
+                   <div class="up-down-buttons">
+-                    <label>Optimizer:</label>
++                    <label data-model-atlas-ko="최적화:">Optimizer:</label>
+                   </div>
+                   <div class="up-down-buttons" style="width: 65px">
+                     <paper-dropdown-menu no-animations no-label-float>
+@@ -950,7 +980,7 @@
+                 </div>
+                 <div class="config-item" style="width: 120px">
+                   <div class="up-down-buttons">
+-                    <label>Learning rate:</label>
++                    <label data-model-atlas-ko="학습률:">Learning rate:</label>
+                   </div>
+                   <div class="up-down-buttons" style="width: 48px">
+                     <paper-dropdown-menu no-animations no-label-float>
+@@ -971,25 +1001,25 @@
+ 
+               <div id="component-true-prediction" class="model-component"
+                 style="top: 136px; left: 525px">
+-                <div class="component-sub-label">Real</div>
++                <div class="component-sub-label" data-model-atlas-ko="진짜">Real</div>
+                 <svg id="svg-true-prediction"></svg>
+               </div>
+ 
+               <div id="component-generated-prediction" class="model-component"
+                 style="top: 230px; left: 525px">
+-                <div class="component-sub-label">Fake</div>
++                <div class="component-sub-label" data-model-atlas-ko="가짜">Fake</div>
+                 <svg id="svg-generated-prediction"></svg>
+-                <div class="component-label">Prediction of<br />Samples</div>
++                <div class="component-label" data-model-atlas-ko="샘플 판별 결과">Prediction of<br />Samples</div>
+               </div>
+ 
+               <div id="component-discriminator"
+                 class="model-component model-component-model"
+                 style="top: 136px; left: 372px">
+                 <svg id="svg-discriminator-output"></svg>
+-                <div class="component-label">Discriminator
++                <div class="component-label"><span data-model-atlas-ko="판별자">Discriminator</span>
+                   <div id="overlap-toggle" class="checkbox-toggle">
+                     <paper-checkbox type="checkbox" id="overlap-plots" checked
+-                      title="show/hide discriminator's classification">
++                      title="show/hide discriminator's classification" data-model-atlas-title="판별자 판정 표시 / 숨기기">
+                     </paper-checkbox>
+                   </div>
+                 </div>
+@@ -1001,14 +1031,14 @@
+                 <div class="config-item" style="width: 175px">
+                   <div class="up-down-buttons">
+                     <button class="mdl-button mdl-js-button mdl-button--icon"
+-                      id="d-layers-add-button" title="Add a layer">
++                      id="d-layers-add-button" title="Add a layer" data-model-atlas-title="판별자 은닉층 추가">
+                       <i class="material-icons" id="button-d-layers-up">
+                         keyboard_arrow_up
+                       </i>
+                     </button>
+                     <br />
+                     <button class="mdl-button mdl-js-button mdl-button--icon"
+-                      id="d-layers-remove-button" title="Remove a layer">
++                      id="d-layers-remove-button" title="Remove a layer" data-model-atlas-title="판별자 은닉층 제거">
+                       <i class="material-icons" id="button-d-layers-down">
+                         keyboard_arrow_down
+                       </i>
+@@ -1016,12 +1046,12 @@
+                   </div>
+                   <div class="up-down-buttons">
+                     <label>
+-                      <span id="num-d-layers">1</span> hidden layer(s)</label>
++                      <span id="num-d-layers">2</span><span title="Includes the first hidden layer; excludes the output layer." data-model-atlas-title="첫 은닉층을 포함하고 출력층은 제외합니다." data-model-atlas-ko="개 은닉층"> hidden layer(s)</span></label>
+                   </div>
+                   <div class="up-down-buttons">
+                     <button class="mdl-button mdl-js-button mdl-button--icon"
+                       id="d-neurons-add-button" 
+-                      title="Add a neuron for each layer">
++                      title="Add a neuron for each layer" data-model-atlas-title="판별자 각 층의 뉴런 늘리기">
+                       <i class="material-icons" id="button-d-neurons-up">
+                         keyboard_arrow_up
+                       </i>
+@@ -1029,14 +1059,14 @@
+                     <br />
+                     <button class="mdl-button mdl-js-button mdl-button--icon"
+                       id="d-neurons-remove-button" 
+-                      title="Remove a neuron for each layer">
++                      title="Remove a neuron for each layer" data-model-atlas-title="판별자 각 층의 뉴런 줄이기">
+                       <i class="material-icons" id="button-d-neurons-down">
+                         keyboard_arrow_down
+                       </i>
+                     </button>
+                   </div>
+                   <div class="up-down-buttons">
+-                    <label><span id="num-d-neurons">8</span> neuron(s)</label>
++                    <label><span id="num-d-neurons">8</span><span data-model-atlas-ko="개 뉴런"> neuron(s)</span></label>
+                   </div>
+                 </div>
+               </div>
+@@ -1045,9 +1075,9 @@
+                 class="model-component model-component-model"
+                 style="top: 136px; left: 102px">
+                   <svg id="svg-generator-manifold"></svg>
+-                  <div class="component-label">Generator
++                  <div class="component-label"><span data-model-atlas-ko="생성자">Generator</span>
+                     <div id="manifold-toggle" class="checkbox-toggle"
+-                      title="show/hide generator's manifold">
++                      title="show/hide generator's manifold" data-model-atlas-title="생성자의 매니폴드 표시 / 숨기기">
+                       <paper-checkbox type="checkbox" id="enable-manifold">
+                       </paper-checkbox>
+                     </div>
+@@ -1060,14 +1090,14 @@
+                 <div class="config-item" style="width: 175px">
+                   <div class="up-down-buttons">
+                     <button class="mdl-button mdl-js-button mdl-button--icon"
+-                      id="g-layers-add-button" title="Add a layer">
++                      id="g-layers-add-button" title="Add a layer" data-model-atlas-title="생성자 은닉층 추가">
+                       <i class="material-icons" id="button-g-layer-up">
+                         keyboard_arrow_up
+                       </i>
+                     </button>
+                     <br />
+                     <button class="mdl-button mdl-js-button mdl-button--icon"
+-                      id="g-layers-remove-button" title="Remove a layer">
++                      id="g-layers-remove-button" title="Remove a layer" data-model-atlas-title="생성자 은닉층 제거">
+                       <i class="material-icons" id="button-g-layer-down">
+                         keyboard_arrow_down
+                       </i>
+@@ -1075,12 +1105,12 @@
+                   </div>
+                   <div class="up-down-buttons">
+                     <label>
+-                      <span id="num-g-layers">1</span> hidden layer(s)</label>
++                      <span id="num-g-layers">2</span><span title="Includes the first hidden layer; excludes the output layer." data-model-atlas-title="첫 은닉층을 포함하고 출력층은 제외합니다." data-model-atlas-ko="개 은닉층"> hidden layer(s)</span></label>
+                   </div>
+                   <div class="up-down-buttons">
+                     <button class="mdl-button mdl-js-button mdl-button--icon"
+                       id="g-neurons-add-button" 
+-                      title="Add a neuron for each layer">
++                      title="Add a neuron for each layer" data-model-atlas-title="생성자 각 층의 뉴런 늘리기">
+                       <i class="material-icons" id="button-g-neurons-up">
+                         keyboard_arrow_up
+                       </i>
+@@ -1088,14 +1118,14 @@
+                     <br />
+                     <button class="mdl-button mdl-js-button mdl-button--icon"
+                       id="g-neurons-remove-button" 
+-                      title="Remove a neuron for each layer">
++                      title="Remove a neuron for each layer" data-model-atlas-title="생성자 각 층의 뉴런 줄이기">
+                       <i class="material-icons" id="button-g-neurons-down">
+                         keyboard_arrow_down
+                       </i>
+                     </button>
+                   </div>
+                   <div class="up-down-buttons">
+-                    <label><span id="num-g-neurons">8</span> neuron(s)</label>
++                    <label><span id="num-g-neurons">8</span><span data-model-atlas-ko="개 뉴런"> neuron(s)</span></label>
+                   </div>
+                 </div>
+               </div>
+@@ -1103,15 +1133,15 @@
+               <div id="component-discriminator-gradients" 
+                 class="model-component"
+                 style="top: 7px; left: 430px">
+-                <div class="component-label">Gradients</div>
++                <div class="component-label" data-model-atlas-ko="기울기">Gradients</div>
+               </div>
+ 
+               <div id="component-generator-gradients" class="model-component"
+                 style="top: 390px; left: 255px">
+                 <svg id="svg-generator-gradients"></svg>
+-                <div class="component-label">Gradients
++                <div class="component-label"><span data-model-atlas-ko="기울기">Gradients</span>
+                   <div id="g-gradients-toggle" class="checkbox-toggle"
+-                    title="show/hide gradients for generator"
++                    title="show/hide discriminator input gradients at fake samples" data-model-atlas-title="가짜 샘플에서 판별자 입력 기울기 표시 / 숨기기"
+                     style="right: 13px; top: -1px">
+                     <paper-checkbox type="checkbox" id="show-g-gradients" 
+                       checked>
+@@ -1122,9 +1152,9 @@
+ 
+               <div id="component-true-samples" class="model-component"
+                 style="top: 136px; left: 255px">
+-                <div class="component-sub-label">Real
++                <div class="component-sub-label"><span data-model-atlas-ko="진짜">Real</span>
+                   <div id="t-samples-toggle" class="checkbox-toggle"
+-                    title="show/hide real samples">
++                    title="show/hide real samples" data-model-atlas-title="진짜 샘플 표시 / 숨기기">
+                     <paper-checkbox type="checkbox" id="show-t-samples" 
+                       checked>
+                     </paper-checkbox>
+@@ -1135,22 +1165,22 @@
+ 
+               <div id="component-generated-samples" class="model-component"
+                 style="top: 230px; left: 255px">
+-                <div class="component-sub-label">Fake
++                <div class="component-sub-label"><span data-model-atlas-ko="가짜">Fake</span>
+                   <div id="g-samples-toggle" class="checkbox-toggle"
+-                    title="show/hide fake samples">
++                    title="show/hide fake samples" data-model-atlas-title="가짜 샘플 표시 / 숨기기">
+                     <paper-checkbox type="checkbox" id="show-g-samples" 
+                       checked>
+                     </paper-checkbox>
+                   </div>
+                 </div>
+                 <svg id="svg-generated-samples"></svg>
+-                <div class="component-label">Samples</div>
++                <div class="component-label" data-model-atlas-ko="샘플">Samples</div>
+               </div>
+ 
+               <div id="component-noise" class="model-component"
+                 style="top: 230px; left: -15px">
+                 <svg id="svg-noise"></svg>
+-                <div class="component-label">Noise</div>
++                <div class="component-label" data-model-atlas-ko="노이즈">Noise</div>
+               </div>
+ 
+               <div id="component-options-noise" class="model-component-options"
+@@ -1161,8 +1191,8 @@
+                       id="noise-dropdown" class="dropdown-content" 
+                       selected="{{selectedNoiseType}}">
+                       <template is="dom-repeat" items="[[noiseTypes]]">
+-                        <paper-item value="[[item]]" label="[[item]]">
+-                          [[item]]
++                        <paper-item value="[[item]]" label="[[optionLabel(item)]]">
++                          [[optionLabel(item)]]
+                         </paper-item>
+                       </template>
+                     </paper-listbox>
+@@ -1176,54 +1206,54 @@
+                 class="tooltip tooltip-for-d"
+                 style="top: 0; left: 0px">
+                 <div class="tooltip-number">1</div>
+-                Generator derives samples from noise
++                <span data-model-atlas-ko="생성자가 노이즈로 샘플 생성">Generator derives samples from noise</span>
+               </div>
+               <div id="tooltip-d-prediction" class="tooltip tooltip-for-d"
+                 style="top: 0; left: 150px">
+                 <div class="tooltip-number">2</div>
+-                Discriminator classifies samples
++                <span data-model-atlas-ko="판별자가 샘플 분류">Discriminator classifies samples</span>
+               </div>
+               <div id="tooltip-d-loss" class="tooltip tooltip-for-d"
+                 style="top: 0; left: 300px">
+                 <div class="tooltip-number">3</div>
+-                Computes discriminator loss
++                <span data-model-atlas-ko="판별자 손실 계산">Computes discriminator loss</span>
+               </div>
+               <div id="tooltip-d-gradients" class="tooltip tooltip-for-d"
+                 style="top: 0; left: 450px">
+                 <div class="tooltip-number">4</div>
+-                Computes discriminator gradients
++                <span data-model-atlas-ko="판별자 기울기 계산">Computes discriminator gradients</span>
+               </div>
+               <div id="tooltip-update-discriminator" 
+                 class="tooltip tooltip-for-d"
+                 style="top: 0; left: 600px">
+                 <div class="tooltip-number">5</div>
+-                Updates discriminator based on gradients
++                <span data-model-atlas-ko="기울기로 판별자 갱신">Updates discriminator based on gradients</span>
+               </div>
+               <div id="tooltip-g-generated-samples" 
+                 class="tooltip tooltip-for-g"
+                 style="top: 500px; left: 0px">
+                 <div class="tooltip-number">1</div>
+-                Generator derives samples from noise
++                <span data-model-atlas-ko="생성자가 노이즈로 샘플 생성">Generator derives samples from noise</span>
+               </div>
+               <div id="tooltip-g-prediction" class="tooltip tooltip-for-g"
+                 style="top: 500px; left: 150px">
+                 <div class="tooltip-number">2</div>
+-                Discriminator classifies fake samples only
++                <span data-model-atlas-ko="판별자가 가짜 샘플 분류">Discriminator classifies fake samples only</span>
+               </div>
+               <div id="tooltip-g-loss" class="tooltip tooltip-for-g"
+                 style="top: 500px; left: 300px">
+                 <div class="tooltip-number">3</div>
+-                Computes generator loss
++                <span data-model-atlas-ko="생성자 손실 계산">Computes generator loss</span>
+               </div>
+               <div id="tooltip-g-gradients" class="tooltip tooltip-for-g"
+                 style="top: 500px; left: 450px">
+                 <div class="tooltip-number">4</div>
+-                Computes generator gradients
++                <span data-model-atlas-ko="생성자 기울기 계산">Computes generator gradients</span>
+               </div>
+               <div id="tooltip-update-generator" class="tooltip tooltip-for-g"
+                 style="top: 500px; left: 600px">
+                 <div class="tooltip-number">5</div>
+-                Updates generator based on gradients
++                <span data-model-atlas-ko="기울기로 생성자 갱신">Updates generator based on gradients</span>
+               </div>
+             </div>
+           </div>
+@@ -1234,8 +1264,8 @@
+         <div id="visualization-container" class="panel-item">
+           <div class="panel-title"
+             title="Visualizes components in the model overview graph as 
+-multiple layers. The layers can be turned on or off using checkboxes.">
+-            Layered Distributions
++multiple layers. The layers can be turned on or off using checkboxes." data-model-atlas-title="모델의 구성 요소를 여러 층으로 표시합니다. 체크박스로 각 층을 켜고 끌 수 있습니다.">
++            <span data-model-atlas-ko="분포 겹쳐 보기">Layered Distributions</span>
+           </div>
+ 
+           <div id="vis-content-container">
+@@ -1258,49 +1288,47 @@ multiple layers. The layers can be turned on or off using checkboxes.">
+ 
+             <div id="layers-descriptions">
+               <div class="layers-descriptions-section">
+-                Each dot is a 2D data sample:
+-                <span id="toggle-right-real-samples" 
++                <span data-model-atlas-ko="각 점은 2차원 샘플입니다:">Each dot is a 2D data sample:</span>
++                <span role="button" tabindex="0" id="toggle-right-real-samples"
+                   class="toggle-right checked"
+-                  title="click to toggle this layer"
+-                  style="color: var(--real-data-color);">real samples</span>;
+-                <span id="toggle-right-fake-samples"
++                  title="click to toggle this layer" data-model-atlas-title="클릭하여 이 층 표시 / 숨기기"
++                  style="color: var(--real-data-color);" data-model-atlas-ko="진짜 샘플">real samples</span>;
++                <span role="button" tabindex="0" id="toggle-right-fake-samples"
+                   class="toggle-right checked"
+-                  title="click to toggle this layer"
+-                  style="color: var(--generator-color);">fake samples</span>.
++                  title="click to toggle this layer" data-model-atlas-title="클릭하여 이 층 표시 / 숨기기"
++                  style="color: var(--generator-color);" data-model-atlas-ko="가짜 샘플">fake samples</span>.
+               </div>
+               <div class="layers-descriptions-section">
+-                Background colors of grid cells represent
+-                <span id="toggle-right-discriminator"
++                <span data-model-atlas-ko="배경색은">Background colors of grid cells represent</span>
++                <span role="button" tabindex="0" id="toggle-right-discriminator"
+                   class="toggle-right checked"
+-                  title="click to toggle this layer"
++                  title="click to toggle this layer" data-model-atlas-title="클릭하여 이 층 표시 / 숨기기"
+                   style="color: rgb(64, 128, 247);">
+-                    discriminator</span>'s classifications.
++                    <span data-model-atlas-ko="판별자">discriminator</span></span><span data-model-atlas-ko="의 판단입니다.">'s classifications.</span>
+                 <br />
+-                Samples in
+-                <span style="color: var(--real-data-color);">green regions</span>
+-                are likely to be real;
+-                those in
+-                <span style="color: var(--generator-color);">purple regions</span>
+-                likely fake.
++                <span data-model-atlas-ko="판별자 점수 D(x)는">The discriminator assigns a higher score D(x) to</span>
++                <span style="color: var(--real-data-color);" data-model-atlas-ko="초록색 영역">green regions</span>
++                <span data-model-atlas-ko="에서 높고">and a lower score to</span>
++                <span style="color: var(--generator-color);" data-model-atlas-ko="보라색 영역">purple regions</span>
++                <span data-model-atlas-ko="에서 낮습니다. 이는 판별자의 예측이며 실제 출처의 정답은 아닙니다.">. This is the discriminator's prediction, not the sample's true origin.</span>
+               </div>
+               <div class="layers-descriptions-section">
+-                <strong>Manifold</strong> represents
+-                <span id="toggle-right-generator"
++                <strong data-model-atlas-ko="매니폴드">Manifold</strong> <span data-model-atlas-ko="는">represents</span>
++                <span role="button" tabindex="0" id="toggle-right-generator"
+                   class="toggle-right"
+-                  title="click to toggle this layer"
++                  title="click to toggle this layer" data-model-atlas-title="클릭하여 이 층 표시 / 숨기기"
+                   style="color: var(--generator-color);">
+-                    generator</span>'s transformation results from noise space.
++                    <span data-model-atlas-ko="생성자">generator</span></span><span data-model-atlas-ko="가 노이즈를 변환한 결과입니다.">'s transformation results from noise space.</span>
+                 <br />
+-                Opacity encodes density:
+-                darker purple means more samples in smaller area.
++                <span data-model-atlas-ko="2D 입력은 격자, 1D 입력은 선으로 표시합니다. 2D 격자의 진하기는 변환된 셀과 입력 분포로 계산한 밀도 시각화이며 정확한 샘플 개수는 아닙니다.">A 2D input forms a grid; a 1D input forms a line. For 2D, opacity visualizes density from the transformed cells and input distribution, not exact sample counts.</span>
+               </div>
+               <div class="layers-descriptions-section"> 
+-                Pink lines from fake samples represent
+-                <span id="toggle-right-gradients"
++                <span data-model-atlas-ko="가짜 샘플의 분홍색 화살표는 판별자 점수 D(x)가 가장 빨리 증가하는">Pink arrows from fake samples show the direction in which the discriminator score D(x) increases fastest:</span>
++                <span role="button" tabindex="0" id="toggle-right-gradients"
+                   class="toggle-right checked"
+-                  title="click to toggle this layer"
++                  title="click to toggle this layer" data-model-atlas-title="클릭하여 이 층 표시 / 숨기기"
+                   style="color: var(--gradient-color);">
+-                  gradients</span> for generator.
++                  <span data-model-atlas-ko="입력 기울기 ∇ₓD(x)">input gradient ∇ₓD(x)</span></span><span data-model-atlas-ko="입니다.">.</span>
+                 <br />
+                 <svg width="12" height="12">
+                   <circle class="generated-dot" r="2"
+@@ -1309,8 +1337,7 @@ multiple layers. The layers can be turned on or off using checkboxes.">
+                     transform="translate(2,10)"
+                     points="0,0 1,1 10,-10 -1,-1"></polygon>
+                 </svg> 
+-                This sample needs to move upper right 
+-                to decrease generator's loss.
++                <span data-model-atlas-ko="이 그림에서는 판별자 점수가 오른쪽 위로 증가합니다. 현재 판별자를 고정하면 이 방향은 두 생성자 손실을 국소적으로 줄이지만, 생성자 가중치의 기울기나 실제 점 이동을 그대로 나타내지는 않습니다.">In this illustration the score increases toward the upper right. With the discriminator fixed, this locally decreases either generator loss, but the arrow is not the generator's weight gradient or the sample's exact movement.</span>
+               </div>
+             </div>
+ 
+@@ -1318,18 +1345,18 @@ multiple layers. The layers can be turned on or off using checkboxes.">
+               <canvas id="input-drawing-canvas" 
+                 width="400" height="400"></canvas>
+               <div id="drawing-instruction">
+-                Draw a distribution above, then click the apply button.
++                <span data-model-atlas-ko="마우스나 손가락으로 분포를 그린 뒤 적용을 누르세요.">Draw a distribution with a mouse or touch, then click Apply.</span>
+               </div>
+               <button id="finish-drawing" 
+                 class="mdl-button mdl-js-button mdl-button--raised">
+-                Apply
++                <span data-model-atlas-ko="적용">Apply</span>
+               </button>
+             </div>
+           </div>
+         </div>
+ 
+         <div id="charts-panel" class="panel-item">
+-          <div class="panel-title">Metrics</div>
++          <div class="panel-title" data-model-atlas-ko="평가 지표">Metrics</div>
+ 
+           <div id="chart-container">
+             <canvas id="cost-chart" width="180" height="180"></canvas>
+diff --git a/demo/ganlab.ts b/demo/ganlab.ts
+index 6366241..4612086 100644
+--- a/demo/ganlab.ts
++++ b/demo/ganlab.ts
+@@ -1,3 +1,4 @@
++// Modified by Model Atlas: translate labels, fix visualization and metrics, and handle checkpoint loading.
+ import * as d3 from 'd3-selection';
+ import { scaleSequential } from 'd3-scale';
+ import { interpolateGreens, interpolatePRGn } from 'd3-scale-chromatic';
+@@ -23,6 +24,7 @@ const NUM_TRUE_SAMPLES_VISUALIZED = 450;
+ const VIS_INTERVAL = 50;
+ const EPOCH_INTERVAL = 2;
+ const SLOW_INTERVAL_MS = 1250;
++const SLOW_ITERATION_CANCELLED = {};
+ 
+ interface ManifoldCell {
+   points: Float32Array[];
+@@ -50,6 +52,10 @@ const GANLabPolymer: new () => PolymerHTMLElement = PolymerElement({
+ 
+ class GANLab extends GANLabPolymer {
+   private iterationCount: number;
++  private playbackGeneration: number;
++  private slowGeneration: number;
++  private slowIterationActive: boolean;
++  private modelRequestGeneration: number;
+ 
+   private noiseProvider: ganlab_input_providers.InputProvider;
+   private trueSampleProvider: ganlab_input_providers.InputProvider;
+@@ -78,17 +84,51 @@ class GANLab extends GANLabPolymer {
+   private canvas: HTMLCanvasElement;
+   private drawing: ganlab_drawing.GANLabDrawing;
+ 
++  // Display translations only. The original option values drive training and checkpoints.
++  optionLabel(value: string): string {
++    if (document.documentElement.lang !== 'ko') return value;
++    const labels: {[key: string]: string} = {
++      'Log loss': '로그 손실',
++      'LeastSq loss': '제곱 손실',
++      '1D Uniform': '1D 균등',
++      '1D Gaussian': '1D 정규',
++      '2D Uniform': '2D 균등',
++      '2D Gaussian': '2D 정규'
++    };
++    return labels[value] || value;
++  }
++
+   ready() {
++    this.modelRequestGeneration = 0;
++    this.playbackGeneration = 0;
++    this.slowGeneration = 0;
++    this.slowIterationActive = false;
++    // Apply labels only; training parameters, IDs, and displayed numbers are untouched.
++    let language = new URLSearchParams(window.location.search).get('lang');
++    if (language !== 'ko' && language !== 'en') {
++      try { language = localStorage.getItem('model-atlas-language'); } catch (_) { language = null; }
++    }
++    document.documentElement.lang = language === 'ko' ? 'ko' : 'en';
++    if (language === 'ko') {
++      Array.prototype.forEach.call(document.querySelectorAll('[data-model-atlas-ko]'), (el: HTMLElement) => {
++        el.textContent = el.getAttribute('data-model-atlas-ko');
++      });
++      Array.prototype.forEach.call(document.querySelectorAll('[data-model-atlas-title]'), (el: HTMLElement) => {
++        el.setAttribute('title', el.getAttribute('data-model-atlas-title'));
++      });
++    }
+     // HTML elements.
+     const numGeneratorLayersElement =
+       document.getElementById('num-g-layers') as HTMLElement;
+-    this.numGeneratorLayers = +numGeneratorLayersElement.innerText;
++    // Checkpoints store the number of additional hidden layers; the model
++    // always has an initial hidden layer as well. Display the total instead.
++    this.numGeneratorLayers = +numGeneratorLayersElement.innerText - 1;
+     document.getElementById('g-layers-add-button')!.addEventListener(
+       'click', () => {
+         if (this.numGeneratorLayers < 5) {
+           this.numGeneratorLayers += 1;
+           numGeneratorLayersElement.innerText =
+-            this.numGeneratorLayers.toString();
++            (this.numGeneratorLayers + 1).toString();
+           this.disabledPretrainedMode();
+           this.createExperiment();
+         }
+@@ -98,7 +138,7 @@ class GANLab extends GANLabPolymer {
+         if (this.numGeneratorLayers > 0) {
+           this.numGeneratorLayers -= 1;
+           numGeneratorLayersElement.innerText =
+-            this.numGeneratorLayers.toString();
++            (this.numGeneratorLayers + 1).toString();
+           this.disabledPretrainedMode();
+           this.createExperiment();
+         }
+@@ -106,13 +146,13 @@ class GANLab extends GANLabPolymer {
+ 
+     const numDiscriminatorLayersElement =
+       document.getElementById('num-d-layers') as HTMLElement;
+-    this.numDiscriminatorLayers = +numDiscriminatorLayersElement.innerText;
++    this.numDiscriminatorLayers = +numDiscriminatorLayersElement.innerText - 1;
+     document.getElementById('d-layers-add-button')!.addEventListener(
+       'click', () => {
+         if (this.numDiscriminatorLayers < 5) {
+           this.numDiscriminatorLayers += 1;
+           numDiscriminatorLayersElement.innerText =
+-            this.numDiscriminatorLayers.toString();
++            (this.numDiscriminatorLayers + 1).toString();
+           this.disabledPretrainedMode();
+           this.createExperiment();
+         }
+@@ -122,7 +162,7 @@ class GANLab extends GANLabPolymer {
+         if (this.numDiscriminatorLayers > 0) {
+           this.numDiscriminatorLayers -= 1;
+           numDiscriminatorLayersElement.innerText =
+-            this.numDiscriminatorLayers.toString();
++            (this.numDiscriminatorLayers + 1).toString();
+           this.disabledPretrainedMode();
+           this.createExperiment();
+         }
+@@ -263,11 +303,23 @@ class GANLab extends GANLabPolymer {
+     const distributionElementList = 
+       document.querySelectorAll('.distribution-item');
+ 
+-    for (let i = 0; i < distributionElementList.length; ++i) { 
+-      // tslint:disable-next-line:no-any event has no type
+-      distributionElementList[i].addEventListener('click', (event: any) =>
+-        this.changeDataset(event.target), false);
+-    }  
++    const distributionGroup = document.getElementById('distribution-image-list');
++    distributionGroup.setAttribute('role', 'group');
++    distributionGroup.setAttribute('aria-label', language === 'ko' ? '데이터 분포 선택' : 'Select data distribution');
++    for (let i = 0; i < distributionElementList.length; ++i) {
++      const item = distributionElementList[i] as HTMLElement;
++      item.setAttribute('role', 'button');
++      item.setAttribute('tabindex', '0');
++      item.setAttribute('aria-label', item.getAttribute('title'));
++      item.setAttribute('aria-pressed', String(item.classList.contains('selected')));
++      item.addEventListener('click', () => this.changeDataset(item));
++      item.addEventListener('keydown', (event: KeyboardEvent) => {
++        if (event.key === 'Enter' || event.key === ' ') {
++          event.preventDefault();
++          item.click();
++        }
++      });
++    }
+ 
+     this.noiseTypes =
+       ['1D Uniform', '1D Gaussian', '2D Uniform', '2D Gaussian'];
+@@ -310,44 +362,39 @@ class GANLab extends GANLabPolymer {
+         layer: '#vis-generator-gradients'
+       }
+     ];
+-    checkboxList.forEach(layer => {      
+-      this.querySelector(layer.graph)!.addEventListener(
+-        'change', (event: Event) => {
+-        const container =
+-          this.querySelector(layer.layer) as SVGGElement;
+-        // tslint:disable-next-line:no-any
+-        container.style.visibility =
+-          (event.target as any).checked ? 'visible' : 'hidden';
+-          
+-        const element = 
+-          this.querySelector(layer.description) as HTMLElement;
+-        // tslint:disable-next-line:no-any
+-        if ((event.target as any).checked) {
+-          element.classList.add('checked');
+-        } else {
+-          element.classList.remove('checked');
+-        }
+-      });
+-      this.querySelector(layer.description)!.addEventListener(
+-        'click', (event: Event) => {
+-        const spanElement = 
+-          this.querySelector(layer.description) as HTMLElement;
+-        const container =
+-          this.querySelector(layer.layer) as HTMLElement;
+-        const element = 
+-          this.querySelector(layer.graph) as HTMLInputElement;
+-
+-        // tslint:disable-next-line:no-any
+-        if ((event.target as any).classList.contains('checked')) {
+-          spanElement.classList.remove('checked');
+-          container.style.visibility = 'hidden';
+-          element.checked = false;
+-        } else {
+-          spanElement.classList.add('checked');
+-          container.style.visibility = 'visible'
+-          element.checked = true;
++    // The descriptions and graph checkboxes control the same five display layers.
++    // Use the checkbox state, not event.target: the clicked text may be a child span.
++    const layerNames: {[key: string]: string[]} = {
++      '#toggle-right-discriminator': ['판별자 판정 표시', 'Discriminator classifications'],
++      '#toggle-right-generator': ['생성자 매니폴드 표시', 'Generator manifold'],
++      '#toggle-right-real-samples': ['진짜 샘플 표시', 'Real samples'],
++      '#toggle-right-fake-samples': ['가짜 샘플 표시', 'Fake samples'],
++      '#toggle-right-gradients': ['판별자 입력 기울기 표시', 'Discriminator input gradients']
++    };
++    checkboxList.forEach(layer => {
++      const graph = this.querySelector(layer.graph) as HTMLInputElement;
++      const description = this.querySelector(layer.description) as HTMLElement;
++      const container = this.querySelector(layer.layer) as SVGGElement;
++      description.setAttribute('aria-label', layerNames[layer.description][language === 'ko' ? 0 : 1]);
++      graph.setAttribute('aria-label', layerNames[layer.description][language === 'ko' ? 0 : 1]);
++      const updateView = (checked: boolean) => {
++        container.style.visibility = checked ? 'visible' : 'hidden';
++        description.classList.toggle('checked', checked);
++        description.setAttribute('aria-pressed', String(checked));
++      };
++      const toggle = () => {
++        graph.checked = !graph.checked;
++        updateView(graph.checked);
++      };
++      graph.addEventListener('change', () => updateView(graph.checked));
++      description.addEventListener('click', toggle);
++      description.addEventListener('keydown', (event: KeyboardEvent) => {
++        if ((event.key === 'Enter' || event.key === ' ') && !event.repeat) {
++          event.preventDefault();
++          toggle();
+         }
+       });
++      updateView(graph.checked);
+     });
+ 
+     // Pre-trained checkbox.
+@@ -430,12 +477,16 @@ class GANLab extends GANLabPolymer {
+   }
+ 
+   private createExperiment() {
+-    // Reset.
++    // Any pending checkpoint belongs to an experiment that has now been replaced.
++    this.modelRequestGeneration++;
++    // Cancel any suspended animation before replacing the model.
++    this.cancelSlowIteration();
+     this.pause();
+     this.iterationCount = 0;
+     this.iterCountElement.innerText = this.zeroPad(this.iterationCount);
+ 
+     this.isPausedOngoingIteration = false;
++    this.slowIterationActive = false;
+ 
+     document.getElementById('d-loss-value').innerText = '-';
+     document.getElementById('g-loss-value').innerText = '-';
+@@ -532,6 +583,7 @@ class GANLab extends GANLabPolymer {
+     const distributionElementList = 
+       document.querySelectorAll('.distribution-item');
+     for (let i = 0; i < distributionElementList.length; ++i) {
++      distributionElementList[i].setAttribute('aria-pressed', String(distributionElementList[i] === element));
+       if (distributionElementList[i].classList.contains('selected')) {
+         distributionElementList[i].classList.remove('selected');
+       }
+@@ -545,31 +597,41 @@ class GANLab extends GANLabPolymer {
+   }
+     
+   private loadModelAndCreateExperiment() {
++    const requestGeneration = ++this.modelRequestGeneration;
++    const status = document.getElementById('pretrained-status');
++    status.textContent = '';
++    this.pause();
++    this.cancelSlowIteration();
+     if (this.selectedShapeName === 'drawing') {
+-      this.pause();
+       this.drawing.prepareDrawing();
+       this.disabledPretrainedMode();
+     } else if (this.usePretrained === true) {
+       const filename = `pretrained_${this.selectedShapeName}`;
+       this.loadPretrainedWeightFile(filename).then((loadedModel) => {
++        if (requestGeneration !== this.modelRequestGeneration) return;
++        this.applyPretrainedConfig(loadedModel);
+         const loadedIterCount = this.iterationCount;
+ 
+         this.createExperiment();
+         this.model.loadPretrainedWeights(loadedModel);
+ 
+-        // Run one iteration for visualization.
++        // Render the loaded weights without performing an optimizer update.
+         this.isPlaying = true;
+-        this.iterateTraining(false);
++        this.iterateTraining(false, 'visualize');
+         this.isPlaying = false;
+ 
+         this.iterationCount = loadedIterCount;
+         this.iterCountElement.innerText = this.zeroPad(this.iterationCount);
+-      });
+-    } else {
+-      const filename = `pretrained_${this.selectedShapeName}`;
+-      this.loadPretrainedWeightFile(filename).then((loadedModel) => {
++      }, () => {
++        if (requestGeneration !== this.modelRequestGeneration) return;
++        this.disabledPretrainedMode();
+         this.createExperiment();
++        status.textContent = document.documentElement.lang === 'ko'
++          ? '사전 학습 모델을 불러오지 못해 처음부터 시작합니다.'
++          : 'Could not load the pretrained model; starting from scratch.';
+       });
++    } else {
++      this.createExperiment();
+     }
+   }
+ 
+@@ -579,7 +641,8 @@ class GANLab extends GANLabPolymer {
+ 
+     const trueDistribution: Array<[number, number]> = [];
+     while (trueDistribution.length < NUM_TRUE_SAMPLES_VISUALIZED) {
+-      const values = inputAtlasList.splice(0, 2);
++      const start = trueDistribution.length * 2;
++      const values = inputAtlasList.slice(start, start + 2);
+       trueDistribution.push([values[0], values[1]]);
+     }
+ 
+@@ -633,7 +696,7 @@ class GANLab extends GANLabPolymer {
+ 
+   private onClickFinishDrawingButton() {
+     if (this.drawing.drawingPositions.length === 0) {
+-      alert('Draw something on canvas');
++      alert(document.documentElement.lang === 'ko' ? '캔버스에 먼저 분포를 그려 주세요.' : 'Draw something on the canvas first.');
+     } else {
+       const drawingElement =
+         this.querySelector('#drawing-container') as HTMLElement;
+@@ -666,9 +729,16 @@ class GANLab extends GANLabPolymer {
+   }
+ 
+   private pause() {
+-    // Extra iteration for visualization.
+-    this.iterateTraining(false);
++    this.playbackGeneration++;
++    // A slow iteration can be paused before its first timer fires.
++    if (this.slowIterationActive) this.isPausedOngoingIteration = true;
++    // Refresh the fast-mode display without taking another optimizer step.
++    // A slow-mode iteration may be suspended partway through its animation.
++    if (this.isPlaying && !this.slowMode) {
++      this.iterateTraining(false, 'refresh');
++    }
+     this.isPlaying = false;
++    this.iterCountElement.innerText = this.zeroPad(this.iterationCount);
+     const button = document.getElementById('play-pause-button');
+     if (button.classList.contains('playing')) {
+       button.classList.remove('playing');
+@@ -735,6 +805,8 @@ class GANLab extends GANLabPolymer {
+         .classList.add('mdl-button--colored');
+       document.getElementById('tooltips').classList.add('shown');
+     } else {
++      const resumeFast = this.isPlaying && this.slowIterationActive;
++      this.cancelSlowIteration();
+       document.getElementById('slow-step')
+         .classList.remove('mdl-button--colored');
+       this.dehighlightStep();
+@@ -758,6 +830,7 @@ class GANLab extends GANLabPolymer {
+         this.gFlowElements[i].classList.remove('g-activated');
+       }
+       document.getElementById('tooltips')!.classList.remove('shown');
++      if (resumeFast) this.iterateTraining(true);
+     }
+   }
+ 
+@@ -784,13 +857,24 @@ class GANLab extends GANLabPolymer {
+   }
+ 
+   private async iterateTraining(keepIterating: boolean, type?: string) {
++    try {
++      await this.runTrainingIteration(keepIterating, type);
++    } catch (error) {
++      if (error !== SLOW_ITERATION_CANCELLED) throw error;
++    }
++  }
++
++  private async runTrainingIteration(keepIterating: boolean, type?: string) {
+     if (!this.isPlaying) {
+       return;
+     }
+ 
+-    this.iterationCount++;
++    const animate = keepIterating && this.slowMode;
++    const slowIteration = animate;
++    if (slowIteration) this.slowIterationActive = true;
++    if (type !== 'refresh') this.iterationCount++;
+ 
+-    if (!keepIterating || this.iterationCount === 1 || this.slowMode ||
++    if (!keepIterating || this.iterationCount === 1 || animate ||
+       this.iterationCount % EPOCH_INTERVAL === 0) {
+       this.iterCountElement.innerText = this.zeroPad(this.iterationCount);
+ 
+@@ -800,7 +884,7 @@ class GANLab extends GANLabPolymer {
+     }
+ 
+     // Visualize generated samples before training.
+-    if (this.slowMode) {
++    if (animate) {
+       const container =
+         document.getElementById('model-visualization-container');
+       if (!container.classList.contains('any-highlighted')) {
+@@ -823,7 +907,7 @@ class GANLab extends GANLabPolymer {
+ 
+     tf.tidy(() => {
+       let gResultData: Float32Array;
+-      if (!keepIterating || this.iterationCount === 1 || this.slowMode ||
++      if (!keepIterating || this.iterationCount === 1 || animate ||
+         this.iterationCount % VIS_INTERVAL === 0) {
+         const gDataBefore: Array<[number, number]> = [];
+         const noiseFixedBatch =
+@@ -865,7 +949,7 @@ class GANLab extends GANLabPolymer {
+       }
+     });
+ 
+-    if (this.slowMode) {
++    if (animate) {
+       await this.highlightStep(true,
+         ['component-true-samples', 'component-generated-samples',
+           'component-discriminator',
+@@ -873,7 +957,7 @@ class GANLab extends GANLabPolymer {
+         'tooltip-d-prediction');
+     }
+ 
+-    if (!keepIterating || this.iterationCount === 1 || this.slowMode ||
++    if (!keepIterating || this.iterationCount === 1 || animate ||
+       this.iterationCount % VIS_INTERVAL === 0) {
+       tf.tidy(() => {
+         const noiseBatch =
+@@ -936,7 +1020,15 @@ class GANLab extends GANLabPolymer {
+     // Train Discriminator.
+     let dCostVal: number = null;
+     tf.tidy(() => {
+-      const kDSteps = type === 'D' ? 1 : (type === 'G' ? 0 : this.kDSteps);
++      const kDSteps = type === 'D' ? 1 :
++        (type === 'G' || type === 'visualize' || type === 'refresh' ? 0 : this.kDSteps);
++      if (type === 'visualize') {
++        const noiseBatch = this.noiseProviderFixed.getNextCopy() as tf.Tensor2D;
++        const trueSampleBatch = this.trueSampleProviderFixed.getNextCopy() as tf.Tensor2D;
++        dCostVal = this.model.dLoss(
++          this.model.discriminator(trueSampleBatch),
++          this.model.discriminator(this.model.generator(noiseBatch))).get();
++      }
+       for (let j = 0; j < kDSteps; j++) {
+         const dCost = this.model.dOptimizer.minimize(() => {
+           const noiseBatch = this.noiseProvider.getNextCopy() as tf.Tensor2D;
+@@ -947,7 +1039,7 @@ class GANLab extends GANLabPolymer {
+             this.model.discriminator(this.model.generator(noiseBatch));
+           return this.model.dLoss(truePred, generatedPred);
+         }, true, this.model.dVariables);
+-        if ((!keepIterating || this.iterationCount === 1 || this.slowMode ||
++        if ((!keepIterating || this.iterationCount === 1 || animate ||
+           this.iterationCount % VIS_INTERVAL === 0)
+           && j + 1 === kDSteps) {
+           dCostVal = dCost.get();
+@@ -955,30 +1047,30 @@ class GANLab extends GANLabPolymer {
+       }
+     });
+ 
+-    if (!keepIterating || this.iterationCount === 1 || this.slowMode ||
++    if (!keepIterating || this.iterationCount === 1 || animate ||
+       this.iterationCount % VIS_INTERVAL === 0) {
+ 
+-      if (this.slowMode) {
++      if (animate) {
+         await this.highlightStep(true, ['component-d-loss'], 'tooltip-d-loss');
+       }
+ 
+       // Update discriminator loss.
+-      if (dCostVal) {
++      if (dCostVal !== null) {
+         document.getElementById('d-loss-value').innerText =
+-          (dCostVal / 2).toFixed(3);
+-        document.getElementById('d-loss-bar').title = (dCostVal / 2).toFixed(3);
++          dCostVal.toFixed(3);
++        document.getElementById('d-loss-bar').title = dCostVal.toFixed(3);
+         document.getElementById('d-loss-bar').style.width =
+           this.model.lossType === 'LeastSq loss'
+             ? `${dCostVal * 50.0}px`
+             : `${Math.pow(dCostVal * 0.5, 2) * 50.0}px`;
+       }
+ 
+-      if (this.slowMode) {
++      if (animate) {
+         await this.highlightStep(true,
+           ['component-discriminator-gradients'], 'tooltip-d-gradients');
+       }
+ 
+-      if (this.slowMode) {
++      if (animate) {
+         await this.highlightStep(true,
+           ['component-discriminator'], 'tooltip-update-discriminator');
+       }
+@@ -1033,7 +1125,7 @@ class GANLab extends GANLabPolymer {
+       });
+     }
+ 
+-    if (this.slowMode) {
++    if (animate) {
+       await this.sleep(SLOW_INTERVAL_MS);
+       this.dehighlightStep();
+ 
+@@ -1060,14 +1152,14 @@ class GANLab extends GANLabPolymer {
+         'tooltip-g-generated-samples');
+     }
+ 
+-    if (this.slowMode) {
++    if (animate) {
+       await this.highlightStep(false,
+         ['component-generated-samples', 'component-discriminator',
+           'component-generated-prediction'],
+         'tooltip-g-prediction');
+     }
+ 
+-    if (this.slowMode) {
++    if (animate) {
+       await this.highlightStep(false, ['component-g-loss'], 'tooltip-g-loss');
+     }
+ 
+@@ -1075,7 +1167,7 @@ class GANLab extends GANLabPolymer {
+     const gradData: Array<[number, number, number, number]> = [];
+     tf.tidy(() => {
+       let gResultData: Float32Array;
+-      if (!keepIterating || this.iterationCount === 1 || this.slowMode ||
++      if (!keepIterating || this.iterationCount === 1 || animate ||
+         this.iterationCount % VIS_INTERVAL === 0) {
+         const gDataBefore: Array<[number, number]> = [];
+         const noiseFixedBatch =
+@@ -1099,7 +1191,7 @@ class GANLab extends GANLabPolymer {
+       }
+ 
+       // Compute and store gradients before training.
+-      if (!keepIterating || this.iterationCount === 1 || this.slowMode ||
++      if (!keepIterating || this.iterationCount === 1 || animate ||
+         this.iterationCount % VIS_INTERVAL === 0) {
+         const gradFunction = tf.grad(this.model.discriminator);
+         const noiseFixedBatchForGrad =
+@@ -1118,9 +1210,15 @@ class GANLab extends GANLabPolymer {
+     });
+ 
+     // Train generator.
+-    const kGSteps = type === 'G' ? 1 : (type === 'D' ? 0 : this.kGSteps);
++    const kGSteps = type === 'G' ? 1 :
++      (type === 'D' || type === 'visualize' || type === 'refresh' ? 0 : this.kGSteps);
+     let gCostVal: number = null;
+     tf.tidy(() => {
++      if (type === 'visualize') {
++        const noiseBatch = this.noiseProviderFixed.getNextCopy() as tf.Tensor2D;
++        gCostVal = this.model.gLoss(
++          this.model.discriminator(this.model.generator(noiseBatch))).get();
++      }
+       for (let j = 0; j < kGSteps; j++) {
+         const gCost = this.model.gOptimizer.minimize(() => {
+           const noiseBatch = this.noiseProvider.getNextCopy() as tf.Tensor2D;
+@@ -1128,7 +1226,7 @@ class GANLab extends GANLabPolymer {
+             this.model.discriminator(this.model.generator(noiseBatch));
+           return this.model.gLoss(pred);
+         }, true, this.model.gVariables);
+-        if ((!keepIterating || this.iterationCount === 1 || this.slowMode ||
++        if ((!keepIterating || this.iterationCount === 1 || animate ||
+           this.iterationCount % VIS_INTERVAL === 0)
+           && j + 1 === kGSteps) {
+           gCostVal = gCost.get();
+@@ -1136,10 +1234,10 @@ class GANLab extends GANLabPolymer {
+       }
+     });
+ 
+-    if (!keepIterating || this.iterationCount === 1 || this.slowMode ||
++    if (!keepIterating || this.iterationCount === 1 || animate ||
+       this.iterationCount % VIS_INTERVAL === 0) {
+       // Update generator loss.
+-      if (gCostVal) {
++      if (gCostVal !== null) {
+         document.getElementById('g-loss-value').innerText =
+           gCostVal.toFixed(3);
+         document.getElementById('g-loss-bar').title = gCostVal.toFixed(3);
+@@ -1156,11 +1254,14 @@ class GANLab extends GANLabPolymer {
+         chartContainer.style.visibility = 'visible';
+       }
+ 
+-      this.updateChartData(this.costChartData, this.iterationCount,
+-        [dCostVal ? dCostVal / 2 : null, gCostVal]);
+-      this.costChart.update();
++      // Refreshing should not add a training-loss point without a training step.
++      if (type !== 'refresh') {
++        this.updateChartData(this.costChartData, this.iterationCount,
++          [dCostVal, gCostVal]);
++        this.costChart.update();
++      }
+ 
+-      if (this.slowMode) {
++      if (animate) {
+         await this.highlightStep(false,
+           ['component-generator-gradients'], 'tooltip-g-gradients');
+       }
+@@ -1198,7 +1299,7 @@ class GANLab extends GANLabPolymer {
+             this.createArrowPolygon(d, plotSizePx, arrowWidth));
+       });
+ 
+-      if (this.slowMode) {
++      if (animate) {
+         await this.highlightStep(false,
+           ['component-generator'], 'tooltip-update-generator');
+       }
+@@ -1293,13 +1394,22 @@ class GANLab extends GANLabPolymer {
+           this.noiseProviderFixed.getNextCopy() as tf.Tensor2D;
+         const gResult = this.model.generator(noiseFixedBatch);
+         const gResultData = gResult.dataSync();
++        // In non-animated mode, arrows move to these post-update samples.
++        // Recompute their directions there instead of carrying over gradients
++        // from the pre-update sample positions.
++        const postUpdateGradient = !animate
++          ? tf.grad(this.model.discriminator)(gResult).dataSync() : null;
+         for (let i = 0; i < gResultData.length / 2; ++i) {
+           gData.push([gResultData[i * 2], gResultData[i * 2 + 1]]);
++          if (postUpdateGradient) {
++            gradData[i][2] = postUpdateGradient[i * 2];
++            gradData[i][3] = postUpdateGradient[i * 2 + 1];
++          }
+         }
+       });
+ 
+       // Visualize generated samples.
+-      if (!this.slowMode) {
++      if (!animate) {
+         this.gDotsElementList.forEach((dotsElement, k) => {
+           const plotSizePx = k === 0 ? this.plotSizePx : this.smallPlotSizePx;
+           d3Transition.transition()
+@@ -1339,7 +1449,7 @@ class GANLab extends GANLabPolymer {
+       ]);
+       this.evalChart.update();
+ 
+-      if (this.slowMode) {
++      if (animate) {
+         await this.sleep(SLOW_INTERVAL_MS);
+         this.dehighlightStep();
+ 
+@@ -1362,7 +1472,13 @@ class GANLab extends GANLabPolymer {
+       this.isPlaying = false;
+     }
+     
+-    requestAnimationFrame(() => this.iterateTraining(true));
++    if (slowIteration) this.slowIterationActive = false;
++    if (keepIterating) {
++      const generation = this.playbackGeneration;
++      requestAnimationFrame(() => {
++        if (generation === this.playbackGeneration) this.iterateTraining(true);
++      });
++    }
+   }
+ 
+   private createArrowPolygon(d: number[],
+@@ -1592,8 +1708,28 @@ class GANLab extends GANLabPolymer {
+       Promise<tf.io.ModelArtifacts> {
+     const handler = 
+       tf.io.browserHTTPRequest(`pretrained_models/${filename}.json`);
+-    const loadedModel: tf.io.ModelArtifacts = await handler.load();
++    const loadedModel = await handler.load();
++    // This TensorFlow.js version reads the body of a failed weight request.
++    // Reject incomplete checkpoint data before trying to construct tensors.
++    if (!loadedModel.modelTopology || !loadedModel.modelTopology['config'] ||
++        !loadedModel.weightSpecs || !loadedModel.weightData) {
++      throw new Error('Incomplete pretrained checkpoint');
++    }
++    let expectedBytes = 0;
++    for (const spec of loadedModel.weightSpecs) {
++      if (spec.dtype !== 'float32' || !spec.shape ||
++          spec.shape.some((size: number) => !Number.isInteger(size) || size < 0)) {
++        throw new Error('Unsupported pretrained weight');
++      }
++      expectedBytes += spec.shape.reduce((total: number, size: number) => total * size, 1) * 4;
++    }
++    if (expectedBytes !== loadedModel.weightData.byteLength) {
++      throw new Error('Incomplete pretrained weights');
++    }
++    return loadedModel;
++  }
+ 
++  private applyPretrainedConfig(loadedModel: tf.io.ModelArtifacts) {
+     this.iterationCount = loadedModel.modelTopology['iter_count'];
+     
+     const loadedConfig: {} = loadedModel.modelTopology['config'];
+@@ -1602,9 +1738,9 @@ class GANLab extends GANLabPolymer {
+     }
+ 
+     document.getElementById('num-g-layers')!.innerText =
+-      this.numGeneratorLayers.toString();
++      (this.numGeneratorLayers + 1).toString();
+     document.getElementById('num-d-layers')!.innerText =
+-      this.numDiscriminatorLayers.toString();
++      (this.numDiscriminatorLayers + 1).toString();
+     document.getElementById('num-g-neurons')!.innerText =
+       this.numGeneratorNeurons.toString();
+     document.getElementById('num-d-neurons')!.innerText =
+@@ -1612,11 +1748,11 @@ class GANLab extends GANLabPolymer {
+     document.getElementById('k-d-steps')!.innerText = this.kDSteps.toString();
+     document.getElementById('k-g-steps')!.innerText = this.kGSteps.toString();
+ 
+-    return loadedModel as Promise<tf.io.ModelArtifacts>;
+   }
+ 
+   private recreateCharts() {
+     document.getElementById('chart-container').style.visibility = 'hidden';
++    const korean = document.documentElement.lang === 'ko';
+ 
+     this.costChartData = new Array<ChartData>(2);
+     for (let i = 0; i < this.costChartData.length; ++i) {
+@@ -1626,8 +1762,8 @@ class GANLab extends GANLabPolymer {
+       this.costChart.destroy();
+     }
+     const costChartSpecification = [
+-      { label: 'Discriminator\'s Loss', color: 'rgba(5, 117, 176, 0.5)' },
+-      { label: 'Generator\'s Loss', color: 'rgba(123, 50, 148, 0.5)' }
++      { label: korean ? '판별자 손실' : 'Discriminator\'s Loss', color: 'rgba(5, 117, 176, 0.5)' },
++      { label: korean ? '생성자 손실' : 'Generator\'s Loss', color: 'rgba(123, 50, 148, 0.5)' }
+     ];
+     this.costChart = this.createChart(
+       'cost-chart', this.costChartData, costChartSpecification, 0);
+@@ -1640,8 +1776,8 @@ class GANLab extends GANLabPolymer {
+       this.evalChart.destroy();
+     }
+     const evalChartSpecification = [
+-      { label: 'KL Divergence (by grid)', color: 'rgba(220, 80, 20, 0.5)' },
+-      { label: 'JS Divergence (by grid)', color: 'rgba(200, 150, 10, 0.5)' }
++      { label: korean ? 'KL 발산 (격자)' : 'KL Divergence (by grid)', color: 'rgba(220, 80, 20, 0.5)' },
++      { label: korean ? 'JS 발산 (격자)' : 'JS Divergence (by grid)', color: 'rgba(200, 150, 10, 0.5)' }
+     ];
+     this.evalChart = this.createChart(
+       'eval-chart', this.evalChartData, evalChartSpecification, 0);
+@@ -1649,7 +1785,7 @@ class GANLab extends GANLabPolymer {
+ 
+   private updateChartData(data: ChartData[][], xVal: number, yList: number[]) {
+     for (let i = 0; i < yList.length; ++i) {
+-      data[i].push({ x: xVal, y: yList[i] ? yList[i].toFixed(3) : null});
++      data[i].push({ x: xVal, y: Number.isFinite(yList[i]) ? yList[i].toFixed(3) : null});
+     }
+   }
+ 
+@@ -1690,10 +1826,29 @@ class GANLab extends GANLabPolymer {
+     });
+   }
+ 
++  private cancelSlowIteration() {
++    this.slowGeneration++;
++    if (this.slowIterationActive) {
++      this.dehighlightStep();
++      document.getElementById('model-visualization-container').classList.remove('any-highlighted');
++      ['component-generator', 'component-discriminator'].forEach(id =>
++        document.getElementById(id).classList.remove('deactivated'));
++      ['component-d-loss', 'component-g-loss'].forEach(id =>
++        document.getElementById(id).classList.remove('activated'));
++      this.dFlowElements.forEach(element => element.classList.remove('d-activated'));
++      this.gFlowElements.forEach(element => element.classList.remove('g-activated'));
++    }
++    this.slowIterationActive = false;
++    this.isPausedOngoingIteration = false;
++  }
++
+   private sleep(ms: number) {
+-    return new Promise(resolve => {
++    const generation = this.slowGeneration;
++    return new Promise((resolve, reject) => {
+       const check = () => {
+-        if (this.isPlaying) {
++        if (generation !== this.slowGeneration) {
++          reject(SLOW_ITERATION_CANCELLED);
++        } else if (this.isPlaying) {
+           this.isPausedOngoingIteration = false;
+           resolve();
+         } else {
+diff --git a/demo/ganlab_drawing.ts b/demo/ganlab_drawing.ts
+index 42cfbef..80da64a 100644
+--- a/demo/ganlab_drawing.ts
++++ b/demo/ganlab_drawing.ts
+@@ -1,3 +1,4 @@
++// Modified by Model Atlas: map pointer events to the canvas and support touch.
+ export class GANLabDrawing {
+   private _drawingPositions: Array<[number, number]>;
+   private isDrawing: boolean;
+@@ -11,23 +12,41 @@ export class GANLabDrawing {
+     this.context.strokeStyle = 'rgba(0, 136, 55, 0.25)';
+     this.context.lineJoin = 'round';
+     this.context.lineWidth = 10;
+-    const drawingContainer =
+-      document.getElementById('vis-content-container') as HTMLDivElement;
+-    const offsetLeft = drawingContainer.offsetLeft + 5;
+-    const offsetTop = drawingContainer.offsetTop + 15;
+-
+-    this.canvas.addEventListener('mousedown', (event: MouseEvent) => {
++    // Client coordinates and the live canvas rectangle share a coordinate
++    // system, even when the embedded page scrolls or the canvas is scaled.
++    const position = (event: PointerEvent): [number, number] | null => {
++      const rect = this.canvas.getBoundingClientRect();
++      if (!rect.width || !rect.height || event.clientX < rect.left ||
++          event.clientX >= rect.right || event.clientY < rect.top ||
++          event.clientY >= rect.bottom) return null;
++      return [(event.clientX - rect.left) * this.canvas.width / rect.width,
++              (event.clientY - rect.top) * this.canvas.height / rect.height];
++    };
++    let activePointerId: number | null = null;
++    this.canvas.addEventListener('pointerdown', (event: PointerEvent) => {
++      if (!event.isPrimary || event.button !== 0) return;
++      const point = position(event);
++      if (!point) return;
+       this.isDrawing = true;
+-      this.draw([event.pageX - offsetLeft, event.pageY - offsetTop]);
+-    });
+-    this.canvas.addEventListener('mousemove', (event: MouseEvent) => {
+-      if (this.isDrawing) {
+-        this.draw([event.pageX - offsetLeft, event.pageY - offsetTop]);
+-      }
++      activePointerId = event.pointerId;
++      this.canvas.setPointerCapture(event.pointerId);
++      event.preventDefault();
++      this.draw(point);
+     });
+-    this.canvas.addEventListener('mouseup', (event: Event) => {
+-      this.isDrawing = false;
++    this.canvas.addEventListener('pointermove', (event: PointerEvent) => {
++      if (!this.isDrawing || activePointerId !== event.pointerId) return;
++      const point = position(event);
++      if (point) this.draw(point);
+     });
++    const stopDrawing = (event: PointerEvent) => {
++      if (activePointerId === event.pointerId) {
++        this.isDrawing = false;
++        activePointerId = null;
++      }
++    };
++    this.canvas.addEventListener('pointerup', stopDrawing);
++    this.canvas.addEventListener('pointercancel', stopDrawing);
++    this.canvas.addEventListener('lostpointercapture', stopDrawing);
+   }
+ 
+   get drawingPositions(): Array<[number, number]> {
+diff --git a/demo/ganlab_evaluators.ts b/demo/ganlab_evaluators.ts
+index a578548..2f37fe6 100644
+--- a/demo/ganlab_evaluators.ts
++++ b/demo/ganlab_evaluators.ts
+@@ -1,3 +1,4 @@
++// Modified by Model Atlas: preserve samples and assign out-of-range points to edge cells.
+ export class GANLabEvaluatorGridDensities {
+ 
+   private gridTrueSampleCount: number[];
+@@ -11,13 +12,14 @@ export class GANLabEvaluatorGridDensities {
+   }
+ 
+   private mapPointToGridIndex(point: [number, number]) {
+-    return Math.trunc(point[0] * this.numGrid) +
+-      this.numGrid * Math.trunc(point[1] * this.numGrid);
++    const x = Math.min(this.numGrid - 1, Math.max(0, Math.floor(point[0] * this.numGrid)));
++    const y = Math.min(this.numGrid - 1, Math.max(0, Math.floor(point[1] * this.numGrid)));
++    return x + this.numGrid * y;
+   }
+ 
+   createGridsForTrue(trueAtlas: number[], numTrueSamples: number) {
+     for (let i = 0; i < numTrueSamples; ++i) {
+-      const values = trueAtlas.splice(i * 2, i * 2 + 2);
++      const values = trueAtlas.slice(i * 2, i * 2 + 2);
+       this.gridTrueSampleCount[this.mapPointToGridIndex(
+         [values[0], values[1]])]++;
+       this.gridTrueDensities[this.mapPointToGridIndex(
+diff --git a/demo/ganlab_models.ts b/demo/ganlab_models.ts
+index f1d916f..3056717 100644
+--- a/demo/ganlab_models.ts
++++ b/demo/ganlab_models.ts
+@@ -1,3 +1,4 @@
++// Modified by Model Atlas: retain the selected loss when recreating a model.
+ import * as tf from '@tensorflow/tfjs-core';
+ 
+ // Hack to prevent error when using grads (doesn't allow this in model).
+@@ -21,7 +22,7 @@ export class GANLabModel {
+     private numDiscriminatorNeurons: number,
+     private batchSize: number,
+     lossType: string
+-  ) { }
++  ) { this.lossType = lossType; }
+ 
+   initializeModelVariables() {
+     if (this.dVariables) {
+diff --git a/demo/index.html b/demo/index.html
+index 6e0720a..b0023ea 100644
+--- a/demo/index.html
++++ b/demo/index.html
+@@ -1,13 +1,25 @@
++<!-- Modified by Model Atlas: bilingual interface and article, responsive reading and scrollable lab, accessible video chapters, heatmap explanation, original diagrams and controls described without icon images. -->
+ <!DOCTYPE html>
+-<html>
++<html lang="en">
+ 
+ <head>
+   <meta charset="UTF-8">
++  <meta name="viewport" content="width=device-width, initial-scale=1">
++  <script>
++    // Choose the page language before Polymer and the model have loaded.
++    (() => {
++      let language = new URLSearchParams(window.location.search).get('lang');
++      if (language !== 'ko' && language !== 'en') {
++        try { language = localStorage.getItem('model-atlas-language'); } catch (_) { language = null; }
++      }
++      document.documentElement.lang = language === 'ko' ? 'ko' : 'en';
++    })();
++  </script>
+   <script src="../node_modules/@bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+   <link rel="import" href="ganlab.html">
+ 
+-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.4.9/dialog-polyfill.min.css" />
+-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.4.9/dialog-polyfill.min.js"></script>
++  <link rel="stylesheet" href="../../../vendor/ganlab/dialog-polyfill-0.4.9.css" />
++  <script type="text/javascript" src="../../../vendor/ganlab/dialog-polyfill-0.4.9.js"></script>
+   <script src="../lib/support.js"></script>
+   
+     <!-- Share card -->
+@@ -22,6 +34,13 @@
+ 
+   <title>GAN Lab: Play with Generative Adversarial Networks in Your Browser!</title>
+   <style>
++    #description [data-model-atlas-article="ko"] { display: none; }
++    html[lang="ko"] #description [data-model-atlas-article="ko"] { display: block; }
++    html[lang="ko"] #description [data-model-atlas-article="en"] { display: none; }
++    #description [data-model-atlas-copy="ko"] { display: none; }
++    html[lang="ko"] #description [data-model-atlas-copy="ko"] { display: block; }
++    html[lang="ko"] #description [data-model-atlas-copy="en"] { display: none; }
++
+     html {
+       width: 100%;
+       height: 100%;
+@@ -181,6 +200,21 @@
+       margin-top: 0px;
+       padding: 20px 10px 0 110px;
+     }
++
++    #mobile-lab-help { display: none; }
++    @media (max-width: 760px) {
++      body { min-width: 0; }
++      #top-bar-panel-container { width: auto; gap: 8px; flex-wrap: wrap; }
++      #tool-description, #source-link { padding: 0 16px; }
++      #mobile-lab-help { display: block; margin: 12px 16px; color: #444; font-size: 14px; line-height: 1.5; }
++      #demo { overflow-x: auto; overscroll-behavior-x: contain; }
++      #demo:focus-visible { outline: 3px solid #176a73; outline-offset: -3px; }
++      #demo gan-lab { display: block; min-width: 1442px; }
++      #description { margin: 0 16px 40px; overflow-wrap: anywhere; }
++      #description .supporting-figure img { max-width: 100%; height: auto; }
++      #description iframe { max-width: 100%; }
++      #description div.citation { padding-left: 0; }
++    }
+   </style>
+ </head>
+ 
+@@ -188,27 +222,62 @@
+   <div id="top-bar">
+     <div id="top-bar-panel-container" class="panel-container">
+       <div id="tool-description">
+-        Play with Generative Adversarial Networks (GANs) in your browser!          
++        <span data-model-atlas-ko="브라우저에서 생성적 적대 신경망(GAN)을 실습하세요!">Play with Generative Adversarial Networks (GANs) in your browser!</span>
+       </div>
+       <div id="source-link">
+-        <a href="https://github.com/poloclub/ganlab" title="Source on GitHub">
+-          Fork us on GitHub
+-          <img src="images/github-mark.png" />
+-        </a>
++        <a href="https://github.com/poloclub/ganlab" title="Source on GitHub" data-model-atlas-ko="GitHub 원본 보기">View source on GitHub</a>
+       </div>
+     </div>
+   </div>      
+       
+-  <div id="demo">
++  <p id="mobile-lab-help" data-model-atlas-ko="실습 화면을 좌우로 밀거나 초점을 둔 뒤 방향키로 이동하세요. 아래 설명 글은 화면 폭에 맞게 표시됩니다.">Swipe the lab horizontally or focus it and use the arrow keys. The article below fits the screen.</p>
++  <div id="demo" role="region" tabindex="0" aria-label="Horizontally scrollable GAN Lab" data-model-atlas-aria-label="가로로 이동하는 GAN 실습" aria-describedby="mobile-lab-help">
+     <div id="loading">
+-      Loading...
++      <span data-model-atlas-ko="불러오는 중...">Loading...</span>
+       <br />
+-      <small>It may take a few tens of seconds.</small>
++      <small data-model-atlas-ko="수십 초가 걸릴 수 있습니다.">It may take a few tens of seconds.</small>
+     </div>
+     <gan-lab></gan-lab>
+   </div>
+ 
+   <div id="description">
++    <div data-model-atlas-article="ko">
++      <h2>GAN이란?</h2>
++      <p>생성 모델은 학습 데이터와 비슷한 새로운 샘플을 만들도록 분포를 학습합니다. 생성적 적대 신경망(GAN)은 무작위 입력을 샘플로 바꾸는 <strong>생성자 G</strong>와 진짜 샘플과 생성된 샘플을 구별하는 <strong>판별자 D</strong>를 번갈아 학습합니다. 생성자는 판별자가 자신의 샘플을 진짜라고 판단하도록 개선됩니다. <a href="https://arxiv.org/pdf/1406.2661.pdf">원 논문</a></p>
++      <h2>무엇을 보고 있나요?</h2>
++      <p>이 실습은 이미지 대신 2차원 점의 분포를 학습합니다. 위쪽에서 진짜 데이터 분포를 선택하세요. 왼쪽 모델 전체 구조는 데이터와 계산의 흐름을, 오른쪽 분포 겹쳐 보기는 같은 공간의 여러 결과를 보여줍니다.</p>
++      <div class="supporting-figure"><img src="../../../vendor/ganlab/article-selected.svg" alt="선택된 데이터 분포가 두 화면에 표시됩니다" /><div class="figure-caption">그림 1. 같은 데이터가 두 화면에 표시되는 방식을 나타낸 개념도입니다.</div></div>
++      <p id="gan-ko-checkpoint">처음 화면에서는 사전 학습 모델을 불러옵니다. 체크를 해제하면 현재 설정으로 새 모델을 만들고 처음부터 학습하며 체크포인트를 요청하지 않습니다. 분포를 바꾸면 사전 학습 사용이 해제되고 현재 설정으로 새 모델을 만듭니다. 파일을 불러오지 못할 때도 안내 후 처음부터 시작합니다.</p>
++      <p>재생 버튼을 누르면 초록색 진짜 샘플과 보라색 가짜 샘플이 표시됩니다. 학습에 따라 생성된 분포가 진짜 분포와 비슷해지는지 살펴보세요. GAN 학습이 항상 안정적으로 수렴하는 것은 아닙니다.</p>
++      <div class="supporting-figure"><img src="../../../vendor/ganlab/article-evolution.svg" alt="진짜 점과 생성된 점의 가상 분포를 세 단계로 표현한 그림" /><div class="figure-caption">그림 2. 생성 분포가 변할 수 있는 모습을 나타낸 가상 예시입니다. 실제 학습 결과가 아니며 수렴을 보장하지 않습니다.</div></div>
++      <h4>생성자: 노이즈에서 샘플로</h4>
++      <p id="gan-ko-noise">생성자 G는 선택한 1차원 또는 2차원 노이즈 z를 2차원 점 G(z)로 바꿉니다. 기본값은 2D 균등이며, 메뉴에서 1D/2D와 균등/정규를 선택할 수 있습니다. 매니폴드 보기는 2D 입력의 격자 또는 1D 입력의 선이 출력 공간에서 어떻게 변하는지 보여 줍니다. 2D에서 색의 진하기는 변환된 격자 셀의 면적과 입력 분포를 바탕으로 한 밀도 시각화입니다. 정확한 샘플 개수를 나타내는 것은 아닙니다.</p>
++      <p id="gan-ko-noise-example">예를 들어 설명용 함수 G(z)=(0.5z, 1−z)에 1차원 입력 z=0.4를 넣으면 G(0.4)=(0.2, 0.6)이라는 2차원 점이 나옵니다. z를 바꾸면 출력 점이 선을 따라 이동합니다. 이 식은 차원을 설명하기 위한 예시이며 실습에서 학습하는 신경망의 실제 식은 아닙니다.</p>
++      <div class="supporting-figure"><img src="../../../vendor/ganlab/article-mapping.svg" alt="1차원 노이즈 선을 2차원 곡선으로 변환하는 가상의 예" /><div class="figure-caption">그림 3. 1차원 입력을 2차원으로 변환하는 가상 개념도입니다.</div></div>
++      <h4>판별자: 진짜와 가짜 구별하기</h4>
++      <p>D(x)는 점 x를 진짜라고 판단하는 점수입니다. 배경의 초록색은 진짜 쪽, 보라색은 가짜 쪽이라는 판별자의 현재 판단을 나타냅니다. 회색에 가까운 영역은 판별이 애매하다는 뜻이지 학습이 성공했다는 증거는 아닙니다.</p>
++      <p id="gan-ko-gray-example">예를 들어 실제 데이터가 유형 A와 B를 각각 절반씩 포함하지만 생성자가 A만 만든다고 합시다. 판별자가 모든 점에 0.5를 주면 배경은 회색이어도 생성 분포에는 B가 빠져 있습니다. 이는 설명용 반례이며, 실제 학습에서는 판별자와 생성자가 함께 변합니다. 샘플과 분포 지표도 함께 살펴보세요.</p>
++      <div class="supporting-figure"><img src="../../../vendor/ganlab/article-heatmap.svg" alt="판별자의 점수에 따라 색이 달라지는 배경" /><div class="figure-caption">그림 4. 배경색으로 나타낸 가상의 판별자 판단입니다.</div></div>
++      <h4>서로 영향을 주는 두 모델</h4>
++      <p>판별자를 업데이트할 때는 진짜와 가짜 샘플을 구별하도록 D의 매개변수를 바꿉니다. 생성자를 업데이트할 때는 D의 매개변수를 고정한 채 D를 통과하는 기울기로 G를 바꿉니다. 분홍색 화살표는 생성자의 가중치 기울기가 아니라 가짜 샘플 위치 x에서의 판별자 출력 기울기 ∇ₓD(x)입니다. D(x)를 가장 빨리 높이는 방향이며, 이 실습의 두 생성자 손실은 D(x)가 커지면 작아지므로 미분 가능한 지점에서 국소적으로 손실을 줄이는 방향이기도 합니다. 실제 갱신은 공유된 생성자 가중치를 바꾸므로 각 점이 화살표대로 움직인다는 뜻은 아닙니다.</p>
++      <p>가상의 예로 D(x)=0.2이고 ∇ₓD(x)=(0.4, −0.1)이라고 합시다. 로그 생성자 손실 L<sub>G</sub>=−log D(x)에서 ∂L<sub>G</sub>/∂D=−1/0.2=−5이므로, 연쇄법칙으로 ∇ₓL<sub>G</sub>=−5×(0.4, −0.1)=(−2, 0.5)입니다. 손실을 줄이는 반대 방향 (2, −0.5)는 화살표와 평행하지만 크기는 다릅니다. 이 예는 점 x의 기울기이며 생성자 가중치에 대한 기울기는 아닙니다.</p>
++      <div class="supporting-figure"><img src="../../../vendor/ganlab/article-gradient.svg" alt="가짜 점에서 판별자 점수가 증가하는 방향을 나타내는 화살표" /><div class="figure-caption">그림 5. 가상의 가짜 샘플에서 판별자 점수가 증가하는 방향입니다.</div></div>
++      <h4 id="gan-ko-loss">실제 손실 함수와 숫자 예제</h4>
++      <p>아래는 이 실습의 기본 크로스 엔트로피 손실입니다. x는 진짜 샘플, z는 노이즈이며 평균은 배치의 샘플들에 대해 계산합니다. 0.95는 판별자의 진짜 샘플 항에 곱하는 가중치입니다.</p>
++      <p><code>L_D = −[0.95 × 평균(log D(x)) + 평균(log(1 − D(G(z))))]</code><br /><code>L_G = −평균(log D(G(z)))</code></p>
++      <p>예를 들어 진짜 점수 D(x)=0.8, 가짜 점수 D(G(z))=0.2인 샘플을 하나씩 쓴다면, 자연로그로 계산한 판별자 손실은 −[0.95 log(0.8) + log(0.8)] ≈ <strong>0.435</strong>, 생성자 손실은 −log(0.2) ≈ <strong>1.609</strong>입니다. 판별자는 두 항을 함께 줄이고, 생성자는 가짜 점수가 커지도록 두 번째 손실을 줄입니다.</p>
++      <p>손실 메뉴에서 Least Squares를 선택하면 두 모델의 손실이 바뀝니다: <code>L_D = 평균((D(x) − 1)²) + 평균(D(G(z))²)</code>, <code>L_G = 평균((D(G(z)) − 1)²)</code>. 같은 점수의 단일 샘플 예에서는 각각 <strong>0.08</strong>과 <strong>0.64</strong>입니다.</p>
++      <p id="gan-ko-loss-display">실습의 손실 숫자와 손실 그래프는 위 손실 함수 값을 표시합니다. 여러 번 갱신하면 마지막 갱신에 사용한 배치의 갱신 전 손실을 기록합니다. 판별자와 생성자는 서로 다른 배치와 시점에서 계산될 수 있습니다. 한 모델만 갱신하면 다른 모델의 숫자는 이전 값이 유지되고 해당 그래프에는 그 단계의 점이 없습니다. 사전 학습 모델을 처음 표시할 때의 값은 고정된 예시 배치에서 계산한 값입니다. 막대 길이는 손실 종류와 모델에 따라 다르게 조정되므로 크기를 비교할 때는 숫자와 그래프를 확인하세요.</p>
++      <h4 id="gan-ko-metrics">분포 평가 지표 읽기</h4>
++      <p>오른쪽 그래프는 학습 손실과 별도로 실제 점과 생성된 점을 격자에 나누어 분포의 차이를 계산합니다. KL은 실제 분포 P를 기준으로 생성 분포 Q와의 차이를, JS는 두 분포의 평균 M=(P+Q)/2를 기준으로 양쪽 차이를 비교합니다. 값이 작아지는 것은 이 격자에서 두 샘플 분포가 가까워진다는 뜻이며, 좋은 생성 모델이라는 보장은 아닙니다.</p>
++      <p><code>KL(P‖Q) = Σ Pᵢ log₂(Pᵢ/Qᵢ)</code><br /><code>JS(P,Q) = ½ KL(P‖M) + ½ KL(Q‖M)</code></p>
++      <p>예를 들어 두 칸의 P=[0.75, 0.25], Q=[0.5, 0.5]이면 M=[0.625, 0.375], KL≈0.189, JS≈0.049입니다. 이는 평활화하지 않은 설명용 예입니다. 실제 그래프는 30×30 격자와 유한한 샘플을 사용하고 각 칸에 작은 수 0.0001을 더합니다. 더한 뒤 다시 정규화하지 않으므로, 샘플이 각각 한 개 이상이면 각 분포의 합은 1.09가 됩니다. 따라서 그래프의 수치는 위 확률분포에 대한 이론적 KL·JS와 정확히 같지는 않습니다. 영역 밖의 점은 가장 가까운 경계 칸에 넣습니다.</p>
++      <p id="gan-ko-normalized-metrics">평활화한 두 배열을 각각 1.09로 나누면 합이 1인 분포가 됩니다. 원본 그래프의 KL과 JS 합은 이 정규화된 분포에서 계산한 값의 1.09배입니다. 다만 평활화 자체도 분포를 바꾸므로, 이 정규화 결과가 평활화하지 않은 이론값과 같다는 뜻은 아닙니다.</p>
++      <h4>직접 실험하기</h4>
++      <ul><li>편집 버튼으로 생성자와 판별자의 층, 뉴런 수, 최적화 방식, 학습률과 반복당 업데이트 횟수를 바꿉니다. 이 반복은 고정 데이터셋 전체를 한 번 도는 에포크가 아닙니다.</li><li>직접 그리기 버튼으로 원하는 데이터 분포를 그린 뒤 적용할 수 있습니다.</li><li>느리게 보기와 단계별 실행으로 각 모델의 손실 계산과 갱신을 차례로 살펴보세요.</li><li>오른쪽 설명의 색이 있는 이름을 눌러 각 분포 레이어를 켜고 끌 수 있습니다.</li></ul>
++      <p>아래에는 원 제작진의 시연 영상과 논문 정보가 이어집니다. 구현은 브라우저의 TensorFlow.js를 사용하며 <a href="https://github.com/poloclub/ganlab">원본 소스 코드</a>에서 확인할 수 있습니다.</p>
++    </div>
++    <div data-model-atlas-article="en">
+     <h2>What is a GAN?</h2>
+     <p>
+       Many machine learning systems look at some kind of complicated input (say, an image) and produce a simple output (a label like, "cat"). By contrast, the goal of a generative model is something like the opposite: take a small piece of input&mdash;perhaps a few random numbers&mdash;and produce a complex output, like an image of a realistic-looking face. A <strong>generative adversarial network (GAN)</strong> is an especially effective type of generative model, <a href="https://arxiv.org/pdf/1406.2661.pdf" title="The original paper by Goodfellow et al. published in 2014">introduced only a few years ago</a>, which has been a subject of intense interest in the machine learning community. 
+@@ -253,9 +322,9 @@
+     </p>
+     
+     <div class="supporting-figure">
+-      <img src="figures/figure-data-selected.png" />
++      <img src="../../../vendor/ganlab/article-selected.svg" alt="The same illustrative green points in two views" />
+       <div class="figure-caption">
+-        Figure 1. Selected data distribution is shown at two places.
++        Figure 1. A schematic of the same data shown in two views.
+       </div>
+     </div>
+     
+@@ -267,18 +336,20 @@
+       (2) The <strong>layered distributions</strong> view overlays the visualizations of the components from the model overview graph, so you can more easily compare the component outputs when analyzing the model.
+     </p>
+     
++    <p id="gan-en-checkpoint">The initial view loads a pretrained model. Uncheck the option to create a new model using the current settings and train from scratch without requesting a checkpoint. Changing distributions turns off pretrained mode and creates a new model with the current settings. If loading the checkpoint fails, a message appears and the lab starts from scratch.</p>
++
+     <h4>
+       Let training begin.
+     </h4>
+     
+     <p>
+-      To start training the GAN model, click the play button (<img class="icon" src="figures/figure-icon-play.png" />) on the toolbar. Besides <span style="color: var(--real-data-color);">real samples</span>  from your chosen distribution, you'll also see <span style="color: var(--generator-color);">fake samples</span> that are generated by the model. Fake samples' positions continually updated as the training progresses. A perfect GAN will create fake samples whose distribution is indistinguishable from that of the real samples. When that happens, in the layered distributions view, you will see the two distributions nicely overlap.
++      To start training the GAN model, click the play button on the toolbar. Besides <span style="color: var(--real-data-color);">real samples</span>  from your chosen distribution, you'll also see <span style="color: var(--generator-color);">fake samples</span> that are generated by the model. Fake samples' positions continually updated as the training progresses. A perfect GAN will create fake samples whose distribution is indistinguishable from that of the real samples. When that happens, in the layered distributions view, you will see the two distributions nicely overlap.
+     </p>
+     
+     <div class="supporting-figure">
+-      <img src="figures/figure-animated-ring.gif" />
++      <img src="../../../vendor/ganlab/article-evolution.svg" alt="Three hypothetical snapshots of green real and purple generated points" />
+       <div class="figure-caption">
+-        Figure 2. Fake samples' positions continually updated as the training progresses. Then, the distributions of the real and fake samples nicely overlap.
++        Figure 2. Hypothetical snapshots of a changing generated distribution. They are not a training run and do not guarantee convergence.
+       </div>
+     </div>
+     
+@@ -292,25 +363,27 @@
+     
+     <p>
+       <strong>Generator.</strong>
+-      As described earlier, the <span style="color: var(--generator-color);">generator</span> is a function that transforms a random input into a synthetic output. In GAN Lab, a random input is a 2D sample with a (x, y) value (drawn from a uniform or Gaussian distribution), and the output is also a 2D sample, but mapped into a different position, which is a <span style="color: var(--generator-color);">fake sample</span>. One way to visualize this mapping is using <em>manifold</em> <small><a href="http://colah.github.io/posts/2014-03-NN-Manifolds-Topology/">[Olah, 2014]</a></small>. The input space is represented as a uniform square grid. As the function maps positions in the input space into new positions, if we visualize the output, the whole grid, now consisting of irregular quadrangles, would look like a warped version of the original regular grid. The area (or density) of each (warped) cell has now changed, and we encode the density as opacity, so a higher opacity means more samples in smaller space. A very fine-grained manifold will look almost the same as the visualization of the fake samples. This visualization shows how the generator learns a mapping function to make its output look similar to the distribution of the <span style="color: var(--real-data-color);">real samples</span>.
++      As described earlier, the <span style="color: var(--generator-color);">generator</span> is a function that transforms random input into a synthetic output. In GAN Lab the input noise may be one- or two-dimensional, from a uniform or Gaussian distribution; the output is a 2D <span style="color: var(--generator-color);">fake sample</span>. The default is 2D uniform. A <em>manifold</em> <small><a href="http://colah.github.io/posts/2014-03-NN-Manifolds-Topology/">[Olah, 2014]</a></small> view shows how a 2D input grid or 1D input line maps into output space. For 2D noise, cell opacity visualizes density using the transformed cell area and input distribution; it is not an exact count of samples. This view helps show how the generator learns a mapping whose outputs resemble the <span style="color: var(--real-data-color);">real samples</span>.
+     </p>
++    <p id="gan-en-noise-example">For a toy function G(z)=(0.5z, 1−z), the 1D input z=0.4 gives the 2D point G(0.4)=(0.2, 0.6). Changing z moves the output along a line. This is an example of the dimensions, not the actual learned neural network in the lab.</p>
+     
+     <div class="supporting-figure">
+-      <img src="figures/figure-generator-transformation.png" />
++      <img src="../../../vendor/ganlab/article-mapping.svg" alt="A line of input points mapped to a two-dimensional curve" />
+       <div class="figure-caption">
+-        Figure 3. The generator's data transformation is visualized as a manifold, which turns input noise (leftmost) into fake samples (rightmost).
++        Figure 3. A hypothetical mapping from a one-dimensional input line to a two-dimensional curve.
+       </div>
+     </div>
+     
+     <p>
+       <strong>Discriminator.</strong>
+-      As the generator creates <span style="color: var(--generator-color);">fake samples</span>, the <span style="color: var(--discriminator-color);">discriminator</span>, a binary classifier, tries to tell them apart from the <span style="color: var(--real-data-color);">real samples</span>. GAN Lab visualizes its decision boundary as a 2D heatmap (similar to <a href="http://playground.tensorflow.org"><em>TensorFlow Playground</em></a>). The background colors of a grid cell encode the confidence values of the classifier's results. <span style="background-color: var(--real-data-color); color: white;">Darker green</span> means that samples in that region are more likely to be real; <span style="background-color: var(--generator-color); color: white;">darker purple</span>, more likely to be fake. As a GAN approaches the optimum, the whole heatmap will become more <span style="background-color: rgb(117, 117, 117); color: white;">gray</span> overall, signalling that the discriminator can no longer easily distinguish fake examples from the real ones.
++      As the generator creates <span style="color: var(--generator-color);">fake samples</span>, the <span style="color: var(--discriminator-color);">discriminator</span>, a binary classifier, tries to tell them apart from the <span style="color: var(--real-data-color);">real samples</span>. GAN Lab visualizes its decision boundary as a 2D heatmap (similar to <a href="http://playground.tensorflow.org"><em>TensorFlow Playground</em></a>). The background colors of a grid cell encode the classifier's current scores. <span style="background-color: var(--real-data-color); color: white;">Darker green</span> means that the discriminator scores that region as more real; <span style="background-color: var(--generator-color); color: white;">darker purple</span>, more fake. A <span style="background-color: rgb(117, 117, 117); color: white;">gray</span> region indicates an uncertain score, not proof that the generated distribution matches the real one.
+     </p>
++    <p id="gan-en-gray-example">For example, suppose real data contains equal proportions of types A and B, but the generator produces only A. If the discriminator assigns 0.5 everywhere, the background is gray even though B is missing from the generated distribution. This is an illustrative counterexample; in actual training, the discriminator and generator change together. Inspect the samples and distribution metrics as well.</p>
+     
+     <div class="supporting-figure">
+-      <img src="figures/figure-discriminator-heatmap.png" />
++      <img src="../../../vendor/ganlab/article-heatmap.svg" alt="Illustrative green and purple score regions" />
+       <div class="figure-caption">
+-        Figure 4. The discriminator's performance can be interpreted through a 2D heatmap. Here, the discriminator is performing well, since most real samples lies on its classification surface’s green region (and fake samples on purple region).
++        Figure 4. A schematic discriminator score background, with illustrative real and fake points.
+       </div>
+     </div>
+     
+@@ -319,20 +392,34 @@
+     </h4>
+     
+     <p>
+-      In a GAN, its two networks influence each other as they iteratively update themselves. A great use for GAN Lab is to use its visualization to learn how the <span style="color: var(--generator-color);">generator</span> incrementally updates to improve itself to generate fake samples that are increasingly more realistic. The generator does it by trying to fool the <span style="color: var(--discriminator-color);">discriminator</span>. The generator's loss value decreases when the discriminator classifies <span style="color: var(--generator-color);">fake samples</span> as <span style="color: var(--real-data-color);">real</span> (bad for discriminator, but good for generator). GAN Lab visualizes gradients (as <span style="color: var(--gradient-color);">pink lines</span>) for the fake samples such that the generator would achieve its success.
++      In a GAN, its two networks influence each other as they iteratively update themselves. A great use for GAN Lab is to use its visualization to learn how the <span style="color: var(--generator-color);">generator</span> incrementally updates to improve itself to generate fake samples that are increasingly more realistic. The generator does it by trying to fool the <span style="color: var(--discriminator-color);">discriminator</span>. The generator's loss value decreases when the discriminator classifies <span style="color: var(--generator-color);">fake samples</span> as <span style="color: var(--real-data-color);">real</span> (bad for discriminator, but good for generator). GAN Lab visualizes input gradients of the discriminator at fake samples as <span style="color: var(--gradient-color);">pink arrows</span>.
+     </p>
++    <p>More precisely, each pink arrow shows the discriminator's input gradient ∇ₓD(x) at a fake sample, not the gradient of the generator's weights. For either generator loss implemented here, increasing D(x) locally decreases that loss when the discriminator is fixed and the functions are differentiable. The update changes shared generator weights, so an individual sample need not move exactly along its arrow.</p>
++    <p>For a toy example, suppose D(x)=0.2 and ∇ₓD(x)=(0.4, −0.1). With the log generator loss L<sub>G</sub>=−log D(x), ∂L<sub>G</sub>/∂D=−1/0.2=−5. The chain rule gives ∇ₓL<sub>G</sub>=−5×(0.4, −0.1)=(−2, 0.5). The opposite direction (2, −0.5) decreases the loss locally and is parallel to the arrow, but its magnitude differs. This is a gradient with respect to the point x, not the generator weights.</p>
+ 
+     <div class="supporting-figure">
+-      <img src="figures/figure-gradients-interplay.png" />
++      <img src="../../../vendor/ganlab/article-gradient.svg" alt="Arrows show the direction of increasing discriminator score at fake points" />
+       <div class="figure-caption">
+-        Figure 5. Fake samples' movement directions are indicated by the generator’s gradients (pink lines) based on those samples' current locations and the discriminator's curren classification surface (visualized by background colors).
++        Figure 5. Illustrative discriminator input gradients at fake sample locations; arrows do not predict exact sample movement.
+       </div>
+     </div>
+     
+     <p>
+-      This way, the <span style="color: var(--generator-color);">generator</span> gradually improves to produce samples that are even more realistic. Once the fake samples are updated, the <span style="color: var(--discriminator-color);">discriminator</span> will update accordingly to finetune its decision boundary, and awaits the next batch of fake samples that try to fool itself. This iterative update process continues until the discriminator cannot tell <span style="color: var(--real-data-color);">real</span> and <span style="color: var(--generator-color);">fake</span> samples apart.
++      The generator and discriminator can improve through repeated updates, but GAN training can also be unstable and need not converge. Compare the samples and metrics over time rather than assuming that the discriminator will eventually be unable to tell real and fake samples apart.
+     </p>
++
++    <section id="gan-en-loss-detail"><h4 id="gan-en-loss">Implemented losses and a numerical example</h4>
++    <p>For the default log loss, x is a real sample, z is noise, and each mean is taken over the batch. The 0.95 multiplies the discriminator's real-sample term.</p>
++    <p><code>L_D = −[0.95 × mean(log D(x)) + mean(log(1 − D(G(z))))]</code><br /><code>L_G = −mean(log D(G(z)))</code></p>
++    <p>For one real and one fake sample with D(x)=0.8 and D(G(z))=0.2, the natural logarithm gives discriminator loss −[0.95 log(0.8) + log(0.8)] ≈ <strong>0.435</strong> and generator loss −log(0.2) ≈ <strong>1.609</strong>. The discriminator minimizes both terms; the generator minimizes its own loss, favoring a higher fake score.</p>
++    <p>Selecting LeastSq loss changes both losses: <code>L_D = mean((D(x) − 1)²) + mean(D(G(z))²)</code>, <code>L_G = mean((D(G(z)) − 1)²)</code>. For the same single-sample scores, the results are <strong>0.08</strong> and <strong>0.64</strong>.</p></section>
+     
++    <p id="gan-en-loss-display">The lab’s loss numbers and loss chart show the objectives above. When there are multiple updates, the recorded value is the loss on the batch used for the final update, before that update. Discriminator and generator losses can use different batches and be calculated at different times. When only one model is updated, the other number retains its previous value and its chart has no point for that step. The initial pretrained view evaluates a fixed example batch. Bar lengths use different display scaling for each model and loss type, so use the numbers and chart when comparing values.</p>
++    <h4 id="gan-en-metrics">Reading the distribution metrics</h4>
++    <p>In addition to the training losses, the right-hand chart compares real and generated samples in grid cells. KL measures a difference from the real distribution P to the generated distribution Q; JS compares each distribution with their average M=(P+Q)/2. A smaller score indicates a closer match on this grid, not proof of a good generator.</p>
++    <p><code>KL(P‖Q) = Σ Pᵢ log₂(Pᵢ/Qᵢ)</code><br /><code>JS(P,Q) = ½ KL(P‖M) + ½ KL(Q‖M)</code></p>
++    <p>For two cells, P=[0.75, 0.25] and Q=[0.5, 0.5] give M=[0.625, 0.375], KL≈0.189 and JS≈0.049. This illustration has no smoothing. The chart uses a 30×30 grid, finite samples, and adds 0.0001 to each cell without renormalizing. With at least one sample from each distribution, each smoothed array sums to 1.09. The chart values therefore differ from the theoretical KL and JS of normalized probability distributions. Points outside the display area are assigned to the nearest edge cell.</p>
++    <p id="gan-en-normalized-metrics">Dividing each smoothed array by 1.09 gives a normalized distribution. The original chart's KL and JS sums are 1.09 times the values calculated on those normalized distributions. Smoothing also changes the distributions, so the normalized result need not equal the unsmoothed theoretical value.</p>
+     <h4>
+       Playing with interactive features.
+     </h4>
+@@ -344,65 +431,72 @@
+           Interactive hyperparameter adjustment
+         </dt>
+         <dd>
+-          Click the edit icon (<img class="icon" src="figures/figure-icon-edit.png" />) to reveal individual hyperparameters, and edit them on the fly during training.
++          Click the edit icon to reveal individual hyperparameters, and edit them on the fly during training.
+         </dd>
+         <dt>
+           User-defined data distribution
+         </dt>
+         <dd>
+-          If you don't like our selection of distributions, draw your own by clicking the icon (<img class="icon" src="figures/figure-icon-draw.png" />) at the end of the data distributions list.
++          If you don't like our selection of distributions, draw your own by clicking the draw button at the end of the data distributions list.
+         </dd>
+         <dt>
+           Slow-motion mode
+         </dt>
+         <dd>
+-          Lost track of the animation? Then you can slow it down by clicking the slow-motion icon (<img class="icon" src="figures/figure-icon-slow.png" />) to enter slow-mo. 
+-          <a class="video-part-link" data-start="111" data-end="138">Check out this video</a>
++          Lost track of the animation? Then you can slow it down by clicking the slow-motion icon to enter slow-mo.
++          <a class="video-part-link" href="https://www.youtube.com/watch?v=eTq9T_sPTYQ&amp;t=111s" target="_blank" rel="noopener noreferrer" data-start="111" data-end="138">Check out this video</a>
+         </dd>
+         <dt>
+           Manual step-by-step execution
+         </dt>
+         <dd>
+-          If you want more control, you can manually train individual iteration step by step by clicking the icon (<img class="icon" src="figures/figure-icon-step.png" />).
+-          <a class="video-part-link" data-start="139" data-end="190">Check out this video</a>
++          If you want more control, you can manually train individual iteration step by step by clicking the step button.
++          <a class="video-part-link" href="https://www.youtube.com/watch?v=eTq9T_sPTYQ&amp;t=139s" target="_blank" rel="noopener noreferrer" data-start="139" data-end="190">Check out this video</a>
+         </dd>
+       </dl>
+     </p>
+     
++    </div>
+     <p>
+-      Check out the following video for a quick look at GAN Lab's features.
++      <span data-model-atlas-ko="다음 영상에서 GAN Lab의 주요 기능을 확인하세요.">Check out the following video for a quick look at GAN Lab's features.</span>
+       <ul>
+-        <li class="video-part-link" data-start="1" data-end="37">
+-          Introduction of GAN Lab 
+-          <small>(0:00-0:38)</small>
++        <li><a class="video-part-link" href="https://www.youtube.com/watch?v=eTq9T_sPTYQ&amp;t=0s" target="_blank" rel="noopener noreferrer" data-start="0" data-end="37">
++          <span data-model-atlas-ko="GAN Lab 소개">Introduction of GAN Lab</span>
++          <small>(0:00-0:38)</small></a>
+         </li>
+-        <li class="video-part-link" data-start="38" data-end="64">
+-          Training of a simple distribution with hyperparameter adjustments 
+-          <small>(0:38-1:05)</small>
++        <li><a class="video-part-link" href="https://www.youtube.com/watch?v=eTq9T_sPTYQ&amp;t=38s" target="_blank" rel="noopener noreferrer" data-start="38" data-end="64">
++          <span data-model-atlas-ko="하이퍼파라미터를 바꾸며 간단한 분포 학습">Training of a simple distribution with hyperparameter adjustments</span>
++          <small>(0:38-1:05)</small></a>
+         </li>
+-        <li class="video-part-link" data-start="65" data-end="110">
+-          Training of a user-defined distribution
+-          <small>(1:05-1:51)</small>
++        <li><a class="video-part-link" href="https://www.youtube.com/watch?v=eTq9T_sPTYQ&amp;t=65s" target="_blank" rel="noopener noreferrer" data-start="65" data-end="110">
++          <span data-model-atlas-ko="직접 그린 분포 학습">Training of a user-defined distribution</span>
++          <small>(1:05-1:51)</small></a>
+         </li>
+-        <li class="video-part-link" data-start="111" data-end="138">
+-          Slow-motion mode 
+-          <small>(1:51-2:19)</small>
++        <li><a class="video-part-link" href="https://www.youtube.com/watch?v=eTq9T_sPTYQ&amp;t=111s" target="_blank" rel="noopener noreferrer" data-start="111" data-end="138">
++          <span data-model-atlas-ko="느리게 보기">Slow-motion mode</span>
++          <small>(1:51-2:19)</small></a>
+         </li>
+-        <li class="video-part-link" data-start="139" data-end="190">
+-          Manual step-by-step execution 
+-          <small>(2:19-3:10)</small>
++        <li><a class="video-part-link" href="https://www.youtube.com/watch?v=eTq9T_sPTYQ&amp;t=139s" target="_blank" rel="noopener noreferrer" data-start="139" data-end="190">
++          <span data-model-atlas-ko="단계별 실행">Manual step-by-step execution</span>
++          <small>(2:19-3:10)</small></a>
+         </li>
+       </ul>
+ 
+-      <iframe id="video-demo-iframe" width="640" height="302" 
++      <iframe id="video-demo-iframe" title="GAN Lab demonstration video" data-model-atlas-title="GAN Lab 시연 영상" width="640" height="302"
+         style="width: 640px;"
+         src="https://www.youtube.com/embed/eTq9T_sPTYQ?rel=0&amp;enablejsapi=1"
+         frameborder="0" allowfullscreen>
+       </iframe>
+     </p>
+ 
+-    <h2>How is it implemented?</h2>
+-    <p>
++    <h2 data-model-atlas-ko="어떻게 구현되었나요?">How is it implemented?</h2>
++    <p data-model-atlas-copy="ko" id="gan-implementation-ko">
++      GAN Lab은 브라우저에서 실행되는 딥러닝 라이브러리
++      <a href="https://js.tensorflow.org/"><em>TensorFlow.js</em></a>를 사용합니다.
++      모델 학습부터 시각화까지 JavaScript로 구현되어 있으며, Chrome 같은 웹 브라우저에서 사용할 수 있습니다.
++      <a href="https://github.com/poloclub/ganlab">GitHub에서 원본 소스 코드</a>를 확인할 수 있습니다.
++    </p>
++    <p data-model-atlas-copy="en" id="gan-implementation-en">
+       GAN Lab uses <a href="https://js.tensorflow.org/"><em>TensorFlow.js</em></a>, 
+       an in-browser GPU-accelerated deep learning library. 
+       Everything, from model training to visualization, is implemented with 
+@@ -413,8 +507,20 @@
+       <a href="https://github.com/poloclub/ganlab">GitHub</a>.
+     </p>
+ 
+-    <h2>Who developed GAN Lab?</h2>
+-    <p>
++    <h2 data-model-atlas-ko="GAN Lab을 만든 사람들">Who developed GAN Lab?</h2>
++    <p data-model-atlas-copy="ko" id="gan-credits-ko">
++      GAN Lab은 <a href="https://minsuk.com">Minsuk Kahng</a>,
++      <a href="https://nikubaba.com">Nikhil Thorat</a>,
++      <a href="https://poloclub.github.io/polochau/">Polo Chau</a>,
++      <a href="http://www.fernandaviegas.com/">Fernanda Viégas</a>,
++      <a href="http://www.bewitched.com/">Martin Wattenberg</a>이 제작했습니다.
++      Georgia Tech와 Google Brain/<a href="https://pair.withgoogle.com">PAIR</a>의 연구 협력 결과입니다.
++      제작진은 의견을 제공한 Shan Carter, Daniel Smilkov,
++      <a href="https://research.google.com/bigpicture/">Google Big Picture 팀</a>,
++      <a href="https://pair.withgoogle.com">Google People + AI Research (PAIR)</a>,
++      <a href="http://vis.gatech.edu/">Georgia Tech Visualization Lab</a>에도 감사를 표합니다.
++    </p>
++    <p data-model-atlas-copy="en" id="gan-credits-en">
+       GAN Lab was created by 
+       <a href="https://minsuk.com">Minsuk Kahng</a>,
+       <a href="https://nikubaba.com">Nikhil Thorat</a>, 
+@@ -434,15 +540,11 @@
+     </p>
+     
+     <p style="margin-bottom: 0;">
+-      For more information, check out 
++      <span data-model-atlas-ko="자세한 내용은 연구 논문을 확인하세요:">For more information, check out</span>
+       <a href="http://minsuk.com/papers/kahng-ganlab-vis2018.pdf">
+-        our research paper</a>:     
++        <span data-model-atlas-ko="GAN Lab 연구 논문">our research paper</span></a>.
+     </p>
+ 
+-    <a href="http://minsuk.com/papers/kahng-ganlab-vis2018.pdf">
+-      <img src="figures/figure-paper-screenshot.png" style="float: left;" />
+-    </a>
+-
+     <div class="citation">      
+       <a href="https://minsuk.com">Minsuk Kahng</a>,
+       <a href="https://nikubaba.com">Nikhil Thorat</a>, 
+@@ -458,6 +560,20 @@
+     </div>
+   </div>
+ 
++  <script>
++    // Translate the static page even when the interactive component has not initialized.
++    if (document.documentElement.lang === 'ko') {
++      document.querySelectorAll('[data-model-atlas-ko]').forEach(el => {
++        el.textContent = el.getAttribute('data-model-atlas-ko');
++      });
++      document.querySelectorAll('[data-model-atlas-title]').forEach(el => {
++        el.setAttribute('title', el.getAttribute('data-model-atlas-title'));
++      });
++      document.querySelectorAll('[data-model-atlas-aria-label]').forEach(el => {
++        el.setAttribute('aria-label', el.getAttribute('data-model-atlas-aria-label'));
++      });
++    }
++  </script>
+   <script type="text/javascript">
+     const tag = document.createElement('script');
+     tag.id = 'iframe-demo';
+@@ -466,23 +582,30 @@
+     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+   
+     let player;
++    let playerReady = false;
+     function onYouTubeIframeAPIReady() {
+       player = new YT.Player('video-demo-iframe', {
+         events: {
+-          'onReady': onPlayerReady
++          'onReady': onPlayerReady,
++          'onError': () => { playerReady = false; }
+         }
+       });
+     }
+     function onPlayerReady(event) {
+-      player.mute()
++      player = event.target;
++      playerReady = true;
++      try { player.mute(); } catch (_) { /* Seeking remains available. */ }
+     }
+-    
+-    const videoLinks = document.querySelectorAll('.video-part-link');
+-    Array.from(videoLinks).forEach((linkElement) => {
+-      linkElement.addEventListener('click', () => {
+-        const startSecond = linkElement.getAttribute('data-start');
+-        player.seekTo(startSecond);
+-        player.playVideo();
++
++    // Native links remain usable when the embedded player is blocked or fails.
++    document.querySelectorAll('a.video-part-link').forEach((linkElement) => {
++      linkElement.addEventListener('click', (event) => {
++        if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || !playerReady || !player) return;
++        try {
++          player.seekTo(Number(linkElement.dataset.start), true);
++          player.playVideo();
++          event.preventDefault();
++        } catch (_) { /* Follow the timestamp link instead. */ }
+       });
+     });
+   </script>
