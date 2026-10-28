@@ -73,8 +73,9 @@ try {
   assert.equal(await page.locator('#navigation').getAttribute('aria-label'),'단원 탐색');
   assert.equal(await page.locator('#language').getAttribute('aria-label'),'영어로 전환');
   assert.equal(await page.locator('.section-heading .eyebrow').first().textContent(),'핵심 개념');
-  await page.locator('.glossary summary').first().click();
-  assert.match(await page.locator('.glossary').first().textContent(),/E\[X\]=1×0\.25\+3×0\.75=2\.5/);
+  await page.locator('#math-basics-title').click();
+  await page.locator('.first-steps [data-math-help="mean"] > summary').click();
+  assert.match(await page.locator('.first-steps [data-math-help="mean"]').textContent(),/2\.5/);
   await page.locator('.worked-note summary').first().click();
   assert.match(await page.locator('.worked-note').first().textContent(),/첫 출력은 1×2\+2×1\+0=4/);
   assert.match(await page.locator('.worked-note').first().textContent(),/z=\[4,0\]ᵀ/);
@@ -170,8 +171,9 @@ try {
   assert.equal(await page.locator('#training-stage-status').textContent(),'3 / 4');
   assert.match(await page.locator('.training-history').textContent(),/Evaluation loss/);
   assert.equal(await page.locator('h1').textContent(),'Learning basics');
-  await page.locator('.glossary summary').first().click();
-  assert.match(await page.locator('.glossary').first().textContent(),/inner dimensions must agree/);
+  await page.locator('#math-basics-title').click();
+  await page.locator('.first-steps [data-math-help="gradient"] > summary').click();
+  assert.match(await page.locator('.first-steps [data-math-help="gradient"]').textContent(),/the derivative at w=2/);
   await page.locator('.worked-note summary').first().click();
   assert.match(await page.locator('.worked-note').first().textContent(),/the second is −1×2\+1×1\+1=0/);
   assert.match(await page.locator('#training-title').textContent(),/Repeat training/);

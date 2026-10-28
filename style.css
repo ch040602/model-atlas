@@ -93,3 +93,8 @@ html[lang=ko] .sequence-lab{word-break:keep-all;overflow-wrap:break-word}
 .first-next{padding:10px 14px;border:1px solid #b7c9b9;border-radius:6px;background:white;color:#234e37;text-align:left;line-height:1.6}
 .first-steps :is(summary,button,input):focus-visible{outline:3px solid #27846b;outline-offset:4px}#first-steps-title{scroll-margin-top:24px}
 @media(max-width:600px){.first-steps{padding:18px 14px}.first-steps h2{font-size:21px}.first-steps p{font-size:15px}}
+.concept-first{margin:24px 0;padding:22px;border-left:3px solid #6f906c;background:#f8faf6;min-width:0}
+.concept-first h2{font-size:21px;margin:0 0 12px}.concept-first p{font-size:16px;line-height:1.9;max-width:72ch;word-break:keep-all;overflow-wrap:anywhere}
+.concept-first>details>summary{cursor:pointer;font-weight:650;font-size:15px;line-height:1.8}.concept-first>details{margin:18px 0}
+.concept-first>a{display:inline-block;line-height:1.7;font-size:14px}.concept-first summary:focus-visible{outline:3px solid #27846b;outline-offset:3px}
+@media(max-width:600px){.concept-first{padding:16px 12px}.concept-first p{font-size:15px}}

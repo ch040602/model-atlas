@@ -26,8 +26,8 @@ for(const [x,overlap] of [2,3,3,2,1,0,0,0].entries())for(const threshold of [.1,
 assert.throws(()=>boxIoU(-1,.5),RangeError);assert.throws(()=>boxIoU(1,0),RangeError);
 const server=createServer(async(req,res)=>{
  const file=new URL(req.url,'http://localhost').pathname.slice(1)||'index.html';
- if(!/^[\w.-]+$/.test(file))return res.writeHead(404).end();
- try{const data=await readFile(new URL('../'+file,import.meta.url));res.writeHead(200,{'Content-Type':file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.css')?'text/css':'text/javascript; charset=utf-8'}).end(data);}catch{res.writeHead(404).end();}
+ if(!/^[\w./-]+$/.test(file)||file.split('/').includes('..'))return res.writeHead(404).end();
+ try{const data=await readFile(new URL('../'+file,import.meta.url));res.writeHead(200,{'Content-Type':file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.css')?'text/css':file.endsWith('.woff2')?'font/woff2':file.endsWith('.woff')?'font/woff':file.endsWith('.ttf')?'font/ttf':'text/javascript; charset=utf-8'}).end(data);}catch{res.writeHead(404).end();}
 });
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const chrome='C:/Program Files/Google/Chrome/Application/chrome.exe';let browser;
@@ -39,6 +39,7 @@ try{
   await page.goto(base+'/index.html');
   await page.locator('#extended-path-link').click();
   await page.waitForURL('**/concepts.html#big-data-context');
+  await page.locator('.concept-first').waitFor();
   for(const [i,c] of extendedConcepts.entries()){
    assert.equal(await page.locator('h1').textContent(),c.ko);
    assert.equal(await page.locator(`a[href="${c.reference}"]`).count()>0,true);

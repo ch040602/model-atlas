@@ -694,11 +694,11 @@ document.addEventListener('click',e=>{
 document.querySelector('#language').addEventListener('click',()=>{lang=lang==='ko'?'en':'ko';localStorage.setItem('model-atlas-language',lang);render();});
 window.addEventListener('hashchange',()=>{const id=location.hash.slice(1);if(chapters.some(c=>c.id===id)&&id!==current){current=id;expanded=0;calculationStep=1;trainingStage=1;batchStage=1;batchIndex=0;splitStage=1;splitChoice='';sequenceStage=1;rnnOutputStage=1;rnnFlowStage=0;lstmStage=1;gruStage=1;convolutionStage=1;poolingStage=1;channelStage=1;diffusionStage=1;latentStage=1;conditioningStage=1;crossStage=1;clipStage=1;embeddingStage=1;attentionStage=1;blockStage=1;tokenSequenceStage=1;sampleStage=1;ganTrainingStage=1;ganModesStage=1;render();}});
 render();
-// Accept section links only for exercise headings or the active unit's formula journey.
+// Accept section links for the active unit's introductory lesson and exercises.
 // Ignore unknown or cross-unit targets rather than scrolling to an unrelated node.
 if(location.search){
   const section=new URLSearchParams(location.search).get('section');
-  const target=[...main.querySelectorAll('.sequence-lab > h2, #formula-title')].find(heading=>heading.id===section);
+  const target=[...main.querySelectorAll('.sequence-lab > h2, #formula-title, #first-steps-title')].find(heading=>heading.id===section);
   if(target) requestAnimationFrame(()=>{target.focus({preventScroll:true});target.scrollIntoView({block:'start',behavior:'auto'});});
 }
 
