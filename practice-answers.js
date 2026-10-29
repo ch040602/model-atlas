@@ -59,7 +59,7 @@ export const practiceAnswers={
 
 function guide(id,items,lang){
  const ko=lang==='ko';
- return `<aside class="practice-answer" data-practice-answer="${esc(id)}"><p class="practice-task"><strong>${ko?'풀어야 할 문제':'Your task'}</strong> ${esc(items[0])}</p><details><summary>${ko?'정답·이유·완료 기준':'Answer, reason and completion check'}</summary><p class="answer-scope">${ko?'고정 숫자는 별도 검산 예제입니다. 현재 조작값의 답은 아래 계산 결과에서 확인하고, 단계가 있으면 마지막까지 넘겨 보세요.':'Fixed numbers are hand-check examples. Read the results below for your current settings; reveal all calculation steps where available.'}</p><h3>${ko?'정답 또는 예상되는 변화':'Answer or expected change'}</h3><p>${esc(items[1])}</p><h3>${ko?'왜 그런가 · 여기까지 설명하면 완료':'Why it follows · explain this to finish'}</h3><p>${esc(items[2])}</p></details></aside>`;
+ return `<aside class="practice-answer" data-practice-answer="${esc(id)}"><p class="practice-task"><strong>${ko?'풀어야 할 문제':'Your task'}</strong> ${esc(items[0])}</p><details><summary>${ko?'답과 이유':'Answer and reasoning'}</summary><p class="answer-scope">${ko?'검산 예제는 고정값입니다. 현재 설정의 답은 아래 계산에서 확인하세요.':'Hand-check examples use fixed values. The calculations below show your current settings.'}</p><h3>${ko?'정답 또는 예상되는 변화':'Answer or expected change'}</h3><p>${esc(items[1])}</p><h3>${ko?'왜 그런가':'Why it follows'}</h3><p>${esc(items[2])}</p></details></aside>`;
 }
 export function mountPracticeAnswers(root,lang,chapter){
  for(const [id,data] of Object.entries(practiceAnswers)){

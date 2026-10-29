@@ -5,6 +5,7 @@ import {stat} from 'node:fs/promises';
 import path from 'node:path';
 import {chromium} from 'playwright';
 import {concepts} from '../concepts-data.js';
+import {conceptQuestions} from '../concept-prompts.js';
 import {chapters} from '../curriculum.js';
 import {conceptChecks,chapterChecks,conceptAnswerMarkup,interviewMarkup} from '../learning-checks.js';
 import {practiceAnswers} from '../practice-answers.js';
@@ -17,6 +18,7 @@ import {conditioningExample} from '../diffusion-conditioning-lab.js';
 import {retrieveExample} from '../rag-retrieval-lab.js';
 import {ganModesExperiment} from '../gan-modes-lab.js';
 
+assert.deepEqual(Object.keys(conceptQuestions).sort(),concepts.map(c=>c.id).sort());
 assert.deepEqual(Object.keys(conceptChecks).sort(),concepts.map(c=>c.id).sort());
 assert.deepEqual(Object.keys(chapterChecks).sort(),chapters.map(c=>c.id).sort());
 for(const [id,data] of Object.entries({...conceptChecks,...chapterChecks})){
@@ -121,6 +123,12 @@ try{
     if(!await page.locator(`[data-concept-answer="${c.id}"]`).count())await page.locator(`#library-list a[href="#${c.id}"]`).click();
     await page.locator(`[data-concept-answer="${c.id}"]`).waitFor();
     const answer=page.locator(`[data-concept-answer="${c.id}"]`);
+    assert.equal(await answer.evaluate(e=>e.open),false,'predict before revealing');
+    assert.equal(await page.locator('.example-card > p').textContent(),conceptQuestions[c.id][lang==='ko'?0:1]);
+    const explanation=await page.locator('.concept-explanation').boundingBox(),question=await page.locator('.example-card').boundingBox();
+    if(width>=1440)assert.ok(question.x>=explanation.x+explanation.width-1,'question alongside explanation');
+    else assert.ok(question.y>=explanation.y+explanation.height-1,'mobile question follows explanation');
+    assert.equal(await page.locator('.concept-definition').count(),1,'formal definition remains available');
     await answer.locator('summary').focus();await page.keyboard.press('Enter');
     assert.equal(await answer.evaluate(e=>e.open),true);
     assert.ok((await answer.innerText()).includes(conceptChecks[c.id][lang][0]),`${c.id}/${lang}: ${await answer.innerText()}`);

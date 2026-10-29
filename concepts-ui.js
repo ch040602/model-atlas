@@ -1,3 +1,4 @@
+import {conceptQuestions} from './concept-prompts.js';
 import {conceptAnswerMarkup,interviewMarkup} from './learning-checks.js';
 import {mountPracticeAnswers} from './practice-answers.js';
 import {conceptFirstMarkup} from './concept-first-steps.js';
@@ -155,27 +156,27 @@ function render(){
     :c.id==='nonlinear-mlp'?'<p class="sequence-fixed">'+(ko?'직접 체험: Playground에서 분류와 XOR 모양 데이터를 선택하고 은닉층·활성화를 바꾸어 재생해 보세요. 결과는 초기화와 설정에 따라 달라집니다.':'Try it: choose classification and the XOR-shaped data in Playground; change hidden layers and activation, then press play. Results vary with initialization and settings.')+' <a href="https://playground.tensorflow.org/" target="_blank" rel="noopener noreferrer">TensorFlow Playground ↗</a> · <a href="https://github.com/tensorflow/playground" target="_blank" rel="noopener noreferrer">GitHub ↗</a></p>'
     :c.id==='word-vectors'?'<p class="sequence-fixed">'+(ko?'직접 체험: Projector에서 제공되는 데이터를 선택하고 단어와 이웃을 검색해 보세요. 2차원 투영 거리는 원래 고차원 관계와 다를 수 있습니다.':'Try it: select a supplied dataset in Projector and search for a word and its neighbors. Two-dimensional projected distances may differ from the original high-dimensional relationships.')+' <a href="https://projector.tensorflow.org/" target="_blank" rel="noopener noreferrer">Embedding Projector ↗</a> · <a href="https://github.com/tensorflow/embedding-projector-standalone" target="_blank" rel="noopener noreferrer">GitHub ↗</a></p>'
     :c.id==='detection-models'?'<p class="sequence-fixed">'+(ko?'직접 체험: 공식 DETR 저장소의 Notebooks에서 추론 Colab을 열어 객체 상자와 어텐션을 확인할 수 있습니다. 외부 서비스와 모델 다운로드가 필요하며 실행 환경에 따라 수정이 필요할 수 있습니다.':'Try it: open the inference Colab under Notebooks in the official DETR repository to inspect boxes and attention. It requires an external service and model downloads; environment changes may require adjustments.')+' <a href="https://github.com/facebookresearch/detr#notebooks" target="_blank" rel="noopener noreferrer">DETR GitHub / Notebooks ↗</a></p>':'';
-  main.innerHTML='<div class="breadcrumb">'+esc(ko?'개념 찾아보기':'CONCEPT LIBRARY')+' / '+esc(groups[c.group][lang])+'</div><h1>'+esc(c[lang])+'</h1>'+conceptFirstMarkup(c,lang)+extra+'<h2>'+(ko?'어떤 개념인가요?':'What is it?')+'</h2><p>'+esc(ko?c.exKo:c.exEn)+'</p><div class="example-card"><h2>'+(ko?'직접 생각해 보기':'Work through an example')+'</h2><p>'+esc(ko?c.tryKo:c.tryEn)+'</p>'+conceptAnswerMarkup(c.id,lang)+'</div>'+(c.id==='metrics'?metricsLab():c.id==='kmeans'?clusterLab():c.id==='pca'?pcaLabMarkup(pcaAngle,lang):c.id==='trees'?treeLabMarkup(treeSettings,lang):c.id==='text-counts'?tfidfMarkup(tfidfSettings,lang):c.id==='batchnorm'?batchNormMarkup(batchNormThird,lang)+dropoutMarkup(dropoutSettings,lang):'')+interviewMarkup(c.id,lang)+courseLink+sequence+'<h2>'+(ko?'더 살펴보기':'References')+'</h2><p class="source-note">'+(ko?'참고 자료: ':'References: ')+refs.join(' · ')+'</p><p class="source-note"><a href="https://scikit-learn.org/stable/user_guide.html" target="_blank" rel="noopener noreferrer">scikit-learn user guide ↗</a> · <a href="https://docs.pytorch.org/docs/stable/index.html" target="_blank" rel="noopener noreferrer">PyTorch documentation ↗</a> · <a href="credits.html">'+(ko?'출처 및 라이선스':'Credits and licenses')+'</a></p>';
+  main.innerHTML='<div class="breadcrumb">'+esc(ko?'개념 찾아보기':'CONCEPT LIBRARY')+' / '+esc(groups[c.group][lang])+'</div><h1>'+esc(c[lang])+'</h1>'+'<div class="concept-study"><div class="concept-explanation">'+conceptFirstMarkup(c,lang)+'<details class="concept-definition"><summary>'+(ko?'정의와 관련 개념 더 보기':'Definition and related concepts')+'</summary><p>'+esc(ko?c.exKo:c.exEn)+'</p></details></div><div class="example-card"><h2>'+(ko?'직접 풀어보기':'Try it yourself')+'</h2><p>'+esc(conceptQuestions[c.id][ko?0:1])+'</p>'+conceptAnswerMarkup(c.id,lang)+'</div></div>'+extra+'<div id="concept-labs">'+(c.id==='metrics'?metricsLab():c.id==='kmeans'?clusterLab():c.id==='pca'?pcaLabMarkup(pcaAngle,lang):c.id==='trees'?treeLabMarkup(treeSettings,lang):c.id==='text-counts'?tfidfMarkup(tfidfSettings,lang):c.id==='batchnorm'?batchNormMarkup(batchNormThird,lang)+dropoutMarkup(dropoutSettings,lang):'')+'</div>'+interviewMarkup(c.id,lang)+courseLink+sequence+'<h2>'+(ko?'더 살펴보기':'References')+'</h2><p class="source-note">'+(ko?'참고 자료: ':'References: ')+refs.join(' · ')+'</p><p class="source-note"><a href="https://scikit-learn.org/stable/user_guide.html" target="_blank" rel="noopener noreferrer">scikit-learn user guide ↗</a> · <a href="https://docs.pytorch.org/docs/stable/index.html" target="_blank" rel="noopener noreferrer">PyTorch documentation ↗</a> · <a href="credits.html">'+(ko?'출처 및 라이선스':'Credits and licenses')+'</a></p>';
   updateMetrics();
   updateClusters();
-  if(c.id==='svm-bayes'){main.querySelector('.example-card').insertAdjacentHTML('afterend',bayesMarkup(bayesSettings,lang));updateBayes();}
-  if(c.id==='roc'){main.querySelector('.example-card').insertAdjacentHTML('afterend',rocMarkup(rocThreshold,lang));updateRoc();}
-  if(c.id==='detection-models'){main.querySelector('.example-card').insertAdjacentHTML('afterend',iouMarkup(iouSettings,lang));updateIoU();}
-  if(c.id==='vision-cam'){main.querySelector('.example-card').insertAdjacentHTML('afterend',camMarkup(camSettings,lang));updateCam();}
-  if(c.id==='style-transfer'){main.querySelector('.example-card').insertAdjacentHTML('afterend',styleTransferMarkup(styleSettings,lang));updateStyleTransfer();}
-  if(c.id==='vision-transformer')main.querySelector('.example-card').insertAdjacentHTML('afterend',vitMarkup(vitState,lang));
+  if(c.id==='svm-bayes'){main.querySelector('#concept-labs').insertAdjacentHTML('beforeend',bayesMarkup(bayesSettings,lang));updateBayes();}
+  if(c.id==='roc'){main.querySelector('#concept-labs').insertAdjacentHTML('beforeend',rocMarkup(rocThreshold,lang));updateRoc();}
+  if(c.id==='detection-models'){main.querySelector('#concept-labs').insertAdjacentHTML('beforeend',iouMarkup(iouSettings,lang));updateIoU();}
+  if(c.id==='vision-cam'){main.querySelector('#concept-labs').insertAdjacentHTML('beforeend',camMarkup(camSettings,lang));updateCam();}
+  if(c.id==='style-transfer'){main.querySelector('#concept-labs').insertAdjacentHTML('beforeend',styleTransferMarkup(styleSettings,lang));updateStyleTransfer();}
+  if(c.id==='vision-transformer')main.querySelector('#concept-labs').insertAdjacentHTML('beforeend',vitMarkup(vitState,lang));
   if(c.id==='nonlinear-mlp'){
-    main.querySelector('.example-card').insertAdjacentHTML('afterend',xorMarkup(xorSettings,lang)+xorTrainingMarkup(xorTrainState,xorTrainRate,xorTrainSelected,lang));
+    main.querySelector('#concept-labs').insertAdjacentHTML('beforeend',xorMarkup(xorSettings,lang)+xorTrainingMarkup(xorTrainState,xorTrainRate,xorTrainSelected,lang));
     updateXorTraining();
   }
-  if(c.id==='optimizers'){main.querySelector('.example-card').insertAdjacentHTML('afterend',optimizerMarkup(optimizerState,optimizerRate,lang));updateOptimizer();}
-  if(c.id==='linear-models'){main.querySelector('.example-card').insertAdjacentHTML('afterend',logisticMarkup(logisticState,logisticRate,lang));updateLogistic();}
-  if(c.id==='word-vectors'){main.querySelector('.example-card').insertAdjacentHTML('afterend',skipgramMarkup(skipgramSettings,lang));updateSkipgram();}
-  if(c.id==='adversarial-examples'){main.querySelector('.example-card').insertAdjacentHTML('afterend',fgsmMarkup(fgsmEpsilon,lang));updateFgsm();}
+  if(c.id==='optimizers'){main.querySelector('#concept-labs').insertAdjacentHTML('beforeend',optimizerMarkup(optimizerState,optimizerRate,lang));updateOptimizer();}
+  if(c.id==='linear-models'){main.querySelector('#concept-labs').insertAdjacentHTML('beforeend',logisticMarkup(logisticState,logisticRate,lang));updateLogistic();}
+  if(c.id==='word-vectors'){main.querySelector('#concept-labs').insertAdjacentHTML('beforeend',skipgramMarkup(skipgramSettings,lang));updateSkipgram();}
+  if(c.id==='adversarial-examples'){main.querySelector('#concept-labs').insertAdjacentHTML('beforeend',fgsmMarkup(fgsmEpsilon,lang));updateFgsm();}
   if(c.id==='pca')document.querySelector('#pca-output').innerHTML=pcaLabOutput(pcaAngle,lang);
   if(c.id==='trees')updateTree();
   if(c.id==='text-counts')updateTfidf();
-  if(c.id==='retrieval-generation'){main.querySelector('.example-card').insertAdjacentHTML('afterend',ragMarkup(ragChoice,lang));updateRag();}
+  if(c.id==='retrieval-generation'){main.querySelector('#concept-labs').insertAdjacentHTML('beforeend',ragMarkup(ragChoice,lang));updateRag();}
   if(c.id==='batchnorm'){updateBatchNorm();updateDropout();}
   mountPracticeAnswers(main,lang);
   renderList();

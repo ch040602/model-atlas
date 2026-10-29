@@ -61,3 +61,13 @@ Verification evidence is recorded below after implementation and browser inspect
 - `python -X utf8 tests/test_publication_audit.py`: passed (12 tests, one environment-specific skip).
 
 These checks establish beginner-oriented content coverage, numerical consistency and interface behavior. They are not measured comprehension results from actual students.
+
+
+## Reading flow and space use (2026-10-29)
+
+- Wide chapter introductions place the four explanatory steps beside the live experiment. Narrow screens preserve explanation → experiment order, with 14–15px body text. Route and contents remain keyboard-accessible disclosures; formal concept definitions are available on demand.
+- At a 1440×1000 viewport, the initial Transformer experiment began around y=1691 before this change and y=371 afterward. This is a single page/layout observation, not a learning-performance measure. Inspected desktop and 390px mobile screenshots for both a model introduction and a concept.
+- Authored 47 bilingual question prompts in `concept-prompts.js`: inputs and the question are separate from the answer reveal. Bayes now supplies the probabilities needed to solve its example. Numerical answers retain their meaning and limits; interview practice no longer repeats the whole concept solution.
+- All 50 lab guides retain the task, answer or observation, reason and completion criterion under shorter labels. The formal definitions, reference links and interactive labs remain available; labs use the full content width below the concept explanation/question pair.
+- Browser regression assertions now check side-by-side versus sequential reading order, a reachable first experiment, readable body text, hidden initial answers and complete question coverage. Existing numerical engines and upstream assets are unchanged.
+- Passed: `tests/smoke.mjs`, `tests/test_first_steps.mjs`, `tests/test_beginner_routes.mjs`, `tests/test_unit_navigation.mjs`, `tests/test_learning_checks.mjs`, `tests/test_concepts.mjs`, `tests/test_extended_concepts.mjs`, `tests/test_concept_first.mjs` and `tests/test_calculation_rail.mjs`. Coverage includes both languages, root/project-prefix hosting, 390/1440px layouts and 1024px rails. Reviewed the final diff for correctness, text clarity, escaping, dependencies and layout regressions.

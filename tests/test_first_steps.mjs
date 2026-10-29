@@ -68,6 +68,13 @@ try{
    for(const kind of kinds){
     await page.locator(`#navigation [data-nav="${kind}"]`).click();
     const first=page.locator('.first-steps');await first.waitFor();
+    const lesson=await first.locator('.first-lesson').boundingBox(),experiment=await first.locator('.first-try').boundingBox();
+    if(width>=1440){
+     assert.ok(experiment.x>=lesson.x+lesson.width-1,'experiment alongside explanation');
+     const main=await page.locator('#main').boundingBox();
+     assert.ok(experiment.y-main.y<700,'experiment is reachable without a long introductory scroll');
+    }else assert.ok(experiment.y>=lesson.y+lesson.height-1,'mobile experiment follows explanation');
+    assert.ok(Number.parseFloat(await first.locator('.first-lesson > p').first().evaluate(e=>getComputedStyle(e).fontSize))>=14,'retain readable body text');
     assert.equal(await first.locator('.first-step').count(),4);
     for(const detail of await first.locator('.first-step').all()){
      if(!await detail.evaluate(e=>e.open)){await detail.locator('summary').focus();await page.keyboard.press('Enter');}

@@ -75,10 +75,10 @@ try{
   assert.equal(await page.locator('#iou-threshold').inputValue(),'0.15');assert.match(await page.locator('[data-iou-result="comparison"]').textContent(),/기준 이상/);
   if(process.env.CONCEPT_SCREENSHOTS)await page.locator('.iou-lab').screenshot({path:`test-results/iou-${width}.png`});
   await page.locator('#language').click();
-  for(const [id,query,example] of [
+  for(const [id,query,example,exampleKo=example] of [
    ['pose-tracking','object tracking','5'],
    ['scene-reconstruction','novel views','(1,0,2)'],
-   ['visual-question-answering','visual question answering','2+1=3']
+   ['visual-question-answering','visual question answering','three balls in total and two red balls','전체 공은 3개, 빨간 공은 2개']
   ]){
    await page.locator('#library-navigation').evaluate(e=>{e.open=true});
    await page.locator('#concept-search').fill(query);
@@ -86,12 +86,14 @@ try{
    assert.equal(await link.count(),1);
    await link.click();
    await page.waitForFunction(title=>document.querySelector('h1')?.textContent===title,extendedConcepts.find(c=>c.id===id).en);
+   await page.locator('.answer-guide summary').click();
    assert.ok((await page.locator('.example-card').innerText()).includes(example));
    if(id==='pose-tracking')assert.equal(await page.locator('a[href="https://arxiv.org/abs/1812.08008"]').count(),1);
    if(id==='scene-reconstruction')assert.equal(await page.locator('a[href="https://arxiv.org/abs/2308.04079"]').count(),1);
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+1));
    await page.locator('#language').click();
-   assert.ok((await page.locator('.example-card').innerText()).includes(example));
+   await page.locator('.answer-guide summary').click();
+   assert.ok((await page.locator('.example-card').innerText()).includes(exampleKo));
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+1));
    await page.locator('#language').click();
   }
