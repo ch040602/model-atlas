@@ -130,7 +130,7 @@ export function firstExperiment(kind,value){
 }
 export function firstExperimentOutput(kind,value,lang){
  const result=firstExperiment(kind,value),i=lang==='ko'?0:1;
- return `${exampleMath(result.tex)}<p>${esc(result.reason[i])}</p>`;
+ return `<p class="answer-label"><strong>${lang==='ko'?'현재 설정의 계산 정답':'Calculated answer for these settings'}</strong></p>${exampleMath(result.tex)}<p>${esc(result.reason[i])}</p>`;
 }
 export function firstStepsMarkup(kind,lang,value=settings[kind]?.value){
  const c=lessons[kind];if(!c)return '';

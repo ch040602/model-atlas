@@ -6,6 +6,8 @@
 
 배경 지식이 없다면 각 단원의 **숫자로 먼저 이해하기**에서 시작하세요. 상자 무게 예측부터 CNN의 밝기 차이, RNN의 순서, Diffusion의 잡음 복원, Transformer의 정보 혼합, GAN의 평가 방향까지 24단계로 설명합니다. 작은 실험 6개는 숫자 하나만 바꾸며 무엇을 고정했는지, 왜 결과가 그만큼 바뀌었는지를 보여 줍니다. 제곱근·벡터·지수·로그·분산·미분 등의 수학 도움말은 단원과 수식 유도, 원본 커서 설명에서 펼쳐 볼 수 있습니다. 개념 사전 47개에도 작은 사례와 결과의 이유를 먼저 읽고, 연결된 모델의 입문 절로 이동하는 안내를 제공합니다. 이 입문 예제의 값은 원본 모델의 실제 값과 구분합니다.
 
+실습에서 무엇을 확인해야 할지 막히면 **풀어야 할 문제 → 정답·이유·완료 기준**을 이용하세요. 조작형 실습 50개에 확인 기준이 있으며, 개념 사전 47개의 예제에는 별도의 풀이를 제공합니다. 고정된 검산 숫자와 현재 조작값의 계산 결과를 구분하고, 학습·생성처럼 하나의 정답이 없는 경우에는 판단 기준을 설명합니다. 47개 개념과 6개 단원 끝의 **내 말로 설명하고 면접에 연결하기**에서는 설명 예시, 후속 질문과 답, 자기 점검 기준으로 연습할 수 있습니다. 단원 목차에서도 바로 이동할 수 있습니다.
+
 [English](README.en.md) · [상세 학습·개발 가이드](DEVELOPMENT_GUIDE.ko.md) · [교육과정 대조표](CURRICULUM_AUDIT.md) · [출처와 라이선스](LICENSES.md)
 
 ## 빠른 시작
@@ -139,6 +141,7 @@ node tests/test_calculation_rail.mjs
 node tests/test_original_cursor.mjs
 node tests/test_first_steps.mjs
 node tests/test_concept_first.mjs
+node tests/test_learning_checks.mjs
 python tests/test_patches.py
 ```
 

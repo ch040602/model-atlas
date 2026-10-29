@@ -2,6 +2,16 @@
 
 Audience: a high-school student who can do arithmetic, but has not studied machine learning, vectors or calculus. This is an editorial and functional audit, not evidence of a learner study.
 
+## Practice answers and interview rehearsal (2026-10-29)
+
+- `learning-checks.js` adds worked solutions and causal explanations for all 47 concept examples, plus sample explanations, a specific follow-up question/answer and a self-assessment rubric for those concepts and all six units. Insufficient information and open-ended model selection are identified explicitly instead of inventing a unique numerical answer.
+- `practice-answers.js` covers all 48 module-based labs and the two inline metrics/K-means labs. Each has a task, answer or expected observation, and a completion criterion. The six main calculators point to their live stepwise results; four original-lab sections explain how to compare cursor values and controlled changes. Fixed hand checks are labeled separately from current control values. The six introductory experiments explicitly label their live calculated answers.
+- Correctness review covered gradient sign versus parameter direction, overshooting, convolution versus averaging, attention weights versus token probabilities, GRU gate convention, exact toy denoising versus generation, diversity versus GAN loss, train/test leakage, and retrieval versus generation. RAG practice answers describe the actual top-one selection, tie rule and out-of-vocabulary fallback; hit@2 remains a separate concept example.
+- Primary documentation cross-checks: [PyTorch GRU convention](https://docs.pytorch.org/docs/stable/generated/torch.nn.GRU.html), [PCA principal axes](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html), and [time-aware cross-validation](https://scikit-learn.org/stable/modules/cross_validation.html#cross-validation-of-time-series-data). Existing concept and lab references remain in place.
+- `node tests/test_learning_checks.mjs`: passed. Independently checks numerical examples against lab engines, discovers lab headings from source, requires all 50 guides to render, and opens every concept/unit answer in KO/EN at 390/1440px under root and `/course` hosting. Checks keyboard disclosure, live updates, no page overflow, math rendering, unique interview IDs, direct section focus and lazy original loading. Inspected mobile and desktop answer/interview screenshots.
+- Regression checks passed: `tests/smoke.mjs`, `tests/test_unit_navigation.mjs`, `tests/test_concepts.mjs`, `tests/test_extended_concepts.mjs`, `tests/test_first_steps.mjs`, and `tests/test_calculation_rail.mjs`. The rail test includes real independent scrolling at 390/1024/1440px. Publication audit: 12 tests, one environment-dependent skip.
+- Review: output text is escaped, native details preserve keyboard operation, no new dependencies or upstream/model changes, and bounded content registries follow the existing static rendering architecture. This checks authored content and functionality, not measured comprehension or interview success.
+
 ## Acceptance checks
 
 - Introduce the task, input and desired output before the model vocabulary.
@@ -10,6 +20,8 @@ Audience: a high-school student who can do arithmetic, but has not studied machi
 - Connect each introductory example to the existing full calculation and original lab; mark toy examples explicitly.
 - Give a prediction question and an explanation of the answer, including common misconceptions.
 - Keep Korean and English, keyboard access, narrow screens, and the independently scrolling calculation rail working.
+- Make the practice target explicit; distinguish a numerical answer, an observed relationship and an open-ended outcome.
+- Offer a worked answer and an interview follow-up without implying that reading them establishes understanding.
 
 ## Audit findings and follow-up
 

@@ -98,3 +98,20 @@ html[lang=ko] .sequence-lab{word-break:keep-all;overflow-wrap:break-word}
 .concept-first>details>summary{cursor:pointer;font-weight:650;font-size:15px;line-height:1.8}.concept-first>details{margin:18px 0}
 .concept-first>a{display:inline-block;line-height:1.7;font-size:14px}.concept-first summary:focus-visible{outline:3px solid #27846b;outline-offset:3px}
 @media(max-width:600px){.concept-first{padding:16px 12px}.concept-first p{font-size:15px}}
+/* Answers stay next to the exercise; details keep long explanations optional. */
+.practice-answer,.answer-guide,.interview-practice{min-width:0;overflow-wrap:anywhere}
+.practice-answer{margin:1rem 0 1.5rem;padding:1rem 1.15rem;background:var(--paper);border-left:3px solid var(--green);border-radius:0 8px 8px 0}
+.practice-answer .practice-task{margin:0 0 .65rem;line-height:1.8}
+.practice-answer summary,.answer-guide summary,.interview-practice summary{cursor:pointer;line-height:1.6;font-weight:650;padding:.55rem 0}
+.practice-answer h3,.interview-practice h3{font-size:1rem;line-height:1.5;margin:1rem 0 .4rem}
+.practice-answer p,.answer-guide p,.interview-practice p,.interview-rubric li{line-height:1.85;max-width:75ch}
+.answer-scope{font-size:.88rem;color:var(--muted,#566275)}
+.answer-guide{border-top:1px solid var(--line,#dce2e7);margin-top:1rem;padding-top:.4rem}
+.answer-guide ol{padding-left:1.4rem}
+.answer-guide li+li{margin-top:1rem}
+.answer-guide .math-display{max-width:100%;overflow-x:auto}
+.interview-practice{margin:2.5rem 0;padding:1.4rem 0;border-top:2px solid var(--line,#dce2e7)}
+.interview-practice>details{border-bottom:1px solid var(--line,#dce2e7);padding:.35rem 0}
+.interview-rubric ul{padding-left:1.3rem}
+.practice-answer summary:focus-visible,.answer-guide summary:focus-visible,.interview-practice summary:focus-visible{outline:2px solid var(--green);outline-offset:4px}
+@media(max-width:600px){.practice-answer{padding:.8rem}.interview-practice{margin-top:1.8rem}.answer-guide ol{padding-left:1.2rem}}
