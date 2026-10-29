@@ -1,0 +1,60 @@
+/* Put the operation beside its result when there is room to read both. */
+#main{container-type:inline-size;container-name:lesson}
+.unit-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}
+.unit-tools>details{margin:0;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:transparent;min-width:0}
+.unit-tools summary{font-size:14px;font-weight:600;cursor:pointer;line-height:1.6}
+.unit-tools>details[open]{grid-column:1/-1}
+.unit-tools .beginner-route ol{columns:2;column-gap:28px}
+.unit-tools .beginner-route li{break-inside:avoid;padding:4px 0}
+.unit-tools .beginner-route p{margin-top:8px}
+.first-steps{background:#fff;border-radius:10px;padding:18px;margin:18px 0;display:grid;gap:12px 22px}
+.first-steps>h2{margin:0;font-size:22px;grid-column:1/-1}
+.first-lesson,.first-try{min-width:0}
+.first-lesson>h3,.first-experiment>h3{margin:0 0 8px;font-size:17px}
+.first-lesson>p{margin:8px 0;font-size:15px;line-height:1.7}
+.first-step{padding:10px 0}.first-step>summary{font-size:15px;line-height:1.6}
+.first-step p{font-size:15px;line-height:1.75;margin:10px 0}
+.first-steps .first-steps-note{font-size:12px;margin:8px 0;color:var(--muted)}
+.first-try{padding:14px;background:#f1f4f7;border-radius:8px}
+.first-experiment{border:0;margin:0;padding:0}
+.first-experiment input{margin:12px 0}.first-experiment p,.first-check p{font-size:14px;line-height:1.75;margin:8px 0}
+.first-check{margin:14px 0;padding:0 0 0 12px}.first-check h3{font-size:15px;margin:0 0 6px}
+.first-next{padding:8px 12px;min-height:40px;font-size:14px}
+.concept-page{max-width:none}
+.concept-lead{font-size:16px!important;line-height:1.75;max-width:75ch;margin:10px 0 16px}
+.concept-study{display:grid;gap:16px;align-items:start}
+.concept-study>*{min-width:0}
+.concept-study .concept-first{margin:0;padding:14px 16px;border-radius:0;background:#f8fafc}
+.concept-study .concept-first h2,.concept-study .example-card h2{font-size:18px;margin:0 0 8px}
+.concept-study .concept-first p{font-size:15px;line-height:1.75;margin:8px 0}
+.concept-study .concept-first>details{margin:10px 0}
+.concept-study .example-card{margin:0;padding:14px 16px;border-radius:8px}
+.concept-study .example-card>p{margin:8px 0}
+.concept-definition{margin:10px 0;padding:8px 0;border-bottom:1px solid var(--line)}
+.concept-definition summary{cursor:pointer;font-size:14px;font-weight:600}
+.concept-definition p{font-size:14px;margin:8px 0;line-height:1.75}
+.answer-guide{margin-top:10px}.answer-guide ol{margin:8px 0}
+.answer-guide p,.practice-answer p,.interview-practice p{margin:8px 0;line-height:1.75}
+.answer-guide .answer-scope,.practice-answer .answer-scope{font-size:12px;color:var(--muted)}
+.practice-answer{margin:10px 0 16px;padding:10px 12px;border-radius:0 6px 6px 0}
+.practice-answer h3,.interview-practice h3{margin:10px 0 4px;font-size:15px}
+.practice-answer .practice-task{font-size:14px;margin:0 0 4px;line-height:1.7}
+.practice-answer summary,.answer-guide summary,.interview-practice summary{font-size:14px;padding:6px 0}
+.lab .practice-answer{background:#18252e;border-color:#81b3ff;color:#eef3fa}
+.lab .practice-answer p{color:#e0e9f5}.lab .practice-answer .answer-scope{color:#bdc8d3}
+.interview-practice{margin:24px 0;padding:16px 0;border-top:1px solid var(--line)}
+.interview-practice h2{font-size:21px;margin:0 0 8px}
+.interview-practice>p{font-size:14px}
+.interview-practice .speech-answer{border-left:2px solid var(--green);padding-left:12px}
+@container lesson (min-width:760px){
+ .first-steps{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}
+ .first-try{position:sticky;top:16px}
+ .concept-study{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ .concept-study .example-card{position:sticky;top:16px}
+}
+@container lesson (max-width:520px){
+ .unit-tools{grid-template-columns:minmax(0,1fr);gap:6px}
+ .unit-tools .beginner-route ol{columns:1}
+ .first-steps{padding:12px;gap:12px}.first-try{padding:12px}
+}
+@media(prefers-reduced-motion:reduce){.first-try,.concept-study .example-card{scroll-behavior:auto}}

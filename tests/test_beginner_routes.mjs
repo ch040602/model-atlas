@@ -27,6 +27,7 @@ try{
    if(lang==='en')await page.locator('#language').click();
    for(const [id,targets] of Object.entries(routes)){
     await page.locator(`#navigation [data-nav="${id}"]`).click();
+    if(!await page.locator('.beginner-route').evaluate(e=>e.open))await page.locator('#route-title').click();
     assert.equal(await page.locator('#route-title').textContent(),lang==='ko'?'처음이라면 이 순서로':'A suggested first pass');
     assert.deepEqual(await page.locator('[data-route-jump]').evaluateAll(els=>els.map(e=>e.dataset.routeJump)),targets);
     if(process.env.ROUTE_SCREENSHOTS && prefix==='' && ['cnn','transformer'].includes(id)) await page.locator('.beginner-route').screenshot({path:`test-results/route-${id}-${lang}-${width}.png`});
